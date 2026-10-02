@@ -64,6 +64,7 @@ async function editContent(id) {
   $("backdropUrl").value = item.backdrop_url || "";
   $("trailerUrl").value = item.trailer_url || "";
   $("videoUrl").value = item.video_url || "";
+  $("featured").checked = !!item.featured;
   $("posterPreview").innerHTML = item.poster_url ? `<img src="${esc(item.poster_url)}">` : "Poster preview";
   $("backdropPreview").innerHTML = item.backdrop_url ? `<img src="${esc(item.backdrop_url)}">` : "Netflix-style backdrop preview";
   $("showTools").style.display = item.type === "show" ? "block" : "none";
@@ -106,7 +107,7 @@ async function save(statusOverride) {
     trailer_url: $("trailerUrl").value.trim(),
     video_url: $("videoUrl").value.trim(),
     genres,
-    featured: false
+    featured: $("featured").checked
   };
   if (!body.title) return alert("Please enter a title.");
   const data = await api("/api/content", {method:"POST", body:JSON.stringify(body)});
