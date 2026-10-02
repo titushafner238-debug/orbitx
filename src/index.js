@@ -47,7 +47,8 @@ async function listContent(env, url, admin = false) {
   const sql = `
     SELECT id, type, title, slug, description, year, runtime_minutes, rating,
            poster_url, backdrop_url, trailer_url, video_url, featured,
-           status, release_at, created_at, updated_at
+           status, release_at, created_at, updated_at,
+           COALESCE((SELECT group_concat(g.name, '||') FROM content_genres cg JOIN genres g ON g.id = cg.genre_id WHERE cg.content_id = content.id), '') AS genres
     FROM content
     ${where.length ? "WHERE " + where.join(" AND ") : ""}
     ORDER BY featured DESC, COALESCE(release_at, created_at) DESC, title ASC
