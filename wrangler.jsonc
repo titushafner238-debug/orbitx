@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "orbitx",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-02",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/admin", "/admin/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "orbitx-db",
+      "database_id": "30258b4f-01e6-43f8-8783-d0bd89e6f4b0"
+    }
+  ]
+}
