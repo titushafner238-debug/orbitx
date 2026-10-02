@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV Shows - ORBIT</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #080808;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d0d0d;
+      border-bottom: 1px solid #222;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 28px;
+    }
+
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 15px;
+      transition: 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: #fff;
+    }
+
+    .page-header {
+      padding: 70px 5% 35px;
+      background: linear-gradient(to bottom, #111 0%, #080808 100%);
+    }
+
+    .page-header h1 {
+      font-size: 46px;
+      margin-bottom: 12px;
+    }
+
+    .page-header p {
+      color: #999;
+      font-size: 16px;
+      max-width: 650px;
+      line-height: 1.6;
+    }
+
+    .search-container {
+      padding: 0 5% 35px;
+      background: #080808;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 650px;
+      padding: 15px 18px;
+      background: #151515;
+      border: 1px solid #292929;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: #555;
+    }
+
+    .search-box::placeholder {
+      color: #777;
+    }
+
+    .section {
+      padding: 25px 5% 55px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 22px;
+    }
+
+    .genres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 35px;
+    }
+
+    .genre-btn {
+      padding: 9px 16px;
+      border-radius: 20px;
+      border: 1px solid #292929;
+      background: #151515;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .genre-btn:hover,
+    .genre-btn.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    .shows-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 24px;
+    }
+
+    .show-card {
+      background: #111;
+      border: 1px solid #202020;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .show-card:hover {
+      transform: translateY(-5px);
+      border-color: #444;
+    }
+
+    .poster {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background: linear-gradient(135deg, #1c1c1c, #090909);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 13px;
+      text-align: center;
+      padding: 15px;
+    }
+
+    .show-info {
+      padding: 16px;
+    }
+
+    .show-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .show-meta {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .watch-btn {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background: #fff;
+      color: #000;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .watch-btn:hover {
+      background: #ddd;
+    }
+
+    .no-results {
+      display: none;
+      color: #777;
+      padding: 40px 0;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    footer {
+      border-top: 1px solid #222;
+      padding: 35px 5%;
+      color: #666;
+      text-align: center;
+      font-size: 13px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 17px 5%;
+      }
+
+      nav {
+        gap: 15px;
+      }
+
+      nav a {
+        font-size: 13px;
+      }
+
+      .page-header {
+        padding: 50px 5% 30px;
+      }
+
+      .page-header h1 {
+        font-size: 36px;
+      }
+
+      .shows-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html" class="logo">ORBIT</a>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="movies.html">Movies</a>
+      <a href="tv.html" class="active">TV</a>
+    </nav>
+  </header>
+
+
+  <section class="page-header">
+    <h1>TV Shows</h1>
+    <p>
+      Explore the ORBIT collection of television shows and series.
+      Browse by genre or search for a specific show.
+    </p>
+  </section>
+
+
+  <div class="search-container">
+    <input
+      type="text"
+      id="searchInput"
+      class="search-box"
+      placeholder="Search TV shows..."
+    >
+  </div>
+
+
+  <section class="section">
+
+    <h2 class="section-title">Genres</h2>
+
+    <div class="genres">
+      <button class="genre-btn active" data-genre="all">All</button>
+      <button class="genre-btn" data-genre="action">Action</button>
+      <button class="genre-btn" data-genre="comedy">Comedy</button>
+      <button class="genre-btn" data-genre="drama">Drama</button>
+      <button class="genre-btn" data-genre="documentary">Documentary</button>
+      <button class="genre-btn" data-genre="sci-fi">Sci-Fi</button>
+      <button class="genre-btn" data-genre="animation">Animation</button>
+      <button class="genre-btn" data-genre="crime">Crime</button>
+      <button class="genre-btn" data-genre="family">Family</button>
+    </div>
+
+
+    <h2 class="section-title">TV Shows</h2>
+
+    <div class="shows-grid" id="showsGrid">
+
+      <div class="show-card" data-genre="drama" data-title="The Great Adventure">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">The Great Adventure</div>
+          <div class="show-meta">Drama • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="comedy" data-title="Laughing Days">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">Laughing Days</div>
+          <div class="show-meta">Comedy • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="action" data-title="Mission Zero">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">Mission Zero</div>
+          <div class="show-meta">Action • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="documentary" data-title="Our Planet">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">Our Planet</div>
+          <div class="show-meta">Documentary • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="sci-fi" data-title="Beyond Tomorrow">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">Beyond Tomorrow</div>
+          <div class="show-meta">Sci-Fi • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="crime" data-title="The Investigation">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">The Investigation</div>
+          <div class="show-meta">Crime • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="animation" data-title="Orbit Kids">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">Orbit Kids</div>
+          <div class="show-meta">Animation • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+
+      <div class="show-card" data-genre="family" data-title="Family Stories">
+        <div class="poster">
+          TV SHOW POSTER
+        </div>
+
+        <div class="show-info">
+          <div class="show-title">Family Stories</div>
+          <div class="show-meta">Family • Series</div>
+
+          <a href="#" class="watch-btn">Watch</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="no-results" id="noResults">
+      No TV shows found.
+    </div>
+
+  </section>
+
+
+  <footer>
+    © 2026 ORBIT. Public domain streaming.
+  </footer>
+
+
+  <script>
+
+    const searchInput = document.getElementById("searchInput");
+    const genreButtons = document.querySelectorAll(".genre-btn");
+    const showCards = document.querySelectorAll(".show-card");
+    const noResults = document.getElementById("noResults");
+
+    let selectedGenre = "all";
+
+
+    function filterShows() {
+
+      const searchText = searchInput.value.toLowerCase().trim();
+
+      let visibleCount = 0;
+
+
+      showCards.forEach(card => {
+
+        const title = card.dataset.title.toLowerCase();
+        const genre = card.dataset.genre.toLowerCase();
+
+        const matchesSearch =
+          title.includes(searchText);
+
+        const matchesGenre =
+          selectedGenre === "all" ||
+          genre === selectedGenre;
+
+
+        if (matchesSearch && matchesGenre) {
+
+          card.style.display = "";
+
+          visibleCount++;
+
+        } else {
+
+          card.style.display = "none";
+
+        }
+
+      });
+
+
+      if (visibleCount === 0) {
+
+        noResults.style.display = "block";
+
+      } else {
+
+        noResults.style.display = "none";
+
+      }
+
+    }
+
+
+    searchInput.addEventListener("input", filterShows);
+
+
+    genreButtons.forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        genreButtons.forEach(btn => {
+          btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        selectedGenre = button.dataset.genre;
+
+        filterShows();
+
+      });
+
+    });
+
+  </script>
+
+</body>
+</html>
