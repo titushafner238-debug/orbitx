@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORBIT Admin</title>
+<style>
+:root{color-scheme:dark;--bg:#090a0d;--panel:#111319;--panel2:#171a21;--line:#292e38;--text:#f4f5f7;--muted:#9aa1ad;--accent:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+header{padding:22px 30px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(9,10,13,.94);backdrop-filter:blur(12px);z-index:5}
+.logo{font-size:24px;font-weight:900;letter-spacing:.18em}.admin{color:var(--muted);font-size:13px}
+main{max-width:1200px;margin:0 auto;padding:30px 20px 70px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:25px}
+button,.button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:11px 16px;border-radius:8px;cursor:pointer;font-weight:700}
+button.primary{background:#fff;color:#08090b;border-color:#fff}button.danger{border-color:#67343a;color:#ffb6bd}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+h1,h2,h3{margin-top:0}.muted{color:var(--muted)}label{display:block;font-size:13px;font-weight:700;margin:14px 0 7px}
+input,textarea,select{width:100%;background:#0b0d11;border:1px solid var(--line);color:var(--text);padding:11px;border-radius:8px;font:inherit}
+textarea{min-height:120px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}.chip{display:flex;align-items:center;gap:6px;background:#0b0d11;border:1px solid var(--line);padding:8px 10px;border-radius:999px;font-size:13px}
+.chip input{width:auto}.drop{border:1px dashed #414754;border-radius:10px;padding:16px;text-align:center;background:#0c0e12}.drop input{border:0;padding:8px}
+.preview{width:100%;aspect-ratio:16/9;background:#0a0b0e;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#666}.preview img{width:100%;height:100%;object-fit:cover}
+.poster-preview{aspect-ratio:2/3}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.list{display:grid;gap:9px;max-height:600px;overflow:auto}.item{border:1px solid var(--line);background:#0c0e12;border-radius:10px;padding:13px;cursor:pointer}.item:hover{border-color:#555}
+.item strong{display:block}.item small{color:var(--muted)}.status{float:right;font-size:11px;border:1px solid var(--line);padding:3px 6px;border-radius:999px}
+#showTools{display:none}.notice{padding:12px;border-radius:9px;background:#181b22;border:1px solid var(--line);margin-bottom:15px;font-size:13px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.two,.three{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="logo">ORBIT</div><div class="admin">CONTENT ADMIN</div></header>
+<main>
+<div class="toolbar">
+<button class="primary" id="newMovie">+ Add Movie</button>
+<button id="newShow">+ Add TV Show</button>
+<button id="refresh">Refresh</button>
+<a class="button" href="/" style="text-decoration:none">View Site</a>
+</div>
+<div id="notice" class="notice">Build your catalog here. Changes are saved directly to OrbitX.</div>
+<div class="grid">
+<section class="panel">
+<h2 id="formTitle">Add Movie</h2>
+<form id="contentForm">
+<input type="hidden" id="contentId">
+<div class="two">
+<div><label>Title</label><input id="title" required></div>
+<div><label>Year</label><input id="year" type="number" min="1888" max="2100"></div>
+</div>
+<label>Movie / Show Summary</label><textarea id="description" placeholder="Write the description viewers will see."></textarea>
+<div class="three">
+<div><label>Runtime (minutes)</label><input id="runtime" type="number" min="1"></div>
+<div><label>Rating</label><select id="rating"><option value="">Select</option><option>G</option><option>PG</option><option>PG-13</option><option>R</option><option>NC-17</option><option>TV-Y</option><option>TV-Y7</option><option>TV-G</option><option>TV-PG</option><option>TV-14</option><option>TV-MA</option></select></div>
+<div><label>Status</label><select id="status"><option value="draft">Draft</option><option value="published">Publish Now</option><option value="scheduled">Scheduled</option></select></div>
+</div>
+<label>Genres — choose as many as you want</label>
+<div class="checks" id="genres"></div>
+<div class="two">
+<div><label>New Genre</label><div class="row"><input id="newGenre" placeholder="e.g. Horror"><button type="button" id="addGenre">Add</button></div></div>
+<div><label>Release Date & Time</label><input id="releaseAt" type="datetime-local"></div>
+</div>
+
+<h3 style="margin-top:24px">Images</h3>
+<div class="two">
+<div><label>Poster / Cover</label><div class="drop"><input id="posterFile" type="file" accept="image/*"><div class="preview poster-preview" id="posterPreview">Poster preview</div></div><input id="posterUrl" placeholder="or paste poster URL"></div>
+<div><label>Backdrop / Hero</label><div class="drop"><input id="backdropFile" type="file" accept="image/*"><div class="preview" id="backdropPreview">Netflix-style backdrop preview</div></div><input id="backdropUrl" placeholder="or paste backdrop URL"></div>
+</div>
+
+<h3 style="margin-top:24px">Trailer & Video</h3>
+<label>Trailer URL</label><input id="trailerUrl" placeholder="YouTube or hosted trailer URL">
+<label>Movie / Episode Video URL</label><input id="videoUrl" placeholder="Hosted video URL (R2 upload will be added here)">
+
+<div class="actions"><button type="submit" class="primary">Save</button><button type="button" id="saveDraft">Save Draft</button><button type="button" id="delete" class="danger">Delete</button></div>
+</form>
+
+<div id="showTools">
+<h3 style="margin-top:32px">TV Seasons & Episodes</h3>
+<div class="two"><input id="seasonNumber" type="number" min="1" value="1" placeholder="Season #"><input id="seasonTitle" placeholder="Season title"></div>
+<textarea id="seasonDescription" placeholder="Season description"></textarea>
+<button id="saveSeason" type="button">Save Season</button>
+<div id="seasonList" style="margin-top:12px"></div>
+<div id="episodeEditor" style="display:none;margin-top:16px">
+<h3>Episodes</h3>
+<div id="episodeList"></div>
+<div class="two"><input id="episodeNumber" type="number" min="1" value="1" placeholder="Episode #"><input id="episodeTitle" placeholder="Episode title"></div>
+<textarea id="episodeDescription" placeholder="Episode description"></textarea>
+<input id="episodeVideo" placeholder="Episode video URL">
+<button id="saveEpisode" type="button">Save Episode</button>
+</div>
+</div>
+</section>
+
+<aside class="panel">
+<h2>Catalog</h2>
+<div class="two"><select id="filterType"><option value="">All</option><option value="movie">Movies</option><option value="show">TV Shows</option></select><input id="search" placeholder="Search title..."></div>
+<div class="list" id="contentList" style="margin-top:15px"></div>
+</aside>
+</div>
+</main>
+<script src="/admin.js"></script>
+</body>
+</html>
