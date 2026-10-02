@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ORBIT - Movies</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #080808;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* HEADER */
+
+        header {
+            height: 72px;
+            background: #0b0b0b;
+            border-bottom: 1px solid #242424;
+            display: flex;
+            align-items: center;
+            padding: 0 45px;
+            gap: 45px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 4px;
+        }
+
+        nav {
+            display: flex;
+            gap: 28px;
+        }
+
+        nav a {
+            color: #bdbdbd;
+            font-size: 15px;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: white;
+        }
+
+        .search {
+            margin-left: auto;
+        }
+
+        .search input {
+            width: 230px;
+            padding: 10px 14px;
+            background: #171717;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+            outline: none;
+        }
+
+        /* PAGE */
+
+        .page {
+            padding: 45px 55px;
+        }
+
+        .page-header {
+            margin-bottom: 35px;
+        }
+
+        .page-header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #888;
+        }
+
+        /* GENRES */
+
+        .genres-title {
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-bottom: 50px;
+        }
+
+        .genre {
+            background: #151515;
+            border: 1px solid #292929;
+            padding: 14px 10px;
+            border-radius: 6px;
+            text-align: center;
+            color: #ccc;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .genre:hover,
+        .genre.selected {
+            background: #ffffff;
+            color: #000000;
+            border-color: white;
+        }
+
+        /* MOVIES */
+
+        .movie-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .movie-header h2 {
+            font-size: 25px;
+        }
+
+        .movie-count {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        .movie-card {
+            background: #151515;
+            border-radius: 7px;
+            overflow: hidden;
+            transition: .2s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            background: #1d1d1d;
+        }
+
+        .poster {
+            height: 275px;
+            background: linear-gradient(
+                145deg,
+                #292929,
+                #101010
+            );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #666;
+            font-size: 13px;
+        }
+
+        .movie-info {
+            padding: 14px;
+        }
+
+        .movie-title {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .movie-meta {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .movie-description {
+            color: #777;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .watch-button {
+            display: block;
+            margin-top: 12px;
+            padding: 9px;
+            background: white;
+            color: black;
+            text-align: center;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .watch-button:hover {
+            background: #ddd;
+        }
+
+        /* EMPTY */
+
+        .empty {
+            display: none;
+            border: 1px solid #292929;
+            padding: 50px;
+            text-align: center;
+            color: #777;
+            border-radius: 8px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            margin-top: 60px;
+            padding: 35px;
+            border-top: 1px solid #222;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 1000px) {
+
+            .movie-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .genre-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 750px) {
+
+            header {
+                height: auto;
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+
+            nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search {
+                margin-left: auto;
+            }
+
+            .page {
+                padding: 35px 20px;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .genre-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .poster {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <a href="index.html" class="logo">
+        ORBIT
+    </a>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="movies.html" class="active">Movies</a>
+        <a href="tv.html">TV</a>
+    </nav>
+
+    <div class="search">
+        <input
+            type="text"
+            id="searchBox"
+            placeholder="Search movies..."
+            onkeyup="searchMovies()"
+        >
+    </div>
+
+</header>
+
+
+<main class="page">
+
+    <div class="page-header">
+
+        <h1>Movies</h1>
+
+        <p>
+            Discover movies available on ORBIT.
+        </p>
+
+    </div>
+
+
+    <!-- GENRES -->
+
+    <h2 class="genres-title">
+        Browse by Genre
+    </h2>
+
+    <div class="genre-grid">
+
+        <div class="genre selected" onclick="filterMovies('All', this)">
+            All
+        </div>
+
+        <div class="genre" onclick="filterMovies('Action', this)">
+            Action
+        </div>
+
+        <div class="genre" onclick="filterMovies('Adventure', this)">
+            Adventure
+        </div>
+
+        <div class="genre" onclick="filterMovies('Comedy', this)">
+            Comedy
+        </div>
+
+        <div class="genre" onclick="filterMovies('Crime', this)">
+            Crime
+        </div>
+
+        <div class="genre" onclick="filterMovies('Documentary', this)">
+            Documentary
+        </div>
+
+        <div class="genre" onclick="filterMovies('Drama', this)">
+            Drama
+        </div>
+
+        <div class="genre" onclick="filterMovies('Kids & Family', this)">
+            Kids & Family
+        </div>
+
+        <div class="genre" onclick="filterMovies('Fantasy', this)">
+            Fantasy
+        </div>
+
+        <div class="genre" onclick="filterMovies('Horror', this)">
+            Horror
+        </div>
+
+        <div class="genre" onclick="filterMovies('Mystery', this)">
+            Mystery
+        </div>
+
+        <div class="genre" onclick="filterMovies('Romance', this)">
+            Romance
+        </div>
+
+        <div class="genre" onclick="filterMovies('Sci-Fi', this)">
+            Sci-Fi
+        </div>
+
+        <div class="genre" onclick="filterMovies('Thriller', this)">
+            Thriller
+        </div>
+
+        <div class="genre" onclick="filterMovies('Western', this)">
+            Western
+        </div>
+
+        <div class="genre" onclick="filterMovies('Animation', this)">
+            Animation
+        </div>
+
+        <div class="genre" onclick="filterMovies('Classic', this)">
+            Classic
+        </div>
+
+        <div class="genre" onclick="filterMovies('Religious', this)">
+            Religious
+        </div>
+
+    </div>
+
+
+    <!-- MOVIE LIST -->
+
+    <div class="movie-header">
+
+        <h2 id="movieTitle">
+            All Movies
+        </h2>
+
+        <div class="movie-count">
+            <span id="movieCount">0</span> movies
+        </div>
+
+    </div>
+
+
+    <div class="movie-grid" id="movieGrid">
+
+
+        <!-- MOVIE 1 -->
+
+        <div
+            class="movie-card"
+            data-title="Coming Soon"
+            data-genre="Classic"
+        >
+
+            <div class="poster">
+                MOVIE POSTER
+            </div>
+
+            <div class="movie-info">
+
+                <div class="movie-title">
+                    Coming Soon
+                </div>
+
+                <div class="movie-meta">
+                    Classic • Movie
+                </div>
+
+                <div class="movie-description">
+                    A movie will be added here once ORBIT's library is ready.
+                </div>
+
+                <a href="#" class="watch-button">
+                    Watch
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- MOVIE 2 -->
+
+        <div
+            class="movie-card"
+            data-title="Coming Soon"
+            data-genre="Action"
+        >
+
+            <div class="poster">
+                MOVIE POSTER
+            </div>
+
+            <div class="movie-info">
+
+                <div class="movie-title">
+                    Coming Soon
+                </div>
+
+                <div class="movie-meta">
+                    Action • Movie
+                </div>
+
+                <div class="movie-description">
+                    A movie will be added here once ORBIT's library is ready.
+                </div>
+
+                <a href="#" class="watch-button">
+                    Watch
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- MOVIE 3 -->
+
+        <div
+            class="movie-card"
+            data-title="Coming Soon"
+            data-genre="Documentary"
+        >
+
+            <div class="poster">
+                MOVIE POSTER
+            </div>
+
+            <div class="movie-info">
+
+                <div class="movie-title">
+                    Coming Soon
+                </div>
+
+                <div class="movie-meta">
+                    Documentary • Movie
+                </div>
+
+                <div class="movie-description">
+                    A movie will be added here once ORBIT's library is ready.
+                </div>
+
+                <a href="#" class="watch-button">
+                    Watch
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- MOVIE 4 -->
+
+        <div
+            class="movie-card"
+            data-title="Coming Soon"
+            data-genre="Comedy"
+        >
+
+            <div class="poster">
+                MOVIE POSTER
+            </div>
+
+            <div class="movie-info">
+
+                <div class="movie-title">
+                    Coming Soon
+                </div>
+
+                <div class="movie-meta">
+                    Comedy • Movie
+                </div>
+
+                <div class="movie-description">
+                    A movie will be added here once ORBIT's library is ready.
+                </div>
+
+                <a href="#" class="watch-button">
+                    Watch
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- MOVIE 5 -->
+
+        <div
+            class="movie-card"
+            data-title="Coming Soon"
+            data-genre="Drama"
+        >
+
+            <div class="poster">
+                MOVIE POSTER
+            </div>
+
+            <div class="movie-info">
+
+                <div class="movie-title">
+                    Coming Soon
+                </div>
+
+                <div class="movie-meta">
+                    Drama • Movie
+                </div>
+
+                <div class="movie-description">
+                    A movie will be added here once ORBIT's library is ready.
+                </div>
+
+                <a href="#" class="watch-button">
+                    Watch
+                </a>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="empty" id="emptyMessage">
+        No movies found.
+    </div>
+
+</main>
+
+
+<footer>
+
+    <p>
+        ORBIT — Free Entertainment
+    </p>
+
+</footer>
+
+
+<script>
+
+    const cards =
+        document.querySelectorAll(".movie-card");
+
+    const count =
+        document.getElementById("movieCount");
+
+    function updateCount() {
+
+        let visible = 0;
+
+        cards.forEach(card => {
+
+            if (card.style.display !== "none") {
+                visible++;
+            }
+
+        });
+
+        count.textContent = visible;
+    }
+
+
+    function filterMovies(genre, button) {
+
+        const buttons =
+            document.querySelectorAll(".genre");
+
+        buttons.forEach(btn => {
+            btn.classList.remove("selected");
+        });
+
+        button.classList.add("selected");
+
+        let visible = 0;
+
+        cards.forEach(card => {
+
+            const cardGenre =
+                card.getAttribute("data-genre");
+
+            if (
+                genre === "All" ||
+                cardGenre === genre
+            ) {
+
+                card.style.display = "block";
+                visible++;
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        document.getElementById("movieTitle").textContent =
+            genre === "All"
+                ? "All Movies"
+                : genre + " Movies";
+
+        document.getElementById("emptyMessage").style.display =
+            visible === 0 ? "block" : "none";
+
+        updateCount();
+    }
+
+
+    function searchMovies() {
+
+        const search =
+            document
+                .getElementById("searchBox")
+                .value
+                .toLowerCase();
+
+        let visible = 0;
+
+        cards.forEach(card => {
+
+            const title =
+                card
+                    .getAttribute("data-title")
+                    .toLowerCase();
+
+            if (title.includes(search)) {
+
+                card.style.display = "block";
+                visible++;
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        document.getElementById("emptyMessage").style.display =
+            visible === 0 ? "block" : "none";
+
+        updateCount();
+    }
+
+
+    updateCount();
+
+</script>
+
+</body>
+</html>
