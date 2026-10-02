@@ -1,368 +1,68 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<title>ORBIT - Movies & TV</title>
+    <title>ORBIT - Movies & TV</title>
 
-<style>
-
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    html {
-        scroll-behavior: smooth;
-    }
-
-    body {
-        background: #080808;
-        color: #ffffff;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    /* HEADER */
-
-    header {
-        height: 72px;
-        background: #0b0b0b;
-        border-bottom: 1px solid #242424;
-        display: flex;
-        align-items: center;
-        padding: 0 45px;
-        gap: 45px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    .logo {
-        font-size: 28px;
-        font-weight: 900;
-        letter-spacing: 4px;
-        white-space: nowrap;
-    }
-
-    nav {
-        display: flex;
-        gap: 28px;
-    }
-
-    nav a {
-        color: #bdbdbd;
-        font-size: 15px;
-        transition: color 0.2s;
-    }
-
-    nav a:hover {
-        color: #ffffff;
-    }
-
-    .search-box {
-        margin-left: auto;
-    }
-
-    .search-box input {
-        width: 230px;
-        padding: 10px 14px;
-        background: #171717;
-        border: 1px solid #333333;
-        border-radius: 6px;
-        color: white;
-        outline: none;
-    }
-
-    .search-box input:focus {
-        border-color: #777777;
-    }
-
-    /* HERO */
-
-    .hero {
-        min-height: 540px;
-        padding: 100px 65px;
-        display: flex;
-        align-items: center;
-
-        background:
-            linear-gradient(
-                90deg,
-                #080808 15%,
-                rgba(8,8,8,0.92) 40%,
-                rgba(8,8,8,0.45) 75%,
-                rgba(8,8,8,0.15)
-            ),
-            radial-gradient(
-                circle at 75% 40%,
-                #303030,
-                #080808 65%
-            );
-    }
-
-    .hero-content {
-        max-width: 650px;
-    }
-
-    .hero-label {
-        color: #aaaaaa;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        margin-bottom: 15px;
-    }
-
-    .hero h1 {
-        font-size: 70px;
-        letter-spacing: 7px;
-        margin-bottom: 20px;
-    }
-
-    .hero p {
-        color: #c5c5c5;
-        font-size: 18px;
-        line-height: 1.7;
-        margin-bottom: 30px;
-    }
-
-    .hero-buttons {
-        display: flex;
-        gap: 12px;
-    }
-
-    .button {
-        padding: 13px 25px;
-        border-radius: 5px;
-        font-weight: bold;
-        border: none;
-        cursor: pointer;
-        font-size: 15px;
-    }
-
-    .button-primary {
-        background: #ffffff;
-        color: #000000;
-    }
-
-    .button-primary:hover {
-        background: #dddddd;
-    }
-
-    .button-secondary {
-        background: #292929;
-        color: #ffffff;
-    }
-
-    .button-secondary:hover {
-        background: #3a3a3a;
-    }
-
-    /* GENERAL SECTIONS */
-
-    .section {
-        padding: 45px 55px;
-    }
-
-    .section-title {
-        font-size: 25px;
-        margin-bottom: 22px;
-    }
-
-    .section-subtitle {
-        color: #888888;
-        margin-top: -12px;
-        margin-bottom: 22px;
-        font-size: 14px;
-    }
-
-    /* MOVIE CARDS */
-
-    .movie-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 18px;
-    }
-
-    .movie-card {
-        background: #151515;
-        border-radius: 7px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: transform 0.2s, background 0.2s;
-    }
-
-    .movie-card:hover {
-        transform: translateY(-4px);
-        background: #1c1c1c;
-    }
-
-    .poster {
-        height: 275px;
-        background:
-            linear-gradient(
-                145deg,
-                #292929,
-                #101010
-            );
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #666666;
-        font-size: 13px;
-    }
-
-    .movie-info {
-        padding: 14px;
-    }
-
-    .movie-title {
-        font-weight: bold;
-        margin-bottom: 7px;
-    }
-
-    .movie-meta {
-        color: #888888;
-        font-size: 13px;
-    }
-
-    /* GENRES */
-
-    .genre-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 10px;
-    }
-
-    .genre {
-        background: #151515;
-        border: 1px solid #292929;
-        padding: 15px 10px;
-        text-align: center;
-        border-radius: 6px;
-        color: #cccccc;
-        font-size: 14px;
-        transition: background 0.2s, border 0.2s;
-        cursor: pointer;
-    }
-
-    .genre:hover {
-        background: #242424;
-        border-color: #555555;
-        color: white;
-    }
-
-    /* ADVERTISEMENT */
-
-    .ad-space {
-        margin: 15px 55px 25px;
-        min-height: 110px;
-        border: 1px dashed #333333;
-        background: #0d0d0d;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #555555;
-        font-size: 12px;
-        letter-spacing: 1px;
-    }
-
-    /* ORIGINALS */
-
-    .originals {
-        background: #101010;
-        border-top: 1px solid #202020;
-        border-bottom: 1px solid #202020;
-    }
-
-    .original-box {
-        border: 1px solid #292929;
-        border-radius: 8px;
-        padding: 45px;
-        background:
-            linear-gradient(
-                135deg,
-                #171717,
-                #0b0b0b
-            );
-    }
-
-    .original-box h3 {
-        font-size: 30px;
-        margin-bottom: 12px;
-    }
-
-    .original-box p {
-        color: #999999;
-        line-height: 1.6;
-        max-width: 650px;
-    }
-
-    /* FOOTER */
-
-    footer {
-        border-top: 1px solid #222222;
-        padding: 35px 55px;
-        color: #666666;
-        font-size: 13px;
-        text-align: center;
-    }
-
-    footer .footer-links {
-        margin-bottom: 15px;
-        display: flex;
-        justify-content: center;
-        gap: 25px;
-    }
-
-    footer a:hover {
-        color: #ffffff;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 1000px) {
-
-        .movie-grid {
-            grid-template-columns: repeat(4, 1fr);
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .genre-grid {
-            grid-template-columns: repeat(4, 1fr);
+        html {
+            scroll-behavior: smooth;
         }
+
+        body {
+            background: #080808;
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* HEADER */
 
         header {
-            padding: 0 25px;
-            gap: 25px;
+            height: 72px;
+            background: #0b0b0b;
+            border-bottom: 1px solid #242424;
+            display: flex;
+            align-items: center;
+            padding: 0 45px;
+            gap: 45px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            white-space: nowrap;
         }
 
         nav {
-            gap: 16px;
-        }
-    }
-
-    @media (max-width: 750px) {
-
-        header {
-            height: auto;
-            min-height: 70px;
-            padding: 15px 20px;
-            flex-wrap: wrap;
+            display: flex;
+            gap: 28px;
         }
 
-        nav {
-            order: 3;
-            width: 100%;
-            justify-content: center;
+        nav a {
+            color: #bdbdbd;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #ffffff;
         }
 
         .search-box {
@@ -370,73 +70,367 @@
         }
 
         .search-box input {
-            width: 160px;
+            width: 230px;
+            padding: 10px 14px;
+            background: #171717;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            color: white;
+            outline: none;
         }
+
+        .search-box input:focus {
+            border-color: #777777;
+        }
+
+        /* HERO */
 
         .hero {
-            padding: 75px 25px;
+            min-height: 540px;
+            padding: 100px 65px;
+            display: flex;
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #080808 15%,
+                    rgba(8,8,8,0.92) 40%,
+                    rgba(8,8,8,0.45) 75%,
+                    rgba(8,8,8,0.15)
+                ),
+                radial-gradient(
+                    circle at 75% 40%,
+                    #303030,
+                    #080808 65%
+                );
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        .hero-label {
+            color: #aaaaaa;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
         }
 
         .hero h1 {
-            font-size: 48px;
-        }
-
-        .section {
-            padding: 35px 20px;
-        }
-
-        .movie-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .genre-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .ad-space {
-            margin: 10px 20px 20px;
-        }
-
-        .poster {
-            height: 230px;
-        }
-    }
-
-    @media (max-width: 450px) {
-
-        .logo {
-            font-size: 23px;
-        }
-
-        .search-box {
-            width: 100%;
-        }
-
-        .search-box input {
-            width: 100%;
-        }
-
-        .hero h1 {
-            font-size: 40px;
+            font-size: 70px;
+            letter-spacing: 7px;
+            margin-bottom: 20px;
         }
 
         .hero p {
-            font-size: 16px;
+            color: #c5c5c5;
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 30px;
         }
 
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .button {
+            padding: 13px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .button-primary {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .button-primary:hover {
+            background: #dddddd;
+        }
+
+        .button-secondary {
+            background: #292929;
+            color: #ffffff;
+        }
+
+        .button-secondary:hover {
+            background: #3a3a3a;
+        }
+
+        /* GENERAL SECTIONS */
+
+        .section {
+            padding: 45px 55px;
+        }
+
+        .section-title {
+            font-size: 25px;
+            margin-bottom: 22px;
+        }
+
+        .section-subtitle {
+            color: #888888;
+            margin-top: -12px;
+            margin-bottom: 22px;
+            font-size: 14px;
+        }
+
+        /* MOVIE CARDS */
+
         .movie-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        .movie-card {
+            background: #151515;
+            border-radius: 7px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px);
+            background: #1c1c1c;
         }
 
         .poster {
-            height: 200px;
+            height: 275px;
+            background:
+                linear-gradient(
+                    145deg,
+                    #292929,
+                    #101010
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666666;
+            font-size: 13px;
         }
-    }
 
-</style>
-```
+        .movie-info {
+            padding: 14px;
+        }
 
+        .movie-title {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .movie-meta {
+            color: #888888;
+            font-size: 13px;
+        }
+
+        /* GENRES */
+
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+
+        .genre {
+            background: #151515;
+            border: 1px solid #292929;
+            padding: 15px 10px;
+            text-align: center;
+            border-radius: 6px;
+            color: #cccccc;
+            font-size: 14px;
+            transition: background 0.2s, border 0.2s;
+            cursor: pointer;
+        }
+
+        .genre:hover {
+            background: #242424;
+            border-color: #555555;
+            color: white;
+        }
+
+        /* ADVERTISEMENT */
+
+        .ad-space {
+            margin: 15px 55px 25px;
+            min-height: 110px;
+            border: 1px dashed #333333;
+            background: #0d0d0d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555555;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* ORIGINALS */
+
+        .originals {
+            background: #101010;
+            border-top: 1px solid #202020;
+            border-bottom: 1px solid #202020;
+        }
+
+        .original-box {
+            border: 1px solid #292929;
+            border-radius: 8px;
+            padding: 45px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #171717,
+                    #0b0b0b
+                );
+        }
+
+        .original-box h3 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .original-box p {
+            color: #999999;
+            line-height: 1.6;
+            max-width: 650px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            border-top: 1px solid #222222;
+            padding: 35px 55px;
+            color: #666666;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        footer .footer-links {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 1000px) {
+
+            .movie-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .genre-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            header {
+                padding: 0 25px;
+                gap: 25px;
+            }
+
+            nav {
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 750px) {
+
+            header {
+                height: auto;
+                min-height: 70px;
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+
+            nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-box {
+                margin-left: auto;
+            }
+
+            .search-box input {
+                width: 160px;
+            }
+
+            .hero {
+                padding: 75px 25px;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .section {
+                padding: 35px 20px;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .genre-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ad-space {
+                margin: 10px 20px 20px;
+            }
+
+            .poster {
+                height: 230px;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .movie-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .poster {
+                height: 200px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -445,71 +439,66 @@
 
 <header>
 
-```
-<a href="#" class="logo">ORBIT</a>
+    <a href="#" class="logo">ORBIT</a>
 
-<nav>
-    <a href="#">Home</a>
+    <nav>
+        <a href="#">Home</a>
+        <a href="movies.html">Movies</a>
+        <a href="https://orbitx.titushafner238.workers.dev/tv">TV</a>
+        <a href="#search">Search</a>
+    </nav>
 
-    <!-- FIXED: Movies now opens the separate movies.html page -->
-    <a href="movies.html">Movies</a>
-
-    <a href="#tv">TV</a>
-    <a href="#search">Search</a>
-</nav>
-
-<div class="search-box">
-    <input
-        id="search"
-        type="text"
-        placeholder="Search ORBIT..."
-    >
-</div>
-```
+    <div class="search-box">
+        <input
+            id="search"
+            type="text"
+            placeholder="Search ORBIT..."
+        >
+    </div>
 
 </header>
+
 
 <!-- HERO -->
 
 <section class="hero">
 
-```
-<div class="hero-content">
+    <div class="hero-content">
 
-    <div class="hero-label">
-        Free Entertainment
+        <div class="hero-label">
+            Free Entertainment
+        </div>
+
+        <h1>ORBIT</h1>
+
+        <p>
+            Discover movies and television from classic
+            favorites to independent creators.
+            ORBIT is just getting started.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button
+                class="button button-primary"
+                onclick="document.getElementById('movies').scrollIntoView()"
+            >
+                Explore Movies
+            </button>
+
+            <button
+                class="button button-secondary"
+                onclick="document.getElementById('tv').scrollIntoView()"
+            >
+                Explore TV
+            </button>
+
+        </div>
+
     </div>
-
-    <h1>ORBIT</h1>
-
-    <p>
-        Discover movies and television from classic
-        favorites to independent creators.
-        ORBIT is just getting started.
-    </p>
-
-    <div class="hero-buttons">
-
-        <button
-            class="button button-primary"
-            onclick="document.getElementById('movies').scrollIntoView()"
-        >
-            Explore Movies
-        </button>
-
-        <button
-            class="button button-secondary"
-            onclick="document.getElementById('tv').scrollIntoView()"
-        >
-            Explore TV
-        </button>
-
-    </div>
-
-</div>
-```
 
 </section>
+
 
 <!-- ADVERTISEMENT SPACE -->
 
@@ -517,294 +506,288 @@
     ADVERTISEMENT
 </div>
 
+
 <!-- FEATURED MOVIES -->
 
 <section class="section" id="movies">
 
-```
-<h2 class="section-title">
-    Featured Movies
-</h2>
+    <h2 class="section-title">
+        Featured Movies
+    </h2>
 
-<p class="section-subtitle">
-    Movies coming to ORBIT
-</p>
+    <p class="section-subtitle">
+        Movies coming to ORBIT
+    </p>
 
-<div class="movie-grid">
+    <div class="movie-grid">
 
-    <div class="movie-card">
-        <div class="poster">MOVIE POSTER</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">MOVIE POSTER</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">MOVIE POSTER</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">MOVIE POSTER</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">MOVIE POSTER</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">MOVIE POSTER</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">MOVIE POSTER</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">MOVIE POSTER</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">MOVIE POSTER</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">MOVIE POSTER</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-</div>
-```
+    </div>
 
 </section>
+
 
 <!-- MOVIE GENRES -->
 
 <section class="section">
 
-```
-<h2 class="section-title">
-    Movie Genres
-</h2>
+    <h2 class="section-title">
+        Movie Genres
+    </h2>
 
-<div class="genre-grid">
+    <div class="genre-grid">
 
-    <div class="genre">Action</div>
-    <div class="genre">Adventure</div>
-    <div class="genre">Comedy</div>
-    <div class="genre">Crime</div>
-    <div class="genre">Documentary</div>
-    <div class="genre">Drama</div>
-    <div class="genre">Kids & Family</div>
-    <div class="genre">Fantasy</div>
-    <div class="genre">Horror</div>
-    <div class="genre">Mystery</div>
-    <div class="genre">Romance</div>
-    <div class="genre">Sci-Fi</div>
-    <div class="genre">Thriller</div>
-    <div class="genre">Western</div>
-    <div class="genre">Animation</div>
-    <div class="genre">Classic</div>
-    <div class="genre">Religious</div>
+        <div class="genre">Action</div>
+        <div class="genre">Adventure</div>
+        <div class="genre">Comedy</div>
+        <div class="genre">Crime</div>
+        <div class="genre">Documentary</div>
+        <div class="genre">Drama</div>
+        <div class="genre">Kids & Family</div>
+        <div class="genre">Fantasy</div>
+        <div class="genre">Horror</div>
+        <div class="genre">Mystery</div>
+        <div class="genre">Romance</div>
+        <div class="genre">Sci-Fi</div>
+        <div class="genre">Thriller</div>
+        <div class="genre">Western</div>
+        <div class="genre">Animation</div>
+        <div class="genre">Classic</div>
+        <div class="genre">Religious</div>
 
-</div>
-```
+    </div>
 
 </section>
+
 
 <!-- RECENTLY ADDED -->
 
 <section class="section">
 
-```
-<h2 class="section-title">
-    Recently Added
-</h2>
+    <h2 class="section-title">
+        Recently Added
+    </h2>
 
-<div class="movie-grid">
+    <div class="movie-grid">
 
-    <div class="movie-card">
-        <div class="poster">COMING SOON</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">COMING SOON</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">COMING SOON</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">COMING SOON</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">COMING SOON</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">COMING SOON</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">COMING SOON</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">COMING SOON</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">COMING SOON</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">Movie</div>
+        <div class="movie-card">
+            <div class="poster">COMING SOON</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">Movie</div>
+            </div>
         </div>
-    </div>
 
-</div>
-```
+    </div>
 
 </section>
+
 
 <!-- TV -->
 
 <section class="section" id="tv">
 
-```
-<h2 class="section-title">
-    TV Shows
-</h2>
+    <h2 class="section-title">
+        TV Shows
+    </h2>
 
-<p class="section-subtitle">
-    Television coming to ORBIT
-</p>
+    <p class="section-subtitle">
+        Television coming to ORBIT
+    </p>
 
-<div class="movie-grid">
+    <div class="movie-grid">
 
-    <div class="movie-card">
-        <div class="poster">TV</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">TV</div>
+        <div class="movie-card">
+            <div class="poster">TV</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">TV</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">TV</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">TV</div>
+        <div class="movie-card">
+            <div class="poster">TV</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">TV</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">TV</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">TV</div>
+        <div class="movie-card">
+            <div class="poster">TV</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">TV</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">TV</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">TV</div>
+        <div class="movie-card">
+            <div class="poster">TV</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">TV</div>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <div class="poster">TV</div>
-        <div class="movie-info">
-            <div class="movie-title">Coming Soon</div>
-            <div class="movie-meta">TV</div>
+        <div class="movie-card">
+            <div class="poster">TV</div>
+            <div class="movie-info">
+                <div class="movie-title">Coming Soon</div>
+                <div class="movie-meta">TV</div>
+            </div>
         </div>
-    </div>
 
-</div>
-```
+    </div>
 
 </section>
+
 
 <!-- TV GENRES -->
 
 <section class="section">
 
-```
-<h2 class="section-title">
-    TV Genres
-</h2>
+    <h2 class="section-title">
+        TV Genres
+    </h2>
 
-<div class="genre-grid">
+    <div class="genre-grid">
 
-    <div class="genre">Action</div>
-    <div class="genre">Adventure</div>
-    <div class="genre">Comedy</div>
-    <div class="genre">Crime</div>
-    <div class="genre">Documentary</div>
-    <div class="genre">Drama</div>
-    <div class="genre">Kids & Family</div>
-    <div class="genre">Fantasy</div>
-    <div class="genre">Horror</div>
-    <div class="genre">Mystery</div>
-    <div class="genre">Romance</div>
-    <div class="genre">Sci-Fi</div>
-    <div class="genre">Thriller</div>
-    <div class="genre">Western</div>
-    <div class="genre">Animation</div>
-    <div class="genre">Classic</div>
-    <div class="genre">Religious</div>
+        <div class="genre">Action</div>
+        <div class="genre">Adventure</div>
+        <div class="genre">Comedy</div>
+        <div class="genre">Crime</div>
+        <div class="genre">Documentary</div>
+        <div class="genre">Drama</div>
+        <div class="genre">Kids & Family</div>
+        <div class="genre">Fantasy</div>
+        <div class="genre">Horror</div>
+        <div class="genre">Mystery</div>
+        <div class="genre">Romance</div>
+        <div class="genre">Sci-Fi</div>
+        <div class="genre">Thriller</div>
+        <div class="genre">Western</div>
+        <div class="genre">Animation</div>
+        <div class="genre">Classic</div>
+        <div class="genre">Religious</div>
 
-</div>
-```
+    </div>
 
 </section>
+
 
 <!-- ORIGINALS -->
 
 <section class="section originals">
 
-```
-<h2 class="section-title">
-    ORBIT Originals
-</h2>
+    <h2 class="section-title">
+        ORBIT Originals
+    </h2>
 
-<div class="original-box">
+    <div class="original-box">
 
-    <h3>
-        Coming Soon
-    </h3>
+        <h3>
+            Coming Soon
+        </h3>
 
-    <p>
-        ORBIT Originals will eventually feature movies,
-        television shows, short films, animation, and other
-        original entertainment created for ORBIT.
-    </p>
+        <p>
+            ORBIT Originals will eventually feature movies,
+            television shows, short films, animation, and other
+            original entertainment created for ORBIT.
+        </p>
 
-</div>
-```
+    </div>
 
 </section>
+
 
 <!-- FOOTER -->
 
 <footer>
 
-```
-<div class="footer-links">
-    <a href="#">About</a>
-    <a href="#">Contact</a>
-    <a href="#">Copyright</a>
-    <a href="#">Privacy</a>
-</div>
+    <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Copyright</a>
+        <a href="#">Privacy</a>
+    </div>
 
-<p>
-    ORBIT — Free Entertainment
-</p>
-```
+    <p>
+        ORBIT — Free Entertainment
+    </p>
 
 </footer>
+
 
 </body>
 </html>
