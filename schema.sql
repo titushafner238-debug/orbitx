@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS content (
   trailer_url TEXT DEFAULT '',
   video_url TEXT DEFAULT '',
   featured INTEGER NOT NULL DEFAULT 0 CHECK (featured IN (0, 1)),
-  status TEXT NOT NULL DEFAULT 'draft'
-    CHECK (status IN ('draft', 'scheduled', 'published')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'published')),
   release_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -59,8 +58,7 @@ CREATE TABLE IF NOT EXISTS episodes (
   runtime_minutes INTEGER,
   thumbnail_url TEXT DEFAULT '',
   video_url TEXT DEFAULT '',
-  status TEXT NOT NULL DEFAULT 'draft'
-    CHECK (status IN ('draft', 'scheduled', 'published')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'published')),
   release_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -68,23 +66,10 @@ CREATE TABLE IF NOT EXISTS episodes (
   FOREIGN KEY (season_id) REFERENCES seasons(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_content_type_status
-  ON content(type, status);
-
-CREATE INDEX IF NOT EXISTS idx_content_release
-  ON content(release_at);
-
-CREATE INDEX IF NOT EXISTS idx_content_featured
-  ON content(featured, status);
-
-CREATE INDEX IF NOT EXISTS idx_content_genres_genre
-  ON content_genres(genre_id);
-
-CREATE INDEX IF NOT EXISTS idx_seasons_show
-  ON seasons(show_id, season_number);
-
-CREATE INDEX IF NOT EXISTS idx_episodes_release
-  ON episodes(release_at);
-
-CREATE INDEX IF NOT EXISTS idx_episodes_season
-  ON episodes(season_id, episode_number);
+CREATE INDEX IF NOT EXISTS idx_content_type_status ON content(type, status);
+CREATE INDEX IF NOT EXISTS idx_content_release ON content(release_at);
+CREATE INDEX IF NOT EXISTS idx_content_featured ON content(featured, status);
+CREATE INDEX IF NOT EXISTS idx_content_genres_genre ON content_genres(genre_id);
+CREATE INDEX IF NOT EXISTS idx_seasons_show ON seasons(show_id, season_number);
+CREATE INDEX IF NOT EXISTS idx_episodes_release ON episodes(release_at);
+CREATE INDEX IF NOT EXISTS idx_episodes_season ON episodes(season_id, episode_number);
