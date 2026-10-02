@@ -1,0 +1,6 @@
+.git/
+.github/
+schema.sql
+wrangler.jsonc
+.assetsignore
+src/
