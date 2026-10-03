@@ -430,7 +430,9 @@
                 height: 200px;
             }
         }
-    </style>
+    
+.account-nav{display:flex;align-items:center;gap:8px}.avatar-circle{width:30px;height:30px;border:1px solid #666;border-radius:50%;display:inline-grid;place-items:center;font-size:18px;color:#aaa}.main-nav{display:flex;gap:28px;align-items:center}.main-nav a{color:#bdbdbd;font-size:15px}.main-nav a:hover,.main-nav a.active{color:#fff}.search-box,.search{margin-left:auto}.search-box input,.search input{width:230px;padding:10px 14px;background:#171717;border:1px solid #333;border-radius:6px;color:#fff;outline:none}
+</style>
 </head>
 
 <body>
@@ -441,20 +443,16 @@
 
     <a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>
 
-    <nav>
-        <a href="#">Home</a>
-        <a href="movies.html">Movies</a>
-        <a href="tv.html">TV</a>
-        <a href="#search">Search</a>\n        <a href="/account">Account</a>
-    </nav>
+    <nav class="main-nav">
+        <a href="/account" class="account-nav" aria-label="Account"><span class="avatar-circle" id="navAvatar">○</span><span>Account</span></a>
+        <a href="/">Home</a>
+        <a href="/movies.html">Movies</a>
+        <a href="/tv.html">TV</a>
+      </nav>
 
     <div class="search-box">
-        <input
-            id="search"
-            type="text"
-            placeholder="Search ORBIT..."
-        >
-    </div>
+        <input id="search" type="text" placeholder="Search ORBIT..." aria-label="Search ORBIT">
+      </div>
 
 </header>
 
@@ -783,7 +781,7 @@
     </div>
 
     <p>
-        ORBIT — Free Entertainment
+        ORBIT X — Free Entertainment
     </p>
 
 </footer>
