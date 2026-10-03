@@ -441,6 +441,16 @@ export default {
           return saveEpisode(request, env);
         }
 
+        if (url.pathname === "/api/b2-diagnostic" && request.method === "GET") {
+          try {
+            const key="diagnostics/"+crypto.randomUUID()+".txt";
+            const bytes=new TextEncoder().encode("Orbit X B2 diagnostic");
+            const result=await b2UploadStream(env,key,new Response(bytes).body,"text/plain",bytes.byteLength);
+            return json({ok:true,key,fileId:result.result?.fileId,contentLength:result.result?.contentLength,contentSha1:result.result?.contentSha1});
+          } catch(e) {
+            return json({ok:false,error:e.message||String(e)},500);
+          }
+        }
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
         if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
         if (url.pathname === "/api/import-url" && request.method === "POST") return importUrl(request, env);
