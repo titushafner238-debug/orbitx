@@ -275,7 +275,7 @@ async function publicSiteSettings(env){ return json({settings:await getSiteSetti
 async function saveSiteSettings(request,env){
   await ensureSiteSettings(env);
   const body=await request.json();
-  const allowed=["logo_text","accent","button_hover","watch_button_text","ad_enabled","ad_text","promo_ids","watch_now_ids","featured_ids","recent_ids","blocked_search_terms","footer_about","footer_contact","footer_copyright","footer_privacy"];
+  const allowed=["logo_text","accent","button_hover","watch_button_text","ad_enabled","ad_text","promo_ids","watch_now_ids","featured_ids","recent_ids","blocked_search_terms","footer_about","footer_contact","footer_copyright","footer_privacy","hero_title","hero_description","hero_backdrop","featured_title","recent_title","tv_title"];
   for(const key of allowed){ if(!(key in body)) continue; const value=typeof body[key]==="string"?body[key]:JSON.stringify(body[key]); await env.DB.prepare("INSERT INTO site_settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(key,value).run(); }
   return json({ok:true,settings:await getSiteSettings(env)});
 }
