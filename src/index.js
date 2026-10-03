@@ -302,6 +302,18 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/movies.html" || url.pathname === "/tv.html") {
+      const page = await env.ASSETS.fetch(request);
+      if (page.ok) {
+        let html = await page.text();
+        html = html.replace(/<title>ORBIT - (Movies|TV Shows)<\/title>/g, "<title>ORBIT X — $1</title>")
+          .replace(/<a href="index\.html" class="logo">\s*ORBIT\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>')
+          .replace(/<a href="index\.html" class="logo">\s*ORBIT X\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>')
+          .replace(/<p>\s*ORBIT — Free Entertainment\s*<\/p>/g, '<p>ORBIT X — Free Entertainment</p>');
+        return new Response(html,{status:page.status,headers:page.headers});
+      }
+    }
+
     if (url.pathname === "/admin" || url.pathname === "/admin/") {
       return env.ASSETS.fetch(new Request(new URL("/admin.html", url), request));
     }
