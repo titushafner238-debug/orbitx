@@ -66,7 +66,16 @@ textarea{min-height:120px;resize:vertical}.two{display:grid;grid-template-column
 
 <h3 style="margin-top:24px">Trailer & Video</h3>
 <label>Trailer URL</label><input id="trailerUrl" placeholder="YouTube or hosted trailer URL">
-<label>Movie / Episode Video URL</label><input id="videoUrl" placeholder="Hosted video URL (R2 upload will be added here)">
+<label>Movie / Episode Video URL</label><input id="videoUrl" placeholder="Stored video URL">
+<div class="drop" style="margin-top:10px;text-align:left">
+  <strong>Import video from a link</strong>
+  <div class="muted" style="margin:5px 0 10px">Paste a direct video file link. Orbit X will download and store it. Maximum target: 2 hours / 20 GB.</div>
+  <div class="row"><input id="videoImportUrl" placeholder="https://example.com/movie.mp4"><button type="button" id="importVideo">Import Video</button></div>
+  <div id="videoImportStatus" class="muted" style="margin-top:8px"></div>
+</div>
+<label>Or upload a video file</label>
+<input id="videoFile" type="file" accept="video/*">
+<div class="muted" style="margin-top:6px">Only upload or import videos you have permission to store and stream.</div>
 
 <div class="actions"><button type="submit" class="primary">Save</button><button type="button" id="saveDraft">Save Draft</button><button type="button" id="delete" class="danger">Delete</button></div>
 </form>
@@ -83,6 +92,7 @@ textarea{min-height:120px;resize:vertical}.two{display:grid;grid-template-column
 <div class="two"><input id="episodeNumber" type="number" min="1" value="1" placeholder="Episode #"><input id="episodeTitle" placeholder="Episode title"></div>
 <textarea id="episodeDescription" placeholder="Episode description"></textarea>
 <input id="episodeVideo" placeholder="Episode video URL">
+<div class="drop" style="margin-top:10px;text-align:left"><strong>Import episode video</strong><div class="row"><input id="episodeImportUrl" placeholder="https://example.com/episode.mp4"><button type="button" id="importEpisodeVideo">Import</button></div><div id="episodeImportStatus" class="muted" style="margin-top:8px"></div></div>
 <button id="saveEpisode" type="button">Save Episode</button>
 </div>
 </div>
