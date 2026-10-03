@@ -120,29 +120,18 @@ async function save(statusOverride) {
 async function uploadFile(file, folder, targetInput, preview) {
   if (!file) return;
   try {
-    $("notice").textContent = "Preparing upload for " + file.name + "...";
-    const prep = await api("/api/upload-url", {
-      method:"POST",
-      body:JSON.stringify({folder, filename:file.name})
+    $("notice").textContent = "Uploading " + file.name + " securely...";
+    const res = await fetch("/api/upload?folder=" + encodeURIComponent(folder) + "&filename=" + encodeURIComponent(file.name), {
+      method:"POST", headers:{"Content-Type":file.type || "application/octet-stream"}, body:file
     });
-    if (!prep.upload_url) throw new Error("Storage did not return an upload URL.");
-    const put = await fetch(prep.upload_url, {
-      method:"PUT",
-      headers:{"Content-Type":file.type || "application/octet-stream"},
-      body:file
-    });
-    if (!put.ok) {
-      const detail = await put.text().catch(()=>"");
-      throw new Error("Storage upload failed (" + put.status + ")" + (detail ? ": " + detail.slice(0,300) : ""));
-    }
-    targetInput.value = prep.url || "";
-    if (preview && file.type.startsWith("image/")) {
-      preview.innerHTML = '<img src="' + esc(prep.url) + '" alt="">';
-    }
+    const data = await res.json().catch(()=>({}));
+    if (!res.ok || !data.ok || !data.url) throw new Error(data.error || ("Upload failed (" + res.status + ")"));
+    targetInput.value = data.url;
+    if (preview && file.type.startsWith("image/")) preview.innerHTML = '<img src="' + esc(data.url) + '" alt="">';
     $("notice").textContent = "Uploaded " + file.name + ". Click Save to attach it to this title.";
   } catch (err) {
-    alert("Upload failed: " + err.message);
     $("notice").textContent = "Upload failed: " + err.message;
+    alert("Upload failed: " + err.message);
   }
 }
 async function importVideoUrl(inputId, targetId, statusId, folder) {
@@ -190,7 +179,7 @@ $("addGenre").onclick = async () => {
   $("newGenre").value = "";
 };
 $("posterFile").onchange = e => uploadFile(e.target.files[0], "posters", $("posterUrl"), $("posterPreview"));
-$("videoFile").onchange = e => uploadFile(e.target.files[0], "videos", $("videoUrl"), null);
+$("videoFile").onchange = async e => { const f=e.target.files[0]; if(!f)return; if(f.size>90*1024*1024){alert("That video is over 90 MB. Use the video link importer for now.");e.target.value="";return;} await uploadFile(f,"videos",$("videoUrl"),null); };
 $("importVideo").onclick = () => importVideoUrl("videoImportUrl", "videoUrl", "videoImportStatus", "videos");
 $("importEpisodeVideo").onclick = () => importVideoUrl("episodeImportUrl", "episodeVideo", "episodeImportStatus", "episodes");
 $("backdropFile").onchange = e => uploadFile(e.target.files[0], "backdrops", $("backdropUrl"), $("backdropPreview"));
