@@ -26,16 +26,18 @@ async function b2Native(env){
   if(!bucket) throw new Error("No Backblaze B2 bucket is available to this application key.");
   return {auth:a,bucket};
 }
-async function b2UploadStream(env,key,stream,contentType="application/octet-stream"){
+async function b2UploadStream(env,key,stream,contentType="application/octet-stream",contentLength=null){
   const b=await b2Native(env);
   const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_upload_url",{method:"POST",headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({bucketId:b.bucket.bucketId})});
-  if(!u.ok) throw new Error("Could not get Backblaze upload URL: "+u.status+" "+await u.text());
+  if(!u.ok) throw new Error("Backblaze upload URL failed ("+u.status+"): "+await u.text());
   const info=await u.json();
   const fileName=encodeURIComponent(key).replace(/%2F/g,"/");
-  const res=await fetch(info.uploadUrl,{method:"POST",headers:{"Authorization":info.authorizationToken,"X-Bz-File-Name":fileName,"Content-Type":contentType||"b2/x-auto","X-Bz-Content-Sha1":"do_not_verify"},body:stream});
-  if(!res.ok) throw new Error("Backblaze upload failed: "+res.status+" "+await res.text());
+  if(!contentLength) throw new Error("The upload size was not provided. Please retry the upload.");
+  const res=await fetch(info.uploadUrl,{method:"POST",headers:{"Authorization":info.authorizationToken,"X-Bz-File-Name":fileName,"Content-Type":contentType||"b2/x-auto","Content-Length":String(contentLength),"X-Bz-Content-Sha1":"do_not_verify"},body:stream});
+  if(!res.ok) throw new Error("Backblaze file upload failed ("+res.status+"): "+await res.text());
   return {bucket:b.bucket,auth:b.auth,result:await res.json()};
 }
+
 async function b2DownloadUrl(env,key){
   const b=await b2Native(env);
   const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_download_authorization",{method:"POST",headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({bucketId:b.bucket.bucketId,fileNamePrefix:key,validDurationInSeconds:3600})});
@@ -44,10 +46,10 @@ async function b2DownloadUrl(env,key){
   return b.auth.downloadUrl+"/file/"+encodeURIComponent(b.bucket.bucketName)+"/"+key.split("/").map(encodeURIComponent).join("/")+"?Authorization="+encodeURIComponent(d.authorizationToken);
 }
 async function b2PutCors(env){ return true; }
-async function b2SignedPut(request,env,key){ await b2UploadStream(env,key,request.body,request.headers.get("content-type")||"application/octet-stream"); }
+async function b2SignedPut(request,env,key){ await b2UploadStream(env,key,request.body,request.headers.get("content-type")||"application/octet-stream",request.headers.get("content-length")); }
 async function b2SignedGet(env,key){ return b2DownloadUrl(env,key); }
 async function b2SignedPutUrl(env,key){ throw new Error("Direct browser upload URLs are disabled; Orbit X uploads through the Worker."); }
-async function b2SignedPutStream(env,key,stream,contentType="application/octet-stream"){ await b2UploadStream(env,key,stream,contentType); }
+async function b2SignedPutStream(env,key,stream,contentType="application/octet-stream",contentLength=null){ await b2UploadStream(env,key,stream,contentType,contentLength); }
 
 
 function slugify(value) {
@@ -287,7 +289,7 @@ async function upload(request, env) { const u=new URL(request.url); const folder
 async function uploadUrl(request, env) { const body=await request.json(); const folder=String(body.folder||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=String(body.filename||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; return json({ok:true,key,url:"/media/"+encodeURIComponent(key),upload_through_worker:true}); }
 
 
-async function importUrl(request,env){const body=await request.json(),sourceUrl=String(body.url||"").trim();if(!/^https?:\/\//i.test(sourceUrl))return json({error:"A direct http(s) video URL is required."},400);let source;try{source=await fetch(sourceUrl,{redirect:"follow"})}catch(e){return json({error:"The source could not be reached."},400)}if(!source.ok||!source.body)return json({error:"The source could not be downloaded ("+source.status+")."},400);const length=Number(source.headers.get("content-length")||0),maxBytes=20*1024*1024*1024;if(length&&length>maxBytes)return json({error:"The source file is larger than the current 20 GB import limit."},413);let name=String(body.filename||"").trim();if(!name){try{name=decodeURIComponent(new URL(sourceUrl).pathname.split("/").pop()||"video.mp4")}catch{}}name=name.replace(/[^a-z0-9._-]/gi,"_")||"video.mp4";const folder=String(body.folder||"videos").replace(/[^a-z0-9_-]/gi,"")||"videos",key=folder+"/"+crypto.randomUUID()+"-"+name;await b2SignedPutStream(env,key,source.body,source.headers.get("content-type")||"video/mp4");return json({ok:true,key,url:"/media/"+encodeURIComponent(key),content_type:source.headers.get("content-type")||"video/mp4",content_length:length||null});}
+async function importUrl(request,env){const body=await request.json(),sourceUrl=String(body.url||"").trim();if(!/^https?:\/\//i.test(sourceUrl))return json({error:"A direct http(s) video URL is required."},400);let source;try{source=await fetch(sourceUrl,{redirect:"follow"})}catch(e){return json({error:"The source could not be reached."},400)}if(!source.ok||!source.body)return json({error:"The source could not be downloaded ("+source.status+")."},400);const length=Number(source.headers.get("content-length")||0),maxBytes=20*1024*1024*1024;if(length&&length>maxBytes)return json({error:"The source file is larger than the current 20 GB import limit."},413);let name=String(body.filename||"").trim();if(!name){try{name=decodeURIComponent(new URL(sourceUrl).pathname.split("/").pop()||"video.mp4")}catch{}}name=name.replace(/[^a-z0-9._-]/gi,"_")||"video.mp4";const folder=String(body.folder||"videos").replace(/[^a-z0-9_-]/gi,"")||"videos",key=folder+"/"+crypto.randomUUID()+"-"+name;await b2SignedPutStream(env,key,source.body,source.headers.get("content-type")||"video/mp4",length||null);return json({ok:true,key,url:"/media/"+encodeURIComponent(key),content_type:source.headers.get("content-type")||"video/mp4",content_length:length||null});}
 
 async function ensureSiteSettings(env){
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '')").run();
