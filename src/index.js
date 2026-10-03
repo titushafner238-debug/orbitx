@@ -382,7 +382,8 @@ export default {
         }
 
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
-        if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);\n        if (url.pathname === "/api/import-url" && request.method === "POST") return importUrl(request, env);
+        if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
+        if (url.pathname === "/api/import-url" && request.method === "POST") return importUrl(request, env);
         
         return json({ error: "API route not found." }, 404);
       } catch (error) {
