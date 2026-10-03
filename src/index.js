@@ -15,11 +15,39 @@ function awsEncode(value) { return encodeURIComponent(value).replace(/[!'()*]/g,
 function hex(buffer) { return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, "0")).join(""); }
 async function hmac(key, data) { return crypto.subtle.sign("HMAC", await crypto.subtle.importKey("raw", key, {name:"HMAC", hash:"SHA-256"}, false, ["sign"]), new TextEncoder().encode(data)); }
 async function signingKey(secret, date, region, service) { const a=await hmac(new TextEncoder().encode("AWS4"+secret),date); const b=await hmac(a,region); const c=await hmac(b,service); return hmac(c,"aws4_request"); }
-function b2Config(env) { if(!env.B2_KEY_ID||!env.B2_APP_KEY||!env.B2_BUCKET_NAME||!env.B2_ENDPOINT) throw new Error("Backblaze B2 storage is not configured."); const endpoint=env.B2_ENDPOINT.replace(/\/$/,""); return {endpoint,host:new URL(endpoint).host,bucket:env.B2_BUCKET_NAME,keyId:env.B2_KEY_ID,secret:env.B2_APP_KEY,region:(new URL(endpoint).hostname.match(/^s3\.([^.]+)\.backblazeb2\.com$/)?.[1]||"us-east-005")}; }
-async function b2SignedPut(request,env,key) { const c=b2Config(env), now=new Date(), amz=now.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z"), date=amz.slice(0,8), hash="UNSIGNED-PAYLOAD", ct=request.headers.get("content-type")||"application/octet-stream", uri="/"+awsEncode(c.bucket)+"/"+key.split("/").map(awsEncode).join("/"), ch="content-type:"+ct.trim()+"\nhost:"+c.host+"\nx-amz-content-sha256:"+hash+"\n", sh="content-type;host;x-amz-content-sha256", cr=["PUT",uri,"",ch,sh,hash].join("\n"), scope=date+"/"+c.region+"/s3/aws4_request", sts="AWS4-HMAC-SHA256\n"+amz+"\n"+scope+"\n"+hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(cr))), sig=hex(await signingKey(c.secret,date,c.region,"s3").then(k=>hmac(k,sts))), auth="AWS4-HMAC-SHA256 Credential="+c.keyId+"/"+scope+", SignedHeaders="+sh+", Signature="+sig; const r=await fetch(c.endpoint+uri,{method:"PUT",headers:{"content-type":ct,"x-amz-content-sha256":hash,"authorization":auth,"x-amz-date":amz},body:request.body}); if(!r.ok) throw new Error("Backblaze upload failed: "+r.status+" "+await r.text()); }
-async function b2SignedGet(env,key) { const c=b2Config(env),now=new Date(),amz=now.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z"),date=amz.slice(0,8),scope=date+"/"+c.region+"/s3/aws4_request",uri="/"+awsEncode(c.bucket)+"/"+key.split("/").map(awsEncode).join("/"),p={"X-Amz-Algorithm":"AWS4-HMAC-SHA256","X-Amz-Credential":c.keyId+"/"+scope,"X-Amz-Date":amz,"X-Amz-Expires":"3600","X-Amz-SignedHeaders":"host"},cq=Object.keys(p).sort().map(k=>awsEncode(k)+"="+awsEncode(p[k])).join("&"),cr=["GET",uri,cq,"host:"+c.host+"\n","host","UNSIGNED-PAYLOAD"].join("\n"),sts="AWS4-HMAC-SHA256\n"+amz+"\n"+scope+"\n"+hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(cr))),sig=hex(await signingKey(c.secret,date,c.region,"s3").then(k=>hmac(k,sts))); return c.endpoint+uri+"?"+cq+"&X-Amz-Signature="+sig; }
-async function b2SignedPutUrl(env,key) { const c=b2Config(env),now=new Date(),amz=now.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z"),date=amz.slice(0,8),scope=date+"/"+c.region+"/s3/aws4_request",uri="/"+awsEncode(c.bucket)+"/"+key.split("/").map(awsEncode).join("/"),p={"X-Amz-Algorithm":"AWS4-HMAC-SHA256","X-Amz-Credential":c.keyId+"/"+scope,"X-Amz-Date":amz,"X-Amz-Expires":"3600","X-Amz-SignedHeaders":"host"},cq=Object.keys(p).sort().map(k=>awsEncode(k)+"="+awsEncode(p[k])).join("&"),cr=["PUT",uri,cq,"host:"+c.host+"\n","host","UNSIGNED-PAYLOAD"].join("\n"),sts="AWS4-HMAC-SHA256\n"+amz+"\n"+scope+"\n"+hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(cr))),sig=hex(await signingKey(c.secret,date,c.region,"s3").then(k=>hmac(k,sts))); return c.endpoint+uri+"?"+cq+"&X-Amz-Signature="+sig; }
-async function b2PutCors(env) { const c=b2Config(env),now=new Date(),amz=now.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z"),date=amz.slice(0,8),scope=date+"/"+c.region+"/s3/aws4_request",uri="/"+awsEncode(c.bucket)+"/",xml="<CORSConfiguration><CORSRule><ID>orbitx-admin</ID><AllowedOrigin>https://orbitx.titushafner238.workers.dev</AllowedOrigin><AllowedMethod>GET</AllowedMethod><AllowedMethod>HEAD</AllowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedHeader>*</AllowedHeader><ExposeHeader>ETag</ExposeHeader><MaxAgeSeconds>3600</MaxAgeSeconds></CORSRule></CORSConfiguration>",payload=hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(xml))),ch="content-type:application/xml\nhost:"+c.host+"\nx-amz-content-sha256:"+payload+"\n",sh="content-type;host;x-amz-content-sha256",cr=["PUT",uri,"cors=",ch,sh,payload].join("\n"),sts="AWS4-HMAC-SHA256\n"+amz+"\n"+scope+"\n"+hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(cr))),sig=hex(await signingKey(c.secret,date,c.region,"s3").then(k=>hmac(k,sts))),auth="AWS4-HMAC-SHA256 Credential="+c.keyId+"/"+scope+", SignedHeaders="+sh+", Signature="+sig,res=await fetch(c.endpoint+uri+"?cors=",{method:"PUT",headers:{"content-type":"application/xml","x-amz-content-sha256":payload,"x-amz-date":amz,"authorization":auth},body:xml}); if(!res.ok) throw new Error("Backblaze CORS setup failed: "+res.status+" "+await res.text()); }
+async function b2Native(env){
+  if(!env.B2_KEY_ID||!env.B2_APP_KEY) throw new Error("Backblaze B2 credentials are not configured.");
+  const auth=await fetch("https://api.backblazeb2.com/b2api/v4/b2_authorize_account",{headers:{Authorization:"Basic "+btoa(env.B2_KEY_ID+":"+env.B2_APP_KEY)}});
+  if(!auth.ok) throw new Error("Backblaze authorization failed: "+auth.status);
+  const a=await auth.json();
+  const list=await fetch(a.apiUrl+"/b2api/v4/b2_list_buckets",{method:"POST",headers:{Authorization:a.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({accountId:a.accountId})});
+  if(!list.ok) throw new Error("Could not list Backblaze buckets: "+list.status+" "+await list.text());
+  const data=await list.json(),bucket=data.buckets?.[0];
+  if(!bucket) throw new Error("No Backblaze B2 bucket is available to this application key.");
+  return {auth:a,bucket};
+}
+async function b2UploadStream(env,key,stream,contentType="application/octet-stream"){
+  const b=await b2Native(env);
+  const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_upload_url",{method:"POST",headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({bucketId:b.bucket.bucketId})});
+  if(!u.ok) throw new Error("Could not get Backblaze upload URL: "+u.status+" "+await u.text());
+  const info=await u.json();
+  const fileName=encodeURIComponent(key).replace(/%2F/g,"/");
+  const res=await fetch(info.uploadUrl,{method:"POST",headers:{"Authorization":info.authorizationToken,"X-Bz-File-Name":fileName,"Content-Type":contentType||"b2/x-auto","X-Bz-Content-Sha1":"do_not_verify"},body:stream});
+  if(!res.ok) throw new Error("Backblaze upload failed: "+res.status+" "+await res.text());
+  return {bucket:b.bucket,auth:b.auth,result:await res.json()};
+}
+async function b2DownloadUrl(env,key){
+  const b=await b2Native(env);
+  const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_download_authorization",{method:"POST",headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({bucketId:b.bucket.bucketId,fileNamePrefix:key,validDurationInSeconds:3600})});
+  if(!u.ok) throw new Error("Could not authorize Backblaze download: "+u.status+" "+await u.text());
+  const d=await u.json();
+  return b.auth.downloadUrl+"/file/"+encodeURIComponent(b.bucket.bucketName)+"/"+key.split("/").map(encodeURIComponent).join("/")+"?Authorization="+encodeURIComponent(d.authorizationToken);
+}
+async function b2PutCors(env){ return true; }
+async function b2SignedPut(request,env,key){ await b2UploadStream(env,key,request.body,request.headers.get("content-type")||"application/octet-stream"); }
+async function b2SignedGet(env,key){ return b2DownloadUrl(env,key); }
+async function b2SignedPutUrl(env,key){ throw new Error("Direct browser upload URLs are disabled; Orbit X uploads through the Worker."); }
+async function b2SignedPutStream(env,key,stream,contentType="application/octet-stream"){ await b2UploadStream(env,key,stream,contentType); }
 
 
 function slugify(value) {
@@ -256,7 +284,7 @@ async function saveEpisode(request, env) {
 }
 
 async function upload(request, env) { const u=new URL(request.url); const folder=(u.searchParams.get("folder")||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=(u.searchParams.get("filename")||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; await b2SignedPut(request,env,key); return json({ok:true,key,url:"/media/"+encodeURIComponent(key)}); }
-async function uploadUrl(request, env) { await b2PutCors(env); const body=await request.json(); const folder=String(body.folder||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=String(body.filename||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; return json({ok:true,key,url:"/media/"+encodeURIComponent(key),upload_url:await b2SignedPutUrl(env,key)}); }
+async function uploadUrl(request, env) { const body=await request.json(); const folder=String(body.folder||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=String(body.filename||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; return json({ok:true,key,url:"/media/"+encodeURIComponent(key),upload_through_worker:true}); }
 
 
 async function b2SignedPutStream(env,key,stream,contentType="application/octet-stream"){const c=b2Config(env),now=new Date(),amz=now.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z"),date=amz.slice(0,8),hash="UNSIGNED-PAYLOAD",ct=contentType||"application/octet-stream",uri="/"+awsEncode(c.bucket)+"/"+key.split("/").map(awsEncode).join("/"),ch="content-type:"+ct.trim()+"\nhost:"+c.host+"\nx-amz-content-sha256:"+hash+"\n",sh="content-type;host;x-amz-content-sha256",cr=["PUT",uri,"",ch,sh,hash].join("\n"),scope=date+"/"+c.region+"/s3/aws4_request",sts="AWS4-HMAC-SHA256\n"+amz+"\n"+scope+"\n"+hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(cr))),sig=hex(await signingKey(c.secret,date,c.region,"s3").then(k=>hmac(k,sts))),auth="AWS4-HMAC-SHA256 Credential="+c.keyId+"/"+scope+", SignedHeaders="+sh+", Signature="+sig,r=await fetch(c.endpoint+uri,{method:"PUT",headers:{"content-type":ct,"x-amz-content-sha256":hash,authorization:auth,"x-amz-date":amz},body:stream});if(!r.ok)throw new Error("Backblaze import failed: "+r.status+" "+await r.text());}
