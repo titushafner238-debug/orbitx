@@ -179,7 +179,7 @@ $("addGenre").onclick = async () => {
   $("newGenre").value = "";
 };
 $("posterFile").onchange = e => uploadFile(e.target.files[0], "posters", $("posterUrl"), $("posterPreview"));
-$("videoFile").onchange = async e => { const f=e.target.files[0]; if(!f)return; if(f.size>90*1024*1024){alert("That video is over 90 MB. Use the video link importer for now.");e.target.value="";return;} await uploadFile(f,"videos",$("videoUrl"),null); };
+$("videoFile").onchange = async e => { const f=e.target.files[0]; if(!f)return; if(f.size>25*1024*1024){alert("That video is over 25 MB. Use the video link importer for larger videos.");e.target.value="";return;} await uploadFile(f,"videos",$("videoUrl"),null); };
 $("importVideo").onclick = () => importVideoUrl("videoImportUrl", "videoUrl", "videoImportStatus", "videos");
 $("importEpisodeVideo").onclick = () => importVideoUrl("episodeImportUrl", "episodeVideo", "episodeImportStatus", "episodes");
 $("backdropFile").onchange = e => uploadFile(e.target.files[0], "backdrops", $("backdropUrl"), $("backdropPreview"));
