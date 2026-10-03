@@ -35,6 +35,30 @@ async function b2Native(env){
   if(!bucket) throw new Error("No Backblaze B2 bucket is available to this application key.");
   return {auth:a,bucket};
 }
+async function b2UploadBytes(env,key,bytes,contentType="application/octet-stream"){
+  const b=await b2Native(env);
+  const body=bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_upload_url",{
+    method:"POST",
+    headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},
+    body:JSON.stringify({bucketId:b.bucket.bucketId})
+  });
+  if(!u.ok) throw new Error("Backblaze upload URL failed ("+u.status+"): "+await u.text());
+  const info=await u.json();
+  const res=await fetch(info.uploadUrl,{
+    method:"POST",
+    headers:{
+      "Authorization":info.authorizationToken,
+      "X-Bz-File-Name":encodeURIComponent(key),
+      "Content-Type":contentType||"b2/x-auto",
+      "Content-Length":String(body.byteLength),
+      "X-Bz-Content-Sha1":"do_not_verify"
+    },
+    body
+  });
+  if(!res.ok) throw new Error("Backblaze file upload failed ("+res.status+"): "+await res.text());
+  return {bucket:b.bucket,auth:b.auth,result:await res.json()};
+}
 async function b2UploadStream(env,key,stream,contentType="application/octet-stream",contentLength=null){
   const b=await b2Native(env);
   const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_upload_url",{
@@ -44,15 +68,12 @@ async function b2UploadStream(env,key,stream,contentType="application/octet-stre
   });
   if(!u.ok) throw new Error("Backblaze upload URL failed ("+u.status+"): "+await u.text());
   const info=await u.json();
-  const fileName=encodeURIComponent(key).replace(/%2F/g,"/");
+  const fileName=encodeURIComponent(key);
   const length=Number(contentLength);
   if(!Number.isSafeInteger(length)||length<0) throw new Error("The upload size was not available.");
   if(!stream) throw new Error("The upload body was empty.");
-
-  // Cloudflare sends ordinary ReadableStreams with chunked transfer encoding.
-  // B2 rejects chunked uploads, so wrap the body in a FixedLengthStream.
   const fixed=new FixedLengthStream(length);
-  stream.pipeTo(fixed.writable).catch(()=>{});
+  await stream.pipeTo(fixed.writable);
   const res=await fetch(info.uploadUrl,{
     method:"POST",
     headers:{
@@ -314,7 +335,24 @@ async function saveEpisode(request, env) {
   return json({ ok: true, id: episodeId });
 }
 
-async function upload(request, env) { const u=new URL(request.url); const folder=(u.searchParams.get("folder")||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=(u.searchParams.get("filename")||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; await b2SignedPut(request,env,key); return json({ok:true,key,url:"/media/"+encodeURIComponent(key)}); }
+async function upload(request, env) {
+  const u=new URL(request.url);
+  const folder=(u.searchParams.get("folder")||"uploads").replace(/[^a-z0-9_-]/gi,"")||"uploads";
+  const filename=(u.searchParams.get("filename")||"file").replace(/[^a-z0-9._-]/gi,"_");
+  const key=folder+"/"+crypto.randomUUID()+"-"+filename;
+  const length=Number(request.headers.get("content-length")||0);
+  const maxSmall=25*1024*1024;
+  if(!length || length>maxSmall) return json({ok:false,error:"This upload is missing a usable size or is over 25 MB. Posters and backdrops must be 25 MB or smaller."},413);
+  const bytes=new Uint8Array(await request.arrayBuffer());
+  if(bytes.byteLength!==length) return json({ok:false,error:"Upload size changed while receiving the file."},400);
+  try {
+    const out=await b2UploadBytes(env,key,bytes,request.headers.get("content-type")||"application/octet-stream");
+    return json({ok:true,key,url:"/media/"+encodeURIComponent(key),fileId:out.result?.fileId,contentLength:out.result?.contentLength});
+  } catch(e) {
+    console.error("ORBIT_UPLOAD_ERROR",e);
+    return json({ok:false,error:e.message||"Backblaze upload failed."},500);
+  }
+}
 async function uploadUrl(request, env) { const body=await request.json(); const folder=String(body.folder||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=String(body.filename||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; return json({ok:true,key,url:"/media/"+encodeURIComponent(key),upload_through_worker:true}); }
 
 
