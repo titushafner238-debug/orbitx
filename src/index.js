@@ -301,16 +301,16 @@ export default {
         }
 
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
-        if (url.pathname.startsWith("/media/") && request.method === "GET") return Response.redirect(await b2SignedGet(env, decodeURIComponent(url.pathname.slice(7))), 302);
-        if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
-        if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
-
         return json({ error: "API route not found." }, 404);
       } catch (error) {
         console.error(error);
         return json({ error: error.message || "Server error." }, 500);
       }
     }
+
+    if (url.pathname.startsWith("/media/") && request.method === "GET") return Response.redirect(await b2SignedGet(env, decodeURIComponent(url.pathname.slice(7))), 302);
+    if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
+    if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
 
     if (url.pathname === "/schema.sql" || url.pathname.startsWith("/src/")) {
       return new Response("Not found", { status: 404 });
