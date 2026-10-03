@@ -37,12 +37,32 @@ async function b2Native(env){
 }
 async function b2UploadStream(env,key,stream,contentType="application/octet-stream",contentLength=null){
   const b=await b2Native(env);
-  const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_upload_url",{method:"POST",headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({bucketId:b.bucket.bucketId})});
+  const u=await fetch(b.auth.apiUrl+"/b2api/v4/b2_get_upload_url",{
+    method:"POST",
+    headers:{Authorization:b.auth.authorizationToken,"Content-Type":"application/json"},
+    body:JSON.stringify({bucketId:b.bucket.bucketId})
+  });
   if(!u.ok) throw new Error("Backblaze upload URL failed ("+u.status+"): "+await u.text());
   const info=await u.json();
   const fileName=encodeURIComponent(key).replace(/%2F/g,"/");
-  if(!contentLength) throw new Error("The upload size was not provided. Please retry the upload.");
-  const res=await fetch(info.uploadUrl,{method:"POST",headers:{"Authorization":info.authorizationToken,"X-Bz-File-Name":fileName,"Content-Type":contentType||"b2/x-auto","Content-Length":String(contentLength),"X-Bz-Content-Sha1":"do_not_verify"},body:stream});
+  const length=Number(contentLength);
+  if(!Number.isSafeInteger(length)||length<0) throw new Error("The upload size was not available.");
+  if(!stream) throw new Error("The upload body was empty.");
+
+  // Cloudflare sends ordinary ReadableStreams with chunked transfer encoding.
+  // B2 rejects chunked uploads, so wrap the body in a FixedLengthStream.
+  const fixed=new FixedLengthStream(length);
+  stream.pipeTo(fixed.writable).catch(()=>{});
+  const res=await fetch(info.uploadUrl,{
+    method:"POST",
+    headers:{
+      "Authorization":info.authorizationToken,
+      "X-Bz-File-Name":fileName,
+      "Content-Type":contentType||"b2/x-auto",
+      "X-Bz-Content-Sha1":"do_not_verify"
+    },
+    body:fixed.readable
+  });
   if(!res.ok) throw new Error("Backblaze file upload failed ("+res.status+"): "+await res.text());
   return {bucket:b.bucket,auth:b.auth,result:await res.json()};
 }
