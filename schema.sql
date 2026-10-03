@@ -73,3 +73,43 @@ CREATE INDEX IF NOT EXISTS idx_content_genres_genre ON content_genres(genre_id);
 CREATE INDEX IF NOT EXISTS idx_seasons_show ON seasons(show_id, season_number);
 CREATE INDEX IF NOT EXISTS idx_episodes_release ON episodes(release_at);
 CREATE INDEX IF NOT EXISTS idx_episodes_season ON episodes(season_id, episode_number);
+
+-- ORBIT X accounts, family profiles, accessibility, and preferences
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  password_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  email_verified INTEGER NOT NULL DEFAULT 0 CHECK (email_verified IN (0,1)),
+  disabled INTEGER NOT NULL DEFAULT 0 CHECK (disabled IN (0,1))
+);
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS profiles (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  avatar_id TEXT DEFAULT 'orbit-cat',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(user_id, name),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS user_settings (
+  user_id TEXT PRIMARY KEY,
+  language TEXT NOT NULL DEFAULT 'en',
+  sound_enabled INTEGER NOT NULL DEFAULT 1 CHECK (sound_enabled IN (0,1)),
+  sound_volume INTEGER NOT NULL DEFAULT 55 CHECK (sound_volume BETWEEN 0 AND 100),
+  blind_mode INTEGER NOT NULL DEFAULT 0 CHECK (blind_mode IN (0,1)),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(expires_at);
+CREATE INDEX IF NOT EXISTS idx_profiles_user ON profiles(user_id);
