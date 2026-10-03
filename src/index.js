@@ -286,13 +286,16 @@ async function adminUsers(env){
 
 const AUTH_COOKIE = "orbit_session";
 const SESSION_DAYS = 30;
-const AVATARS = [
-  {id:"orbit-cat",name:"Cosmo Cat",icon:"🐱"},{id:"orbit-fox",name:"Nova Fox",icon:"🦊"},
-  {id:"orbit-monster",name:"Orbit Monster",icon:"👾"},{id:"orbit-robot",name:"Pixel Bot",icon:"🤖"},
-  {id:"orbit-bunny",name:"Moon Bunny",icon:"🐰"},{id:"orbit-bear",name:"Comet Bear",icon:"🐻"},
-  {id:"orbit-unicorn",name:"Star Unicorn",icon:"🦄"},{id:"orbit-alien",name:"Zippy Alien",icon:"👽"},
-  {id:"orbit-dog",name:"Rocket Pup",icon:"🐶"},{id:"orbit-frog",name:"Cosmic Frog",icon:"🐸"},
-  {id:"orbit-panda",name:"Galaxy Panda",icon:"🐼"},{id:"orbit-dragon",name:"Little Dragon",icon:"🐲"}
+function avatarSvg(kind){
+  const colors={cat:"#b9d6ff",fox:"#ffb37a",monster:"#c8a8ff",robot:"#9ee7dc",bunny:"#ffd1e3",bear:"#d9b58c",star:"#ffe48a",alien:"#a7f3b0",dog:"#c9b08a",frog:"#8be28d",panda:"#e8e8e8",dragon:"#ff9d9d"};
+  const c=colors[kind]||"#cbd5e1";
+  const eyes=kind==="robot"?"<rect x='28' y='31' width='8' height='8' rx='2' fill='#111'/><rect x='44' y='31' width='8' height='8' rx='2' fill='#111'/>":"<circle cx='31' cy='35' r='4' fill='#111'/><circle cx='49' cy='35' r='4' fill='#111'/>";
+  const ears=kind==="bunny"?"<path d='M25 22 Q18 3 29 5 Q36 8 35 25 M45 25 Q44 8 51 5 Q62 3 55 22' fill='"+c+"' stroke='#111' stroke-width='3'/>":kind==="cat"||kind==="fox"||kind==="dog"||kind==="dragon"?"<path d='M22 27 L19 10 L34 20 M52 20 L67 10 L64 28' fill='"+c+"' stroke='#111' stroke-width='3'/>":"";
+  const horn=kind==="star"||kind==="alien"||kind==="dragon"?"<path d='M40 17 L45 5 L50 18' fill='"+c+"' stroke='#111' stroke-width='3'/>":"";
+  return "<svg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false'>"+horn+ears+"<rect x='18' y='18' width='44' height='48' rx='20' fill='"+c+"' stroke='#111' stroke-width='3'/>"+eyes+"<path d='M31 50 Q40 57 49 50' fill='none' stroke='#111' stroke-width='3' stroke-linecap='round'/></svg>";
+}
+const AVATARS=[
+{id:"orbit-cat",name:"Cosmo Cat",icon:avatarSvg("cat")},{id:"orbit-fox",name:"Nova Fox",icon:avatarSvg("fox")},{id:"orbit-monster",name:"Orbit Monster",icon:avatarSvg("monster")},{id:"orbit-robot",name:"Pixel Bot",icon:avatarSvg("robot")},{id:"orbit-bunny",name:"Moon Bunny",icon:avatarSvg("bunny")},{id:"orbit-bear",name:"Comet Bear",icon:avatarSvg("bear")},{id:"orbit-unicorn",name:"Star Friend",icon:avatarSvg("star")},{id:"orbit-alien",name:"Zippy Alien",icon:avatarSvg("alien")},{id:"orbit-dog",name:"Rocket Pup",icon:avatarSvg("dog")},{id:"orbit-frog",name:"Cosmic Frog",icon:avatarSvg("frog")},{id:"orbit-panda",name:"Galaxy Panda",icon:avatarSvg("panda")},{id:"orbit-dragon",name:"Little Dragon",icon:avatarSvg("dragon")}
 ];
 function b64u(bytes){let s="";const a=new Uint8Array(bytes);for(let i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function fromB64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";const b=atob(s),o=new Uint8Array(b.length);for(let i=0;i<b.length;i++)o[i]=b.charCodeAt(i);return o}
