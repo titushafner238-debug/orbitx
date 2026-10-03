@@ -617,116 +617,90 @@
 
 
 <script>
+(async () => {
+  const grid = document.getElementById("movieGrid");
+  const count = document.getElementById("movieCount");
+  const empty = document.getElementById("emptyMessage");
+  const title = document.getElementById("movieTitle");
+  let movies = [];
+  let activeGenre = "All";
 
-    const cards =
-        document.querySelectorAll(".movie-card");
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
 
-    const count =
-        document.getElementById("movieCount");
+  function render(list) {
+    count.textContent = list.length;
+    empty.style.display = list.length ? "none" : "block";
+    grid.innerHTML = list.map(i => {
+      const meta = [i.year, i.rating, i.runtime_minutes ? i.runtime_minutes + " min" : ""]
+        .filter(Boolean).join(" · ");
+      const genres = String(i.genres || "").split("||").filter(Boolean);
+      const url = "/watch.html?slug=" + encodeURIComponent(i.slug);
+      return `<article class="movie-card" data-genres="${esc(genres.join("|"))}" tabindex="0" role="link">
+        <div class="poster">
+          ${i.poster_url
+            ? `<img src="${esc(i.poster_url)}" alt="${esc(i.title)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.textContent='POSTER'">`
+            : "POSTER"}
+        </div>
+        <div class="movie-info">
+          <div class="movie-title">${esc(i.title)}</div>
+          <div class="movie-meta">${esc(meta || "Movie")}</div>
+          ${i.description ? `<div class="movie-description">${esc(i.description)}</div>` : ""}
+          <a href="${url}" class="watch-button">Watch</a>
+        </div>
+      </article>`;
+    }).join("");
 
-    function updateCount() {
-
-        let visible = 0;
-
-        cards.forEach(card => {
-
-            if (card.style.display !== "none") {
-                visible++;
-            }
-
+    grid.querySelectorAll(".movie-card").forEach(card => {
+      const href = card.querySelector(".watch-button")?.href;
+      if (href) {
+        card.addEventListener("click", e => {
+          if (e.target.closest("a")) return;
+          location.href = href;
         });
-
-        count.textContent = visible;
-    }
-
-
-    function filterMovies(genre, button) {
-
-        const buttons =
-            document.querySelectorAll(".genre");
-
-        buttons.forEach(btn => {
-            btn.classList.remove("selected");
+        card.addEventListener("keydown", e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            location.href = href;
+          }
         });
+      }
+    });
+  }
 
-        button.classList.add("selected");
+  function applyFilters() {
+    const search = document.getElementById("searchBox").value.trim().toLowerCase();
+    const filtered = movies.filter(i => {
+      const genres = String(i.genres || "").split("||").map(x => x.toLowerCase());
+      const genreOK = activeGenre === "All" || genres.includes(activeGenre.toLowerCase());
+      const text = (i.title + " " + (i.description || "")).toLowerCase();
+      return genreOK && text.includes(search);
+    });
+    title.textContent = activeGenre === "All" ? "All Movies" : activeGenre + " Movies";
+    render(filtered);
+  }
 
-        let visible = 0;
+  window.filterMovies = (genre, button) => {
+    document.querySelectorAll(".genre").forEach(x => x.classList.remove("selected"));
+    button.classList.add("selected");
+    activeGenre = genre;
+    applyFilters();
+  };
 
-        cards.forEach(card => {
+  document.getElementById("searchBox").addEventListener("input", applyFilters);
 
-            const cardGenre =
-                card.getAttribute("data-genre");
-
-            if (
-                genre === "All" ||
-                cardGenre === genre
-            ) {
-
-                card.style.display = "block";
-                visible++;
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-        document.getElementById("movieTitle").textContent =
-            genre === "All"
-                ? "All Movies"
-                : genre + " Movies";
-
-        document.getElementById("emptyMessage").style.display =
-            visible === 0 ? "block" : "none";
-
-        updateCount();
-    }
-
-
-    function searchMovies() {
-
-        const search =
-            document
-                .getElementById("searchBox")
-                .value
-                .toLowerCase();
-
-        let visible = 0;
-
-        cards.forEach(card => {
-
-            const title =
-                card
-                    .getAttribute("data-title")
-                    .toLowerCase();
-
-            if (title.includes(search)) {
-
-                card.style.display = "block";
-                visible++;
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-        document.getElementById("emptyMessage").style.display =
-            visible === 0 ? "block" : "none";
-
-        updateCount();
-    }
-
-
-    updateCount();
-
+  try {
+    const r = await fetch("/api/public/content?type=movie");
+    const d = await r.json();
+    movies = d.content || [];
+    applyFilters();
+  } catch (e) {
+    console.error(e);
+    grid.innerHTML = "<p>Could not load movies.</p>";
+    count.textContent = "0";
+  }
+})();
 </script>
-
-<script src="catalog.js"></script>
 </body>
 </html>
