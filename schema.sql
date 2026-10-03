@@ -82,7 +82,8 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   email_verified INTEGER NOT NULL DEFAULT 0 CHECK (email_verified IN (0,1)),
-  disabled INTEGER NOT NULL DEFAULT 0 CHECK (disabled IN (0,1))
+  disabled INTEGER NOT NULL DEFAULT 0 CHECK (disabled IN (0,1)),
+  is_admin INTEGER NOT NULL DEFAULT 0 CHECK (is_admin IN (0,1))
 );
 CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,
@@ -112,4 +113,10 @@ CREATE TABLE IF NOT EXISTS user_settings (
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(expires_at);
+CREATE TABLE IF NOT EXISTS admin_sessions (
+  id TEXT PRIMARY KEY,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 CREATE INDEX IF NOT EXISTS idx_profiles_user ON profiles(user_id);
