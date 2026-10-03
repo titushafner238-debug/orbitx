@@ -119,15 +119,27 @@ async function save(statusOverride) {
 
 async function uploadFile(file, folder, targetInput, preview) {
   if (!file) return;
-  const res = await fetch("/api/upload?folder=" + encodeURIComponent(folder) + "&filename=" + encodeURIComponent(file.name), {
-    method: "POST",
-    headers: {"Content-Type": file.type || "application/octet-stream"},
-    body: file
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) return alert(data.error || "Upload failed.");
-  // R2 public/custom URL can be wired here after the bucket's public/custom domain is configured.
-  alert("Uploaded to storage. The storage key is " + data.key + ".");
+  const meta = await api("/api/upload-url", {method:"POST", body:JSON.stringify({folder, filename:file.name})});
+  const res = await fetch(meta.upload_url, {method:"PUT", headers:{"Content-Type":file.type || "application/octet-stream"}, body:file});
+  if (!res.ok) return alert("Upload failed: " + res.status);
+  targetInput.value = meta.url || "";
+  if (preview && file.type.startsWith("image/")) preview.innerHTML = '<img src="' + esc(meta.url) + '">';
+  alert("Uploaded and attached.");
+}
+async function importVideoUrl(inputId, targetId, statusId, folder) {
+  const source = $(inputId).value.trim();
+  if (!source) return alert("Paste a video link first.");
+  $(statusId).textContent = "Downloading video and storing it. This can take a while for a large file...";
+  $(inputId).disabled = true;
+  try {
+    const data = await api("/api/import-url", {method:"POST", body:JSON.stringify({url:source, folder})});
+    $(targetId).value = data.url || "";
+    $(statusId).textContent = "Video imported and attached.";
+  } catch (err) {
+    $(statusId).textContent = "Import failed: " + err.message;
+  } finally {
+    $(inputId).disabled = false;
+  }
 }
 
 $("newMovie").onclick = () => resetForm("movie");
@@ -154,6 +166,9 @@ $("addGenre").onclick = async () => {
   $("newGenre").value = "";
 };
 $("posterFile").onchange = e => uploadFile(e.target.files[0], "posters", $("posterUrl"), $("posterPreview"));
+$("videoFile").onchange = e => uploadFile(e.target.files[0], "videos", $("videoUrl"), null);
+$("importVideo").onclick = () => importVideoUrl("videoImportUrl", "videoUrl", "videoImportStatus", "videos");
+$("importEpisodeVideo").onclick = () => importVideoUrl("episodeImportUrl", "episodeVideo", "episodeImportStatus", "episodes");
 $("backdropFile").onchange = e => uploadFile(e.target.files[0], "backdrops", $("backdropUrl"), $("backdropPreview"));
 
 async function loadSeasons(showId) {
