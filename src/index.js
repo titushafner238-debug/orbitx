@@ -315,7 +315,7 @@ export default {
     }
 
     if (url.pathname === "/admin" || url.pathname === "/admin/" || url.pathname === "/admin.html") {
-      return env.ASSETS.fetch(new Request(new URL("/admin.html", url), request));
+      return env.ASSETS.fetch(request);
     }
     if (url.pathname === "/account" || url.pathname === "/account/") {
       return new Response(ACCOUNT_HTML, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
