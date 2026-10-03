@@ -104,6 +104,18 @@ textarea{min-height:120px;resize:vertical}.two{display:grid;grid-template-column
 <div class="list" id="contentList" style="margin-top:15px"></div>
 </aside>
 </div>
+
+<section class="panel" style="grid-column:1/-1"><h2>Site Control Center</h2><p class="muted">Change the website without editing code. These controls affect the live site.</p><div class="two">
+<div><label>Logo text</label><input id="siteLogo"></div><div><label>Watch button text</label><input id="siteWatchText"></div>
+<div><label>Accent color</label><input id="siteAccent" type="color" value="#ffffff"></div><div><label>Hover button color</label><input id="siteHover" type="color" value="#ffffff"></div>
+<div><label>Advertisement text</label><input id="siteAdText"></div><div><label class="chip"><input id="siteAdEnabled" type="checkbox" checked> Show advertisement area</label></div>
+</div>
+<label>Blocked search terms (comma separated)</label><input id="blockedSearchTerms" placeholder="term1, term2">
+<label>Featured movie IDs (comma separated)</label><input id="featuredIds" placeholder="content_x,...">
+<label>Watch Now movie IDs (comma separated)</label><input id="watchNowIds" placeholder="content_x,...">
+<label>Recently Added movie IDs (comma separated)</label><input id="recentIds" placeholder="content_x,...">
+<label>Top scrolling promo movie IDs (comma separated)</label><input id="promoIds" placeholder="content_x,...">
+<div class="actions"><button type="button" class="primary" id="saveSite">Save Site Settings</button><button type="button" id="loadUsers">Show Accounts</button></div><div id="usersPanel" class="list"></div></section>
 </main>
 <script src="/admin.js"></script>
 </body>
