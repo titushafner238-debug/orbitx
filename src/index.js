@@ -332,7 +332,8 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/movies.html") {
-      return new Response(MOVIES_HTML, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
+      const html = MOVIES_HTML.replace("</body>", '<script src="/catalog.js"></script></body>');
+      return new Response(html, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
     }
 
     if (url.pathname === "/tv.html") {
@@ -343,6 +344,7 @@ export default {
           .replace(/<a href="index\.html" class="logo">\s*ORBIT\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>')
           .replace(/<a href="index\.html" class="logo">\s*ORBIT X\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>')
           .replace(/<p>\s*ORBIT — Free Entertainment\s*<\/p>/g, '<p>ORBIT X — Free Entertainment</p>');
+        html = html.replace("</body>", '<script src="/catalog.js"></script></body>');
         return new Response(html,{status:page.status,headers:page.headers});
       }
     }
@@ -427,7 +429,11 @@ export default {
     if (url.pathname === "/copyright") return new Response(COPYRIGHT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
     if (url.pathname === "/privacy.html") return new Response(PRIVACY_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
     if (url.pathname === "/privacy") return new Response(PRIVACY_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
-    if (url.pathname.startsWith("/media/") && request.method === "GET") return Response.redirect(await b2SignedGet(env, decodeURIComponent(url.pathname.slice(7))), 302);
+    if (url.pathname.startsWith("/media/") && request.method === "GET") {
+      const key = decodeURIComponent(url.pathname.slice(7));
+      if (!key || key.includes("..")) return new Response("Not found", {status:404});
+      return Response.redirect(await b2SignedGet(env, key), 302);
+    }
     if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
     if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
 
@@ -435,7 +441,13 @@ export default {
       return new Response("Not found", { status: 404 });
     }
 
-    return env.ASSETS.fetch(request);
+    const page = await env.ASSETS.fetch(request);
+    if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html") && page.ok) {
+      let html = await page.text();
+      html = html.replace("</body>", '<script src="/catalog.js"></script></body>');
+      return new Response(html, {status: page.status, headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
+    }
+    return page;
   }
 };
 
