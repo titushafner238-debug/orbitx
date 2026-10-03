@@ -40,5 +40,24 @@
     const blocked=(Array.isArray(settings.blocked_search_terms)?settings.blocked_search_terms:[]).map(x=>String(x).toLowerCase()).filter(Boolean);
     document.querySelectorAll('input[placeholder*="Search" i],input[aria-label*="Search" i]').forEach(input=>{const check=()=>input.dataset.orbitBlocked=blocked.some(t=>input.value.trim().toLowerCase().includes(t))?"1":"";input.addEventListener("input",check);input.addEventListener("keydown",e=>{check();if(e.key==="Enter"&&input.dataset.orbitBlocked==="1"){e.preventDefault();alert("That search is not allowed.")}})});
   }catch(e){console.error("ORBIT catalog error",e)}
+  const searchStyle=document.createElement("style");searchStyle.textContent=".orbit-logo-image{height:44px;width:120px;object-fit:contain;display:block}.orbit-search{position:relative;display:flex;align-items:center}.orbit-search-button{width:42px;height:42px;border:1px solid #333;background:#171717;color:#fff;border-radius:6px;cursor:pointer;font-size:20px;transition:.2s}.orbit-search-button:hover{background:#fff;color:#000;border-color:#fff}.orbit-search-input{width:0!important;opacity:0;padding:10px 0!important;border:0!important;transition:width .25s ease,opacity .2s ease,padding .25s ease}.orbit-search.open .orbit-search-input{width:230px!important;opacity:1;padding:10px 14px!important;border:1px solid #333!important;margin-left:8px}.orbit-search-panel{display:none;position:absolute;right:0;top:52px;width:min(680px,90vw);background:#0d0d0d;border:1px solid #2b2b2b;border-radius:8px;padding:18px;box-shadow:0 18px 50px rgba(0,0,0,.65);z-index:500}.orbit-search.open .orbit-search-panel{display:block}.orbit-search-panel.has-query{display:none}.orbit-search-title{font-size:18px;font-weight:700;margin-bottom:12px}.orbit-collections{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.orbit-collection{height:90px;border-radius:7px;background:linear-gradient(135deg,#292929,#111);display:flex;align-items:end;padding:12px;font-weight:700;cursor:pointer}.orbit-collection:hover{background:#fff;color:#000}.orbit-search.open .orbit-search-panel:not(.has-query){display:block}@media(max-width:750px){.orbit-search.open .orbit-search-input{width:170px!important}.orbit-collections{grid-template-columns:repeat(2,1fr)}}";document.head.appendChild(searchStyle);
+
+  const LOGO_URL="https://media.canva.com/v2/document-image/hash:-1625541247/height:447/id:DAHW_FcQLnA/type:B/width:447?brand=BAGm_mQmH9I&csig=AAAAAAAAAAAAAAAAAAAAAD8o_OMjZtrF_UgkbItS24Wau3YZ8H-4jKchGykDiO4z&exp=1791066385&fallbackstale=T&osig=AAAAAAAAAAAAAAAAAAAAAH13B9oQ0MwgFMNyH7wDk19fl1Yc1cjVC0IKyUs_TNMR&page=1&signed=brand%2Cfallback%2Cpage%2Cversion&signer=document-rpc&version=6";
+  document.querySelectorAll(".logo").forEach(el=>{if(!el.querySelector("img"))el.innerHTML='<img src="'+LOGO_URL+'" alt="ORBIT X" class="orbit-logo-image">';});
+  const searchInput=document.querySelector("#search,#searchBox");
+  if(searchInput&&!document.getElementById("orbitSearchToggle")){
+    const wrap=searchInput.closest(".search-box,.search");
+    if(wrap){
+      wrap.classList.add("orbit-search");
+      const btn=document.createElement("button");btn.id="orbitSearchToggle";btn.type="button";btn.className="orbit-search-button";btn.setAttribute("aria-label","Open search");btn.innerHTML="&#128269;";
+      searchInput.classList.add("orbit-search-input");
+      wrap.insertBefore(btn,searchInput);
+      const panel=document.createElement("div");panel.id="orbitSearchPanel";panel.className="orbit-search-panel";panel.innerHTML='<div class="orbit-search-title">Collections</div><div class="orbit-collections"><div class="orbit-collection">Featured</div><div class="orbit-collection">Recently Added</div><div class="orbit-collection">Watch Now</div><div class="orbit-collection">Movies</div></div>';
+      wrap.appendChild(panel);
+      btn.addEventListener("click",()=>{wrap.classList.toggle("open");if(wrap.classList.contains("open"))searchInput.focus();else{searchInput.value="";searchInput.dispatchEvent(new Event("input",{bubbles:true}));}});
+      searchInput.addEventListener("input",()=>{const q=searchInput.value.trim().toLowerCase();panel.classList.toggle("has-query",!!q);document.querySelectorAll(".movie-card").forEach(card=>{card.style.display=!q||card.textContent.toLowerCase().includes(q)?"":"none";});});
+    }
+  }
+
 })();
 </script>
