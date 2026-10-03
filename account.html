@@ -75,7 +75,8 @@ $("saveProfile").onclick=async()=>{try{state=await api("/api/profiles",{method:"
 $("deleteProfile").onclick=async()=>{if(!editingProfile||!confirm("Delete this family profile?"))return;try{state=await api("/api/profiles/delete",{method:"POST",body:JSON.stringify({id:editingProfile})});editingProfile=null;$("profileName").value="";$("deleteProfile").style.display="none";render()}catch(e){showMsg("profileMsg",e.message)}}
 $("soundVolume").oninput=()=>{$("volumeOut").value=$("soundVolume").value+"%"};$("saveSettings").onclick=async()=>{try{state=await api("/api/settings",{method:"POST",body:JSON.stringify({language:$("language").value,sound_enabled:$("soundEnabled").checked,sound_volume:Number($("soundVolume").value),blind_mode:$("blindMode").checked})});showMsg("settingsMsg","Saved.");window.ORBITSound?.apply();window.ORBITBlind?.apply()}catch(e){showMsg("settingsMsg",e.message)}};
 $("logout").onclick=async()=>{await api("/api/auth/logout",{method:"POST"});location.reload()};
-$("settingsJump").onclick=()=>document.querySelector("#accountView .card:nth-of-type(3)")?.scrollIntoView({behavior:"smooth"});\nshowAccount().catch(e=>showMsg("authMsg",e.message));
+$("settingsJump").onclick=()=>document.querySelector("#accountView .card:nth-of-type(3)")?.scrollIntoView({behavior:"smooth"});
+showAccount().catch(e=>showMsg("authMsg",e.message));
 </script>
 </body>
 </html>
