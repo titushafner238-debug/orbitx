@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ORBIT - TV Shows</title>
+    <title>ORBIT X — TV Shows</title>
 
     <style>
         * {
@@ -226,32 +226,27 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-    </style>
+    
+.account-nav{display:flex;align-items:center;gap:8px}.avatar-circle{width:30px;height:30px;border:1px solid #666;border-radius:50%;display:inline-grid;place-items:center;font-size:18px;color:#aaa}.main-nav{display:flex;gap:28px;align-items:center}.main-nav a{color:#bdbdbd;font-size:15px}.main-nav a:hover,.main-nav a.active{color:#fff}.search-box,.search{margin-left:auto}.search-box input,.search input{width:230px;padding:10px 14px;background:#171717;border:1px solid #333;border-radius:6px;color:#fff;outline:none}
+</style>
 </head>
 
 <body>
 
 <header>
 
-    <a href="index.html" class="logo">
-        ORBIT
-    </a>
+    <a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>
 
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="movies.html">Movies</a>
-        <a href="tv.html" class="active">TV</a>
-    </nav>
+    <nav class="main-nav">
+        <a href="/account" class="account-nav" aria-label="Account"><span class="avatar-circle">○</span><span>Account</span></a>
+        <a href="/">Home</a>
+        <a href="/movies.html">Movies</a>
+        <a href="/tv.html" class="active">TV</a>
+      </nav>
 
     <div class="search">
-
-        <input
-            type="text"
-            id="searchBox"
-            placeholder="Search TV shows..."
-        >
-
-    </div>
+        <input type="text" id="searchBox" placeholder="Search TV shows..." aria-label="Search">
+      </div>
 
 </header>
 
@@ -386,7 +381,7 @@
 <footer>
 
     <p>
-        ORBIT — Free Entertainment
+        ORBIT X — Free Entertainment
     </p>
 
 </footer>
