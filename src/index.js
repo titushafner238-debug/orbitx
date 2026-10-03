@@ -18,11 +18,20 @@ async function signingKey(secret, date, region, service) { const a=await hmac(ne
 async function b2Native(env){
   if(!env.B2_KEY_ID||!env.B2_APP_KEY) throw new Error("Backblaze B2 credentials are not configured.");
   const auth=await fetch("https://api.backblazeb2.com/b2api/v4/b2_authorize_account",{headers:{Authorization:"Basic "+btoa(env.B2_KEY_ID+":"+env.B2_APP_KEY)}});
-  if(!auth.ok) throw new Error("Backblaze authorization failed: "+auth.status);
+  if(!auth.ok) throw new Error("Backblaze authorization failed: "+auth.status+" "+await auth.text());
   const a=await auth.json();
-  const list=await fetch(a.apiUrl+"/b2api/v4/b2_list_buckets",{method:"POST",headers:{Authorization:a.authorizationToken,"Content-Type":"application/json"},body:JSON.stringify({accountId:a.accountId})});
-  if(!list.ok) throw new Error("Could not list Backblaze buckets: "+list.status+" "+await list.text());
-  const data=await list.json(),bucket=data.buckets?.[0];
+  const allowedBuckets=Array.isArray(a.allowed?.buckets)?a.allowed.buckets:[];
+  let bucket=allowedBuckets[0]||null;
+  if(!bucket){
+    const list=await fetch(a.apiUrl+"/b2api/v4/b2_list_buckets",{
+      method:"POST",
+      headers:{Authorization:a.authorizationToken,"Content-Type":"application/json"},
+      body:JSON.stringify({accountId:a.accountId})
+    });
+    if(!list.ok) throw new Error("Could not discover the Backblaze bucket: "+list.status+" "+await list.text());
+    const data=await list.json();
+    bucket=data.buckets?.[0]||null;
+  }
   if(!bucket) throw new Error("No Backblaze B2 bucket is available to this application key.");
   return {auth:a,bucket};
 }
@@ -441,16 +450,6 @@ export default {
           return saveEpisode(request, env);
         }
 
-        if (url.pathname === "/api/b2-diagnostic" && request.method === "GET") {
-          try {
-            const key="diagnostics/"+crypto.randomUUID()+".txt";
-            const bytes=new TextEncoder().encode("Orbit X B2 diagnostic");
-            const result=await b2UploadStream(env,key,new Response(bytes).body,"text/plain",bytes.byteLength);
-            return json({ok:true,key,fileId:result.result?.fileId,contentLength:result.result?.contentLength,contentSha1:result.result?.contentSha1});
-          } catch(e) {
-            return json({ok:false,error:e.message||String(e)},500);
-          }
-        }
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
         if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
         if (url.pathname === "/api/import-url" && request.method === "POST") return importUrl(request, env);
