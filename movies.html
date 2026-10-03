@@ -200,6 +200,7 @@
 
         .watch-button {
             display: block;
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
             margin-top: 12px;
             padding: 9px;
             background: white;
@@ -210,8 +211,17 @@
             font-weight: bold;
         }
 
-        .watch-button:hover {
-            background: #ddd;
+        .watch-button:hover,
+        .watch-button:focus-visible {
+            background: #fff;
+            transform: scale(1.04);
+            box-shadow: 0 8px 24px rgba(255,255,255,.22);
+            outline: none;
+        }
+
+        .movie-card:hover .watch-button {
+            transform: scale(1.03);
+            box-shadow: 0 8px 22px rgba(255,255,255,.18);
         }
 
         /* EMPTY */
@@ -646,7 +656,7 @@
         <div class="movie-info">
           <div class="movie-title">${esc(i.title)}</div>
           <div class="movie-meta">${esc(meta || "Movie")}</div>
-          ${i.description ? `<div class="movie-description">${esc(i.description)}</div>` : ""}
+          
           <a href="${url}" class="watch-button">Watch</a>
         </div>
       </article>`;
