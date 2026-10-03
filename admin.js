@@ -222,6 +222,12 @@ $("saveEpisode").onclick = async () => {
 };
 
 resetForm("movie");
+
+async function loadSiteSettings(){const d=await api("/api/site-settings");const s=d.settings||{};$("siteLogo").value=s.logo_text||"ORBIT X";$("siteWatchText").value=s.watch_button_text||"Watch";$("siteAccent").value=s.accent||"#ffffff";$("siteHover").value=s.button_hover||"#ffffff";$("siteAdText").value=s.ad_text||"ADVERTISEMENT";$("siteAdEnabled").checked=s.ad_enabled!==false;$("blockedSearchTerms").value=(s.blocked_search_terms||[]).join(", ");$("featuredIds").value=(s.featured_ids||[]).join(", ");$("watchNowIds").value=(s.watch_now_ids||[]).join(", ");$("recentIds").value=(s.recent_ids||[]).join(", ");$("promoIds").value=(s.promo_ids||[]).join(", ")}
+$("saveSite").onclick=async()=>{await api("/api/site-settings",{method:"POST",body:JSON.stringify({logo_text:$("siteLogo").value,watch_button_text:$("siteWatchText").value,accent:$("siteAccent").value,button_hover:$("siteHover").value,ad_text:$("siteAdText").value,ad_enabled:$("siteAdEnabled").checked,blocked_search_terms:$("blockedSearchTerms").value.split(",").map(x=>x.trim()).filter(Boolean),featured_ids:$("featuredIds").value.split(",").map(x=>x.trim()).filter(Boolean),watch_now_ids:$("watchNowIds").value.split(",").map(x=>x.trim()).filter(Boolean),recent_ids:$("recentIds").value.split(",").map(x=>x.trim()).filter(Boolean),promo_ids:$("promoIds").value.split(",").map(x=>x.trim()).filter(Boolean)})});alert("Site settings saved.")};
+$("loadUsers").onclick=async()=>{const d=await api("/api/admin/users");$("usersPanel").innerHTML=d.users.map(u=>'<div class="item"><strong>'+esc(u.email)+'</strong><small>Created '+esc(u.created_at||"")+' · '+esc(u.profiles||0)+' profiles'+(u.is_admin?' · Admin':"")+(u.disabled?' · Disabled':"")+'</small></div>').join("")||'<p class="muted">No accounts yet.</p>'};
+loadSiteSettings().catch(()=>{});
+
 loadList().catch(err => {
   $("notice").textContent = "Admin API is being connected. " + err.message;
 });
