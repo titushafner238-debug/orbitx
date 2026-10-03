@@ -119,12 +119,23 @@ async function save(statusOverride) {
 
 async function uploadFile(file, folder, targetInput, preview) {
   if (!file) return;
-  const meta = await api("/api/upload-url", {method:"POST", body:JSON.stringify({folder, filename:file.name})});
-  const res = await fetch(meta.upload_url, {method:"PUT", headers:{"Content-Type":file.type || "application/octet-stream"}, body:file});
-  if (!res.ok) return alert("Upload failed: " + res.status);
-  targetInput.value = meta.url || "";
-  if (preview && file.type.startsWith("image/")) preview.innerHTML = '<img src="' + esc(meta.url) + '">';
-  alert("Uploaded and attached.");
+  try {
+    const params = new URLSearchParams({folder, filename:file.name});
+    const res = await fetch("/api/upload?" + params.toString(), {
+      method:"POST",
+      headers:{"Content-Type":file.type || "application/octet-stream"},
+      body:file
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || ("Upload failed: " + res.status));
+    targetInput.value = data.url || "";
+    if (preview && file.type.startsWith("image/")) {
+      preview.innerHTML = '<img src="' + esc(data.url) + '" alt="">';
+    }
+    $("notice").textContent = "Uploaded " + file.name + ". Click Save to attach it to this title.";
+  } catch (err) {
+    alert("Upload failed: " + err.message);
+  }
 }
 async function importVideoUrl(inputId, targetId, statusId, folder) {
   const source = $(inputId).value.trim();
