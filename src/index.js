@@ -256,7 +256,7 @@ async function saveEpisode(request, env) {
 }
 
 async function upload(request, env) { const u=new URL(request.url); const folder=(u.searchParams.get("folder")||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=(u.searchParams.get("filename")||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; await b2SignedPut(request,env,key); return json({ok:true,key,url:"/media/"+encodeURIComponent(key)}); }
-async function uploadUrl(request, env) { const body=await request.json(); const folder=String(body.folder||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=String(body.filename||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; return json({ok:true,key,url:"/media/"+encodeURIComponent(key),upload_url:await b2SignedPutUrl(env,key)}); }
+async function uploadUrl(request, env) { await b2PutCors(env); const body=await request.json(); const folder=String(body.folder||"uploads").replace(/[^a-z0-9_-]/gi,""); const filename=String(body.filename||"file").replace(/[^a-z0-9._-]/gi,"_"); const key=folder+"/"+crypto.randomUUID()+"-"+filename; return json({ok:true,key,url:"/media/"+encodeURIComponent(key),upload_url:await b2SignedPutUrl(env,key)}); }
 
 export default {
   async fetch(request, env) {
@@ -306,7 +306,7 @@ export default {
 
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
         if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
-        if (url.pathname === "/api/setup-b2-cors" && request.method === "GET") { await b2PutCors(env); return json({ok:true}); }
+        
         return json({ error: "API route not found." }, 404);
       } catch (error) {
         console.error(error);
