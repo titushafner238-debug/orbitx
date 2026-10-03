@@ -306,7 +306,7 @@ export default {
 
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
         if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
-        if (url.pathname === "/api/setup-b2-cors" && request.method === "POST") { await b2PutCors(env); return json({ok:true}); }
+        if (url.pathname === "/api/setup-b2-cors" && request.method === "GET") { await b2PutCors(env); return json({ok:true}); }
         return json({ error: "API route not found." }, 404);
       } catch (error) {
         console.error(error);
