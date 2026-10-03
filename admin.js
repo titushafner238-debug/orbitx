@@ -120,32 +120,45 @@ async function save(statusOverride) {
 async function uploadFile(file, folder, targetInput, preview) {
   if (!file) return;
   try {
-    const params = new URLSearchParams({folder, filename:file.name});
-    const res = await fetch("/api/upload?" + params.toString(), {
+    $("notice").textContent = "Preparing upload for " + file.name + "...";
+    const prep = await api("/api/upload-url", {
       method:"POST",
+      body:JSON.stringify({folder, filename:file.name})
+    });
+    if (!prep.upload_url) throw new Error("Storage did not return an upload URL.");
+    const put = await fetch(prep.upload_url, {
+      method:"PUT",
       headers:{"Content-Type":file.type || "application/octet-stream"},
       body:file
     });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || ("Upload failed: " + res.status));
-    targetInput.value = data.url || "";
+    if (!put.ok) {
+      const detail = await put.text().catch(()=>"");
+      throw new Error("Storage upload failed (" + put.status + ")" + (detail ? ": " + detail.slice(0,300) : ""));
+    }
+    targetInput.value = prep.url || "";
     if (preview && file.type.startsWith("image/")) {
-      preview.innerHTML = '<img src="' + esc(data.url) + '" alt="">';
+      preview.innerHTML = '<img src="' + esc(prep.url) + '" alt="">';
     }
     $("notice").textContent = "Uploaded " + file.name + ". Click Save to attach it to this title.";
   } catch (err) {
     alert("Upload failed: " + err.message);
+    $("notice").textContent = "Upload failed: " + err.message;
   }
 }
 async function importVideoUrl(inputId, targetId, statusId, folder) {
   const source = $(inputId).value.trim();
-  if (!source) return alert("Paste a video link first.");
-  $(statusId).textContent = "Downloading video and storing it. This can take a while for a large file...";
+  if (!source) return alert("Paste a direct video file link first.");
+  $(statusId).textContent = "Downloading video and storing it. Keep this page open while it transfers...";
   $(inputId).disabled = true;
   try {
-    const data = await api("/api/import-url", {method:"POST", body:JSON.stringify({url:source, folder})});
+    const data = await api("/api/import-url", {
+      method:"POST",
+      body:JSON.stringify({url:source, folder})
+    });
     $(targetId).value = data.url || "";
-    $(statusId).textContent = "Video imported and attached.";
+    $(statusId).textContent = data.content_length
+      ? "Video imported (" + Math.round(data.content_length/1048576) + " MB) and attached."
+      : "Video imported and attached.";
   } catch (err) {
     $(statusId).textContent = "Import failed: " + err.message;
   } finally {
@@ -224,9 +237,28 @@ $("saveEpisode").onclick = async () => {
 resetForm("movie");
 
 async function loadSiteSettings(){const d=await api("/api/site-settings");const s=d.settings||{};$("siteLogo").value=s.logo_text||"ORBIT X";$("siteWatchText").value=s.watch_button_text||"Watch";$("siteAccent").value=s.accent||"#ffffff";$("siteHover").value=s.button_hover||"#ffffff";$("siteAdText").value=s.ad_text||"ADVERTISEMENT";$("siteAdEnabled").checked=s.ad_enabled!==false;$("blockedSearchTerms").value=(s.blocked_search_terms||[]).join(", ");$("featuredIds").value=(s.featured_ids||[]).join(", ");$("watchNowIds").value=(s.watch_now_ids||[]).join(", ");$("recentIds").value=(s.recent_ids||[]).join(", ");$("promoIds").value=(s.promo_ids||[]).join(", ")}
-$("saveSite").onclick=async()=>{await api("/api/site-settings",{method:"POST",body:JSON.stringify({logo_text:$("siteLogo").value,watch_button_text:$("siteWatchText").value,accent:$("siteAccent").value,button_hover:$("siteHover").value,ad_text:$("siteAdText").value,ad_enabled:$("siteAdEnabled").checked,blocked_search_terms:$("blockedSearchTerms").value.split(",").map(x=>x.trim()).filter(Boolean),featured_ids:$("featuredIds").value.split(",").map(x=>x.trim()).filter(Boolean),watch_now_ids:$("watchNowIds").value.split(",").map(x=>x.trim()).filter(Boolean),recent_ids:$("recentIds").value.split(",").map(x=>x.trim()).filter(Boolean),promo_ids:$("promoIds").value.split(",").map(x=>x.trim()).filter(Boolean)})});alert("Site settings saved.")};
+$("saveSite").onclick=async()=>{
+  try{
+    $("notice").textContent="Saving site settings...";
+    await api("/api/site-settings",{method:"POST",body:JSON.stringify({
+      logo_text:$("siteLogo").value.trim(),
+      watch_button_text:$("siteWatchText").value.trim(),
+      accent:$("siteAccent").value,
+      button_hover:$("siteHover").value,
+      ad_text:$("siteAdText").value.trim(),
+      ad_enabled:$("siteAdEnabled").checked,
+      blocked_search_terms:$("blockedSearchTerms").value.split(",").map(x=>x.trim()).filter(Boolean),
+      featured_ids:$("featuredIds").value.split(",").map(x=>x.trim()).filter(Boolean),
+      watch_now_ids:$("watchNowIds").value.split(",").map(x=>x.trim()).filter(Boolean),
+      recent_ids:$("recentIds").value.split(",").map(x=>x.trim()).filter(Boolean),
+      promo_ids:$("promoIds").value.split(",").map(x=>x.trim()).filter(Boolean)
+    })});
+    $("notice").textContent="Site settings saved.";
+    alert("Site settings saved.");
+  }catch(err){ $("notice").textContent="Could not save site settings: "+err.message; alert("Could not save site settings: "+err.message); }
+};
 $("loadUsers").onclick=async()=>{const d=await api("/api/admin/users");$("usersPanel").innerHTML=d.users.map(u=>'<div class="item"><strong>'+esc(u.email)+'</strong><small>Created '+esc(u.created_at||"")+' · '+esc(u.profiles||0)+' profiles'+(u.is_admin?' · Admin':"")+(u.disabled?' · Disabled':"")+'</small></div>').join("")||'<p class="muted">No accounts yet.</p>'};
-loadSiteSettings().catch(()=>{});
+loadSiteSettings().catch(err => { $("notice").textContent = "Could not load site settings: " + err.message; });
 
 loadList().catch(err => {
   $("notice").textContent = "Admin API is being connected. " + err.message;
