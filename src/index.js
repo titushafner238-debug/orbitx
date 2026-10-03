@@ -470,6 +470,16 @@ export default {
           return saveEpisode(request, env);
         }
 
+        if (url.pathname === "/api/b2-test" && request.method === "GET") {
+          try {
+            const bytes=new TextEncoder().encode("orbit-x-test");
+            const key="diagnostics/"+crypto.randomUUID()+".txt";
+            const out=await b2UploadStream(env,key,new Response(bytes).body,"text/plain",bytes.byteLength);
+            return json({ok:true,key,fileId:out.result?.fileId,contentLength:out.result?.contentLength});
+          } catch(e) {
+            return json({ok:false,error:e.message||String(e)},500);
+          }
+        }
         if (url.pathname === "/api/upload" && request.method === "POST") return upload(request, env);
         if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
         if (url.pathname === "/api/import-url" && request.method === "POST") return importUrl(request, env);
