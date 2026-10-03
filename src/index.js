@@ -265,9 +265,20 @@ export default {
     if (url.pathname === "/admin" || url.pathname === "/admin/") {
       return env.ASSETS.fetch(new Request(new URL("/admin.html", url), request));
     }
+    if (url.pathname === "/account" || url.pathname === "/account/") {
+      return env.ASSETS.fetch(new Request(new URL("/account.html", url), request));
+    }
 
     if (url.pathname.startsWith("/api/")) {
       try {
+        if (url.pathname === "/api/auth/signup" && request.method === "POST") return signup(request, env);
+        if (url.pathname === "/api/auth/login" && request.method === "POST") return login(request, env);
+        if (url.pathname === "/api/auth/logout" && request.method === "POST") return logout(request, env);
+        if (url.pathname === "/api/auth/me" && request.method === "GET") return accountData(request, env);
+        if (url.pathname === "/api/profiles" && request.method === "POST") return saveProfile(request, env);
+        if (url.pathname === "/api/profiles/delete" && request.method === "POST") return deleteProfile(request, env);
+        if (url.pathname === "/api/settings" && request.method === "POST") return saveSettings(request, env);
+
         if (url.pathname === "/api/content" && request.method === "GET") {
           return listContent(env, url, true);
         }
