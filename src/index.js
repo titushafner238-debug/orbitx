@@ -435,7 +435,7 @@ export default {
       return Response.redirect(await b2SignedGet(env, key), 302);
     }
     if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
-    if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
+    if (url.pathname === "/catalog.js" && request.method === "GET") return env.ASSETS.fetch(request);
 
     if (url.pathname === "/schema.sql" || url.pathname.startsWith("/src/")) {
       return new Response("Not found", { status: 404 });
