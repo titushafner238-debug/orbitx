@@ -365,7 +365,12 @@ export default {
       }
     }
 
-    if (url.pathname === "/site.js") return new Response(SITE_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});\n    if (url.pathname === "/about.html") return new Response(ABOUT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});\n    if (url.pathname === "/contact.html") return new Response(CONTACT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});\n    if (url.pathname === "/copyright.html") return new Response(COPYRIGHT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});\n    if (url.pathname === "/privacy.html") return new Response(PRIVACY_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});\n    if (url.pathname.startsWith("/media/") && request.method === "GET") return Response.redirect(await b2SignedGet(env, decodeURIComponent(url.pathname.slice(7))), 302);
+    if (url.pathname === "/site.js") return new Response(SITE_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
+    if (url.pathname === "/about.html") return new Response(ABOUT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
+    if (url.pathname === "/contact.html") return new Response(CONTACT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
+    if (url.pathname === "/copyright.html") return new Response(COPYRIGHT_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
+    if (url.pathname === "/privacy.html") return new Response(PRIVACY_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
+    if (url.pathname.startsWith("/media/") && request.method === "GET") return Response.redirect(await b2SignedGet(env, decodeURIComponent(url.pathname.slice(7))), 302);
     if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
     if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
 
