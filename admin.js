@@ -69,7 +69,7 @@ async function editContent(id) {
   $("backdropPreview").innerHTML = item.backdrop_url ? `<img src="${esc(item.backdrop_url)}">` : "Netflix-style backdrop preview";
   $("showTools").style.display = item.type === "show" ? "block" : "none";
   const genreData = await api("/api/genres");
-  const selected = [];
+  const selected = String(item.genres || "").split("||").filter(Boolean);
   const all = await api("/api/content?type=" + item.type);
   const full = all.content.find(x => x.id === id);
   // Genres are loaded separately below.
