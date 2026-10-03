@@ -1,58 +1,101 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ORBIT</title><style>body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif}.hero{min-height:70vh;background-size:cover;background-position:center;position:relative}.shade{position:absolute;inset:0;background:linear-gradient(90deg,#080808 10%,rgba(8,8,8,.78) 50%,rgba(8,8,8,.25)),linear-gradient(0deg,#080808,transparent 50%)}.content{position:relative;z-index:1;max-width:650px;padding:16vh 7vw}.back{color:#bbb;text-decoration:none}.title{font-size:60px;margin:30px 0 15px}.meta{color:#bbb;margin-bottom:20px}.desc{font-size:18px;line-height:1.7;color:#ddd}.buttons{display:flex;gap:10px;margin-top:25px;flex-wrap:wrap}.btn{padding:13px 20px;background:#fff;color:#000;border-radius:6px;text-decoration:none;font-weight:bold}.btn.alt{background:#292929;color:#fff}main{max-width:1100px;margin:auto;padding:35px 6vw}video{width:100%;max-height:70vh;background:#000}.trailer{margin-top:25px}</style></head><body><section class="hero" id="hero"><div class="shade"></div><div class="content"><a class="back" href="/">← Back to ORBIT</a><h1 class="title" id="title">Loading…</h1><div class="meta" id="meta"></div><p class="desc" id="desc"></p><div class="buttons" id="buttons"></div></div></section><main id="media"></main><script>
-(async () => {
-  const slug = new URLSearchParams(location.search).get("slug");
-  if (!slug) {
-    document.getElementById("title").textContent = "Movie not found";
-    return;
-  }
-
-  try {
-    const r = await fetch("/api/public/content");
-    const d = await r.json();
-    const x = (d.content || []).find(i => i.slug === slug);
-
-    if (!x) {
-      document.getElementById("title").textContent = "Movie not found";
-      return;
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ORBIT X</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:#fff;font-family:Arial,Helvetica,sans-serif}
+.hero{min-height:72vh;background:#111 center/cover no-repeat;position:relative}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,#080808 8%,rgba(8,8,8,.82) 42%,rgba(8,8,8,.25) 80%),linear-gradient(0deg,#080808,transparent 55%)}
+.content{position:relative;z-index:1;max-width:700px;padding:13vh 7vw 80px}
+.back{color:#bbb;text-decoration:none}
+.back:hover{color:#fff}
+.title{font-size:clamp(42px,6vw,70px);line-height:1.05;margin:30px 0 15px}
+.meta{color:#bbb;margin-bottom:20px}
+.desc{font-size:18px;line-height:1.7;color:#ddd}
+.buttons{display:flex;gap:10px;margin-top:25px;flex-wrap:wrap}
+.btn{padding:13px 20px;background:#fff;color:#000;border-radius:6px;text-decoration:none;font-weight:bold}
+.btn.alt{background:#292929;color:#fff}
+main{max-width:1100px;margin:auto;padding:35px 6vw 70px}
+.player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
+.player iframe,.player video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.error{color:#ffb9c0}
+</style>
+</head>
+<body>
+<section class="hero" id="hero">
+<div class="shade"></div>
+<div class="content">
+<a class="back" href="/">← Back to ORBIT X</a>
+<h1 class="title" id="title">Loading…</h1>
+<div class="meta" id="meta"></div>
+<p class="desc" id="desc"></p>
+<div class="buttons" id="buttons"></div>
+</div>
+</section>
+<main id="media"></main>
+<script>
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function youtubeId(value){
+  try{
+    const u=new URL(String(value));
+    const host=u.hostname.replace(/^www\./,"").toLowerCase();
+    if(host==="youtu.be") return u.pathname.split("/").filter(Boolean)[0] || "";
+    if(host==="youtube.com" || host==="m.youtube.com"){
+      if(u.pathname==="/watch") return u.searchParams.get("v") || "";
+      if(u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || "";
+      if(u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2] || "";
     }
+  }catch(e){}
+  return "";
+}
+(async()=>{
+  const slug=new URLSearchParams(location.search).get("slug");
+  const titleEl=document.getElementById("title");
+  const media=document.getElementById("media");
+  if(!slug){titleEl.textContent="Movie not found";return;}
+  try{
+    const r=await fetch("/api/public/content?type=movie",{cache:"no-store"});
+    if(!r.ok) throw new Error("Content request failed: "+r.status);
+    const d=await r.json();
+    const x=(d.content||[]).find(i=>String(i.slug)===String(slug));
+    if(!x){titleEl.textContent="Movie not found";return;}
+    document.title="ORBIT X — "+x.title;
+    titleEl.textContent=x.title;
+    document.getElementById("desc").textContent=x.description||"";
+    document.getElementById("meta").textContent=[x.year,x.rating,x.runtime_minutes?x.runtime_minutes+" min":""].filter(Boolean).join(" · ");
 
-    document.title = "ORBIT X — " + x.title;
-    document.getElementById("title").textContent = x.title;
-    document.getElementById("desc").textContent = x.description || "";
-    document.getElementById("meta").textContent =
-      [x.year, x.rating, x.runtime_minutes ? x.runtime_minutes + " min" : ""]
-      .filter(Boolean).join(" · ");
+    const hero=document.getElementById("hero");
+    const heroImage=x.backdrop_url||x.poster_url;
+    if(heroImage) hero.style.backgroundImage='url("'+String(heroImage).replace(/"/g,"%22")+'")';
 
-    const heroImage = x.backdrop_url || x.poster_url;
-    if (heroImage) {
-      document.getElementById("hero").style.backgroundImage =
-        'url("' + heroImage.replace(/"/g, "%22") + '")';
+    const buttons=document.getElementById("buttons");
+    if(x.video_url){
+      buttons.innerHTML='<a class="btn" href="#watch">Watch now</a>'+(x.trailer_url?'<a class="btn alt" target="_blank" rel="noopener" href="'+esc(x.trailer_url)+'">Trailer</a>':"");
+      const yt=youtubeId(x.video_url);
+      if(yt){
+        media.innerHTML='<h2 id="watch">Watch</h2><div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(yt)+'?rel=0&modestbranding=1" title="'+esc(x.title)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>';
+      }else{
+        media.innerHTML='<h2 id="watch">Watch</h2><div class="player"><video controls playsinline preload="metadata" src="'+esc(x.video_url)+'"></video></div>';
+      }
+    }else if(x.trailer_url){
+      buttons.innerHTML='<a class="btn alt" target="_blank" rel="noopener" href="'+esc(x.trailer_url)+'">Trailer</a>';
+      media.innerHTML='<p>No movie video has been attached yet.</p>';
+    }else{
+      media.innerHTML='<p>No video has been attached to this movie yet.</p>';
     }
-
-    const b = document.getElementById("buttons");
-    if (x.video_url) {
-      b.innerHTML = '<a class="btn" href="#watch">Watch now</a>' +
-        (x.trailer_url ? '<a class="btn alt" target="_blank" rel="noopener" href="' +
-          x.trailer_url.replace(/"/g, "%22") + '">Trailer</a>' : '');
-
-      document.getElementById("media").innerHTML =
-        '<h2 id="watch">Watch</h2>' +
-        (youtubeId(x.video_url)
-          ? '<div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden"><iframe src="https://www.youtube-nocookie.com/embed/' + youtubeId(x.video_url) + '?rel=0&modestbranding=1" title="' + esc(x.title) + '" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>'
-          : '<video controls playsinline preload="metadata" src="' +
-            x.video_url.replace(/"/g, "%22") + '"></video>');
-    } else if (x.trailer_url) {
-      b.innerHTML = '<a class="btn alt" target="_blank" rel="noopener" href="' +
-        x.trailer_url.replace(/"/g, "%22") + '">Trailer</a>';
-      document.getElementById("media").innerHTML =
-        '<p>No movie video has been attached yet.</p>';
-    } else {
-      document.getElementById("media").innerHTML =
-        '<p>No video has been attached to this movie yet.</p>';
-    }
-  } catch (e) {
-    console.error(e);
-    document.getElementById("title").textContent = "Could not load movie";
+  }catch(e){
+    console.error("ORBIT watch error",e);
+    titleEl.textContent="Could not load movie";
+    media.innerHTML='<p class="error">There was a problem loading this movie. Please try again.</p>';
   }
 })();
-</script></body></html>
+</script>
+</body>
+</html>
