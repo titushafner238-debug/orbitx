@@ -155,7 +155,9 @@ async function importVideoUrl(inputId, targetId, statusId, folder) {
   }
 }
 
-$("newMovie").onclick = () => async function loadSiteSettings(){
+$("newMovie").onclick = () => resetForm("movie");
+
+async function loadSiteSettings(){
   const d=await api("/api/site-settings"),s=d.settings||{};
   $("blockedSearchTerms").value=(s.blocked_search_terms||[]).join(", ");
   $("featuredIds").value=(s.featured_ids||[]).join(", ");
