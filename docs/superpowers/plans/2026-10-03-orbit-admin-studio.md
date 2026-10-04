@@ -45,7 +45,7 @@
 
 - [ ] **Step 1: Write failing Worker authorization tests**
 
-Invoke the exported Worker fetch handler with requests that have no session cookie. Assert 403 and the exact JSON error for POST /api/site-settings, /api/content, /api/content/delete, /api/seasons, /api/episodes, /api/upload, /api/upload-url, and /api/import-url. Assert GET /api/content and GET /api/admin/users also return 403. Use an env without a database so any attempted write or admin read fails the test.
+Invoke the exported Worker fetch handler with requests that have no session cookie. Assert 403 and the exact JSON error for POST /api/site-settings, /api/content, /api/content/delete, /api/seasons, /api/episodes, /api/upload, /api/upload-url, and /api/import-url. Assert GET /api/content and GET /api/admin/users also return 403. Assert GET /api/site-settings and GET /api/public/content remain readable using a minimal D1 mock. Use an env without a database on protected requests so any attempted write or admin read fails the test.
 
 - [ ] **Step 2: Run the authorization tests and confirm current gaps**
 
@@ -117,7 +117,7 @@ Initialize the Wrangler local D1 database with schema.sql. Create a local-only a
 
 - [ ] **Step 2: Implement content library and editor states**
 
-Keep movie and show rows searchable and filterable by type, with title, status, and type visible. Group editor fields into details, artwork, video, and show season/episode sections. Add empty instructions for catalog, seasons, and episodes. Route each action through one status area with clear in-progress/success/error text; keep delete confirmation; show image and video upload results next to their own controls. Do not report success until the API confirms it.
+Keep movie and show rows searchable and filterable by type, with title, status, and type visible. Group editor fields into details, artwork, video, and show season/episode sections. Provide distinct Save, Save Draft, and Publish actions. Add empty instructions for catalog, seasons, and episodes. Route each action through one status area with clear in-progress/success/error text; keep delete confirmation; show image and video upload results next to their own controls. Do not report success until the API confirms it.
 
 - [ ] **Step 3: Re-run the local browser flow**
 
@@ -141,7 +141,7 @@ Commit message: feat: improve admin content editing feedback
 
 - [ ] **Step 1: Write failing theme mapping tests**
 
-Test normalizeSiteTheme(settings) for documented defaults, all supported design keys, numeric bounds, missing values, and unsafe image URLs. Test malformed and non-object settings inputs produce a clear 400 response in the Worker. Test that each supported creative effect maps to a CSS variable and that saved data reloads to the same normalized values.
+Test normalizeSiteTheme(settings) for documented defaults, all supported design keys, numeric bounds, missing values, and unsafe image URLs. Using a fake admin session and D1 binding, test that malformed JSON and a non-object POST /api/site-settings payload return HTTP 400 with a clear error. Test that each supported creative effect maps to a CSS variable and that saved data reloads to the same normalized values.
 
 - [ ] **Step 2: Run the theme tests and confirm they fail**
 
