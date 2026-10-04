@@ -497,6 +497,7 @@ export default {
         }
 
         if (url.pathname === "/api/genres" && request.method === "GET") {
+          if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
           return getGenres(env);
         }
 
