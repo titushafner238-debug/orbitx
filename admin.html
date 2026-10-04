@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script src="/site-theme.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ORBIT X — Admin</title>
 <style>
+.access-gate{max-width:680px;margin:70px auto;padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:16px}.access-gate a{color:var(--text);font-weight:800}.locked header,.locked main{display:none!important}
 :root{color-scheme:dark;--bg:#090a0d;--panel:#111319;--panel2:#171a21;--line:#292e38;--text:#f4f5f7;--muted:#9aa1ad;--accent:#fff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
 header{padding:22px 30px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(9,10,13,.94);backdrop-filter:blur(12px);z-index:5}
@@ -27,8 +29,8 @@ textarea{min-height:120px;resize:vertical}.two{display:grid;grid-template-column
 .builder-shell{max-width:1200px;margin:0 auto 22px;padding:0 20px}.builder-head{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;justify-content:space-between;gap:18px;align-items:center}.eyebrow{font-size:11px;letter-spacing:.16em;color:var(--muted);font-weight:800}.builder-head h2{margin:5px 0}.builder-actions{display:flex;gap:9px;flex-wrap:wrap}.builder-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,.7fr);gap:18px;margin-top:18px}.builder-preview-wrap{background:#000;border:1px solid var(--line);border-radius:14px;overflow:hidden}.builder-preview-wrap iframe{width:100%;height:700px;border:0}.builder-controls{display:grid;gap:12px}.builder-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.builder-card h3{margin-bottom:8px}@media(max-width:900px){.builder-grid{grid-template-columns:1fr}.builder-head{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
-<body>
-<header><div class="logo">ORBIT</div><div class="admin">CONTENT ADMIN</div></header>
+<body class="locked"><div id="accessGate" class="access-gate"><h1>Admin access required</h1><p class="muted">Sign in with an ORBIT X administrator account to open the Admin Studio.</p><a href="/account">Go to sign in</a><p id="accessMessage" class="muted"></p></div>
+<header><div class="logo">ORBIT X</div><div class="admin">ADMIN STUDIO</div></header>
 <main>
 <div class="toolbar">
 <button class="primary" id="newMovie">+ Add Movie</button>
