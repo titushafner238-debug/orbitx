@@ -487,6 +487,7 @@ export default {
         }
 
         if (url.pathname === "/api/content" && request.method === "POST") {
+          if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
           return saveContent(request, env);
         }
 
