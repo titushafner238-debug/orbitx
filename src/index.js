@@ -369,10 +369,12 @@ async function getSiteSettings(env){
 }
 async function publicSiteSettings(env){ return json({settings:await getSiteSettings(env)}); }
 async function saveSiteSettings(request,env){
+  if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
   await ensureSiteSettings(env);
-  const body=await request.json();
-  const allowed=["logo_text","logo_url","logo_size","background_color","header_background","card_background","accent","text_color","muted_color","button_color","button_hover","watch_button_text","ad_enabled","ad_text","promo_ids","watch_now_ids","featured_ids","recent_ids","blocked_search_terms","footer_about","footer_contact","footer_copyright","footer_privacy","hero_title","hero_description","hero_backdrop","featured_title","recent_title","watch_now_title","tv_title","max_width"];
-  for(const key of allowed){ if(!(key in body)) continue; const value=typeof body[key]==="string"?body[key]:JSON.stringify(body[key]); await env.DB.prepare("INSERT INTO site_settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(key,value).run(); }
+  let body;try{body=await request.json()}catch{return authJson({error:"Invalid JSON settings payload."},400)}
+  if(!body||typeof body!=="object"||Array.isArray(body)) return authJson({error:"Settings payload must be an object."},400);
+  const allowed=["logo_text","logo_url","logo_size","background_color","header_background","card_background","accent","text_color","muted_color","button_color","button_hover","watch_button_text","ad_enabled","ad_text","promo_ids","watch_now_ids","featured_ids","recent_ids","blocked_search_terms","footer_about","footer_contact","footer_copyright","footer_privacy","hero_title","hero_description","hero_backdrop","featured_title","recent_title","watch_now_title","tv_title","max_width","card_radius","card_shadow","hero_overlay","poster_height","section_gap","page_glow"];
+  for(const key of allowed){if(!(key in body))continue;const value=typeof body[key]==="string"?body[key]:JSON.stringify(body[key]);await env.DB.prepare("INSERT INTO site_settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(key,value).run()}
   return json({ok:true,settings:await getSiteSettings(env)});
 }
 async function requireAdmin(request,env){const u=await currentUser(request,env);if(!u)return null;return Number(u.is_admin)===1?u:null;}
@@ -450,11 +452,13 @@ export default {
     }
 
     if (url.pathname === "/admin" || url.pathname === "/admin/" || url.pathname === "/admin.html") {
-      return new Response(ADMIN_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
+      const page=await env.ASSETS.fetch(new Request(new URL("/admin.html",request.url),request));
+      return new Response(page.body,{status:page.status,headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
     }
 
     if (url.pathname === "/watch.html") {
-      return new Response(WATCH_HTML, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
+      const page=await env.ASSETS.fetch(request);
+      if(page.ok)return new Response(page.body,{status:page.status,headers:{...Object.fromEntries(page.headers),"cache-control":"no-store"}});
     }
     if (url.pathname === "/account" || url.pathname === "/account/") {
       return new Response(ACCOUNT_HTML, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
@@ -495,23 +499,27 @@ export default {
         }
 
         if (url.pathname === "/api/seasons" && request.method === "GET") {
+          if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
           return getSeasons(env, url.searchParams.get("show_id"));
         }
 
         if (url.pathname === "/api/seasons" && request.method === "POST") {
+          if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
           return saveSeason(request, env);
         }
 
         if (url.pathname === "/api/episodes" && request.method === "GET") {
+          if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
           return getEpisodes(env, url.searchParams.get("season_id"));
         }
 
         if (url.pathname === "/api/episodes" && request.method === "POST") {
+          if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403);
           return saveEpisode(request, env);
         }
 
         if (url.pathname === "/api/upload" && request.method === "POST") { if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403); return upload(request, env); }
-        if (url.pathname === "/api/upload-url" && request.method === "POST") return uploadUrl(request, env);
+        if (url.pathname === "/api/upload-url" && request.method === "POST") { if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403); return uploadUrl(request, env); }
         if (url.pathname === "/api/import-url" && request.method === "POST") { if(!await requireAdmin(request,env)) return authJson({error:"Admin access required."},403); return importUrl(request, env); }
         
         return json({ error: "API route not found." }, 404);
@@ -535,7 +543,7 @@ export default {
       if (!key || key.includes("..")) return new Response("Not found", {status:404});
       return Response.redirect(await b2SignedGet(env, key), 302);
     }
-    if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
+    
     if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
 
     if (url.pathname === "/schema.sql" || url.pathname.startsWith("/src/")) {
