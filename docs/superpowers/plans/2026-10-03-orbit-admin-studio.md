@@ -141,7 +141,7 @@ Commit message: feat: improve admin content editing feedback
 
 - [ ] **Step 1: Write failing theme mapping tests**
 
-Test normalizeSiteTheme(settings) for documented defaults, all supported design keys, numeric bounds, missing values, and unsafe image URLs. Test that each supported creative effect maps to a CSS variable and that saved data reloads to the same normalized values.
+Test normalizeSiteTheme(settings) for documented defaults, all supported design keys, numeric bounds, missing values, and unsafe image URLs. Test malformed and non-object settings inputs produce a clear 400 response in the Worker. Test that each supported creative effect maps to a CSS variable and that saved data reloads to the same normalized values.
 
 - [ ] **Step 2: Run the theme tests and confirm they fail**
 
@@ -150,7 +150,7 @@ Expected: FAIL because the shared mapper does not exist.
 
 - [ ] **Step 3: Implement one design-settings mapping**
 
-Create normalizeSiteTheme(settings) in site-theme.js and use these persisted keys: logo_text, logo_url, logo_size, background_color, header_background, card_background, accent, text_color, muted_color, button_color, button_hover, watch_button_text, hero_title, hero_description, hero_backdrop, featured_title, recent_title, watch_now_title, tv_title, max_width, footer_about, footer_contact, footer_copyright, footer_privacy, ad_enabled, ad_text, card_radius, card_shadow, hero_overlay, poster_height, section_gap, and page_glow. Validate numbers against the input ranges and accept only safe HTTPS image URLs for logo_url and hero_backdrop. Extend the Worker allowlist for missing supported keys and requireAdmin on POST /api/site-settings.
+Create normalizeSiteTheme(settings) in site-theme.js and use these persisted keys: logo_text, logo_url, logo_size, background_color, header_background, card_background, accent, text_color, muted_color, button_color, button_hover, watch_button_text, hero_title, hero_description, hero_backdrop, featured_title, recent_title, watch_now_title, tv_title, max_width, footer_about, footer_contact, footer_copyright, footer_privacy, ad_enabled, ad_text, card_radius, card_shadow, hero_overlay, poster_height, section_gap, and page_glow. Validate numbers against the input ranges and accept only safe HTTPS image URLs for logo_url and hero_backdrop. Extend the Worker allowlist for missing supported keys and return a clear 400 for malformed or non-object settings payloads.
 
 - [ ] **Step 4: Rebuild the design and site-settings views**
 
