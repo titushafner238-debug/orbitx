@@ -448,12 +448,8 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
         <a href="/">Home</a>
         <a href="/movies.html">Movies</a>
         <a href="/tv.html">TV</a>
+        <a href="/search.html" class="search-page-button" aria-label="Search ORBIT X" onclick="sessionStorage.setItem('orbitxSearchFrom', location.pathname + location.search)"><span class="search-glass" aria-hidden="true"></span><span>Search</span></a>
       </nav>
-
-    <div class="search-box">
-        <input id="search" type="text" placeholder="Search ORBIT..." aria-label="Search ORBIT">
-      </div>
-
 </header>
 
 
@@ -505,260 +501,46 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
 </div>
 
 
-<!-- FEATURED MOVIES -->
-
+<!-- MOVIE SECTIONS -->
 <section class="section" id="movies">
-
-    <h2 class="section-title">
-        Featured Movies
-    </h2>
-
-    <p class="section-subtitle">
-        Movies coming to ORBIT
-    </p>
-
-    <div class="movie-grid">
-
-        <div class="movie-card">
-            <div class="poster">MOVIE POSTER</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">MOVIE POSTER</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">MOVIE POSTER</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">MOVIE POSTER</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">MOVIE POSTER</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-    </div>
-
+  <h2 class="section-title">Featured Movies</h2>
+  <p class="section-subtitle">Featured movies on ORBIT X.</p>
+  <div class="movie-grid"></div>
 </section>
 
-
-<!-- MOVIE GENRES -->
-
-<section class="section">
-
-    <h2 class="section-title">
-        Movie Genres
-    </h2>
-
-    <div class="genre-grid">
-
-        <div class="genre">Action</div>
-        <div class="genre">Adventure</div>
-        <div class="genre">Comedy</div>
-        <div class="genre">Crime</div>
-        <div class="genre">Documentary</div>
-        <div class="genre">Drama</div>
-        <div class="genre">Kids & Family</div>
-        <div class="genre">Fantasy</div>
-        <div class="genre">Horror</div>
-        <div class="genre">Mystery</div>
-        <div class="genre">Romance</div>
-        <div class="genre">Sci-Fi</div>
-        <div class="genre">Thriller</div>
-        <div class="genre">Western</div>
-        <div class="genre">Animation</div>
-        <div class="genre">Classic</div>
-        <div class="genre">Religious</div>
-
-    </div>
-
-</section>
-
-
-<!-- RECENTLY ADDED -->
-
-<section class="section">
-
-    <h2 class="section-title">
-        Recently Added
-    </h2>
-
-    <div class="movie-grid">
-
-        <div class="movie-card">
-            <div class="poster">COMING SOON</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">COMING SOON</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">COMING SOON</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">COMING SOON</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">COMING SOON</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">Movie</div>
-            </div>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- RECOMMENDED -->
 <section class="section" id="recommended">
   <h2 class="section-title">Recommended</h2>
   <p class="section-subtitle">A few picks to start your next movie night.</p>
   <div class="movie-grid"></div>
 </section>
 
-<!-- CHARLIE CHAPLIN COLLECTION -->
 <section class="section" id="charlie-chaplin">
   <h2 class="section-title">This Is Charlie Chaplin</h2>
   <p class="section-subtitle">Charlie Chaplin films currently available on ORBIT X.</p>
   <div class="movie-grid"></div>
 </section>
 
-<!-- TV -->
+<section class="section" id="recently-added">
+  <h2 class="section-title">Recently Added</h2>
+  <div class="movie-grid"></div>
+</section>
 
+<!-- TV SECTIONS -->
 <section class="section" id="tv">
-
-    <h2 class="section-title">
-        TV Shows
-    </h2>
-
-    <p class="section-subtitle">
-        Television coming to ORBIT
-    </p>
-
-    <div class="movie-grid">
-
-        <div class="movie-card">
-            <div class="poster">TV</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">TV</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">TV</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">TV</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">TV</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">TV</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">TV</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">TV</div>
-            </div>
-        </div>
-
-        <div class="movie-card">
-            <div class="poster">TV</div>
-            <div class="movie-info">
-                <div class="movie-title">Coming Soon</div>
-                <div class="movie-meta">TV</div>
-            </div>
-        </div>
-
-    </div>
-
+  <h2 class="section-title">Featured Shows</h2>
+  <p class="section-subtitle">Featured TV shows on ORBIT X.</p>
+  <div class="movie-grid"></div>
 </section>
 
-
-<!-- TV GENRES -->
-
-<section class="section">
-
-    <h2 class="section-title">
-        TV Genres
-    </h2>
-
-    <div class="genre-grid">
-
-        <div class="genre">Action</div>
-        <div class="genre">Adventure</div>
-        <div class="genre">Comedy</div>
-        <div class="genre">Crime</div>
-        <div class="genre">Documentary</div>
-        <div class="genre">Drama</div>
-        <div class="genre">Kids & Family</div>
-        <div class="genre">Fantasy</div>
-        <div class="genre">Horror</div>
-        <div class="genre">Mystery</div>
-        <div class="genre">Romance</div>
-        <div class="genre">Sci-Fi</div>
-        <div class="genre">Thriller</div>
-        <div class="genre">Western</div>
-        <div class="genre">Animation</div>
-        <div class="genre">Classic</div>
-        <div class="genre">Religious</div>
-
-    </div>
-
+<section class="section" id="tv-recommended">
+  <h2 class="section-title">Recommended Shows</h2>
+  <div class="movie-grid"></div>
 </section>
 
-
-<!-- ORIGINALS -->
+<section class="section" id="tv-recently-added">
+  <h2 class="section-title">Recently Added TV Shows</h2>
+  <div class="movie-grid"></div>
+</section>
 
 <section class="section originals">
 
