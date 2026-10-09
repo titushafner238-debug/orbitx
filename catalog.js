@@ -18,7 +18,7 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
  const [cr,sr]=await Promise.all([fetch("/api/public/content",{cache:"no-store"}),fetch("/api/site-settings",{cache:"no-store"})]);
  const cd=cr.ok?await cr.json():{content:[]},sd=sr.ok?await sr.json():{settings:{}},items=cd.content||[],settings=sd.settings||{};
  document.querySelectorAll(".logo").forEach(el=>el.textContent=settings.logo_text||"ORBIT X"); try{const me=await fetch("/api/auth/me",{cache:"no-store"});if(me.ok){const md=await me.json(),p=md.profiles?.[0],av=md.avatars?.find(x=>x.id===p?.avatar_id),nav=document.getElementById("navAvatar");if(nav&&av)nav.innerHTML=av.icon}}catch{}
- const card=i=>{const meta=[i.year,i.rating,i.runtime_minutes?i.runtime_minutes+" min":""].filter(Boolean).join(" · "),url="/watch.html?slug="+encodeURIComponent(i.slug),poster=i.poster_url;return '<article class="movie-card"><div class="poster">'+(poster?'<img src="'+esc(poster)+'" alt="'+esc(i.title)+'" loading="lazy" onerror="this.remove()">':"POSTER")+'</div><div class="movie-info"><div class="movie-title">'+esc(i.title)+'</div><div class="movie-meta">'+esc(meta||"ORBIT")+'</div><a href="'+url+'" class="watch-button">'+esc(settings.watch_button_text||"Watch")+'</a></div></article>'};
+ const card=i=>{const meta=[i.year,i.rating,i.runtime_minutes?i.runtime_minutes+" min":""].filter(Boolean).join(" · "),url="/watch.html?slug="+encodeURIComponent(i.slug),poster=i.poster_url;return '<article class="movie-card"><div class="poster">'+(poster?'<img src="'+esc(poster)+'" alt="'+esc(i.title)+'" loading="lazy" onerror="this.remove()">':"POSTER")+'<a href="'+url+'" class="watch-button" aria-label="Watch '+esc(i.title)+'"><span class="watch-play-icon" aria-hidden="true">▶</span><span>'+esc(settings.watch_button_text||"Watch")+'</span></a></div><div class="movie-info"><div class="movie-title">'+esc(i.title)+'</div><div class="movie-meta">'+esc(meta||"ORBIT")+'</div></div></article>'};
  const movies=items.filter(i=>i.type==="movie"),shows=items.filter(i=>i.type==="show"),byId=new Map(items.map(i=>[i.id,i]));
  const readIds=key=>{let value=settings[key];if(typeof value==="string"){try{value=JSON.parse(value)}catch{value=[]}}return Array.isArray(value)?value:[]};
  const pick=(key,fallback,type="movie")=>{const chosen=readIds(key).map(x=>byId.get(x)||items.find(i=>i.title===x)).filter(i=>i&&i.type===type);return chosen.length?chosen:fallback};
@@ -37,9 +37,21 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
   fill("#tv .movie-grid",featuredShows,"No featured TV shows yet.");
   fill("#tv-recommended .movie-grid",recommendedShows,"TV recommendations coming soon.");
   fill("#tv-recently-added .movie-grid",recentShows,"No recently added TV shows yet.");
-  // Disney+/Netflix-style horizontal carousels for homepage rows.
   const carouselStyle=document.createElement("style");
   carouselStyle.textContent=`
+    .movie-card .poster{position:relative;overflow:hidden}
+    .movie-card .poster:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));opacity:.72;pointer-events:none;transition:opacity .2s}
+    .movie-card .watch-button{position:absolute;z-index:2;left:12px;right:12px;bottom:12px;min-height:42px;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 14px;border:1px solid rgba(255,255,255,.7);border-radius:6px;background:#f5f5f5!important;color:#111!important;font-size:14px;font-weight:750;letter-spacing:.1px;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.24);opacity:0;transform:translateY(5px);transition:opacity .18s,transform .18s,background .18s}
+    .movie-card:hover .watch-button,.movie-card:focus-within .watch-button{opacity:1;transform:translateY(0)}
+    .movie-card .watch-button:hover{background:#e50914!important;border-color:#e50914!important;color:#fff!important}
+    .movie-card .watch-play-icon{font-size:13px;line-height:1}
+    .movie-card .movie-info{padding:12px 2px 5px;background:transparent}
+    .movie-card{background:transparent!important;overflow:visible;border-radius:7px}
+    .movie-card:hover{background:transparent!important}
+    .movie-card .poster{border-radius:7px;overflow:hidden;background:#171717;box-shadow:0 3px 12px rgba(0,0,0,.25)}
+    .movie-card .movie-title{font-size:15px;line-height:1.35;margin-bottom:5px}
+    .movie-card .movie-meta{font-size:12px;color:#a0a0a0}
+    @media(hover:none){.movie-card .watch-button{opacity:1;transform:none;min-height:38px;left:8px;right:8px;bottom:8px;padding:8px 10px}}
     .orbit-carousel{position:relative;width:100%;min-width:0}
     .orbit-carousel .movie-grid{display:flex!important;flex-wrap:nowrap;gap:18px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 12px;overscroll-behavior-x:contain}
     .orbit-carousel .movie-grid::-webkit-scrollbar{display:none}
@@ -81,5 +93,4 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
  }
 }catch(e){console.error("ORBIT catalog error",e)}
 })();})();
-/* ORBIT X live design system */
 (async()=>{try{const r=await fetch("/api/site-settings",{cache:"no-store"});if(!r.ok)return;const s=(await r.json()).settings||{},root=document.documentElement;const style=document.createElement("style");style.textContent=":root{--orbit-bg:"+(s.background_color||"#080808")+";--orbit-header:"+(s.header_background||"#0b0b0b")+";--orbit-card:"+(s.card_background||"#151515")+";--orbit-accent:"+(s.accent||"#fff")+";--orbit-text:"+(s.text_color||"#fff")+";--orbit-muted:"+(s.muted_color||"#a0a0a0")+";--orbit-button:"+(s.button_color||"#fff")+";--orbit-button-hover:"+(s.button_hover||"#ddd")+";--orbit-max-width:"+(s.max_width||1280)+"px;--orbit-logo-size:"+(s.logo_size||28)+"px}body{background:var(--orbit-bg)!important;color:var(--orbit-text)!important}header,nav,.topbar,.site-header{background-color:var(--orbit-header)!important}.movie-card .poster,.card{background:var(--orbit-card)}.movie-meta,.muted,footer{color:var(--orbit-muted)}a{color:var(--orbit-accent)}.watch-button,.btn,.button{background:var(--orbit-button);color:#080808}.watch-button:hover,.btn:hover,.button:hover{background:var(--orbit-button-hover)}";document.head.appendChild(style);if(s.logo_url){document.querySelectorAll(".logo").forEach(el=>{el.innerHTML="<img src=\""+String(s.logo_url).replace(/"/g,"%22")+" \" alt=\"ORBIT X\" style=\"height:"+Number(s.logo_size||28)+"px;width:auto;object-fit:contain\">".replace(" \" alt","\" alt")})}const maps=[["#watch-now .section-title",s.watch_now_title],["#watchNow .section-title",s.watch_now_title],["#featured .section-title",s.featured_title],["#recently-added .section-title",s.recent_title],["#recent .section-title",s.recent_title],["#tv-recently-added .section-title",s.recent_title]];maps.forEach(x=>{if(x[1])document.querySelectorAll(x[0]).forEach(el=>el.textContent=x[1])});}catch(e){console.error("ORBIT design settings error",e)}})();
