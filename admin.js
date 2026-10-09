@@ -155,7 +155,81 @@ async function importVideoUrl(inputId, targetId, statusId, folder) {
   }
 }
 
-$("newMovie").onclick = () => resetForm("movie");
+$("newMovie").onclick = () => 
+async function importYouTubeBulk() {
+  const status = $("youtubeBulkStatus");
+  const button = $("youtubeBulkImport");
+  let raw = $("youtubeBulkLinks").value.trim();
+  if (!raw) { alert("Paste the YouTube links first."); return; }
+  try { raw = decodeURIComponent(raw); } catch (_) {}
+  const links = [...new Set(raw.split(/[\\n\\r\\t ,]+/).map(x => x.trim()).filter(Boolean)
+    .map(x => x.replace(/[<>()[\\]"]/g, "")))];
+  const valid = [];
+  for (const link of links) {
+    try {
+      const u = new URL(link);
+      if (!/(^|\\.)youtube\\.com$/.test(u.hostname) && u.hostname !== "youtu.be" && u.hostname !== "m.youtube.com") continue;
+      const id = u.hostname === "youtu.be" ? u.pathname.split("/").filter(Boolean)[0] : (u.searchParams.get("v") || u.pathname.match(/\\/(?:embed|shorts)\\/([^/?]+)/)?.[1]);
+      if (id) valid.push({id, url:"https://www.youtube.com/watch?v=" + id});
+    } catch (_) {}
+  }
+  const unique = [...new Map(valid.map(x => [x.id, x])).values()];
+  if (!unique.length) { alert("I couldn't find individual YouTube video links in that text."); return; }
+  button.disabled = true;
+  let added = 0, skipped = 0, drafts = 0, failed = 0;
+  try {
+    status.textContent = "Checking existing catalog entries...";
+    const existingData = await api("/api/content?type=movie");
+    const existing = existingData.content || [];
+    for (let i = 0; i < unique.length; i++) {
+      const item = unique[i];
+      status.textContent = "Importing " + (i + 1) + " of " + unique.length + "...";
+      if (existing.some(x => String(x.video_url || "").includes(item.id))) { skipped++; continue; }
+      let meta = null;
+      try {
+        const response = await fetch("https://noembed.com/embed?url=" + encodeURIComponent(item.url));
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.title) meta = data;
+        }
+      } catch (_) {}
+      const title = meta?.title || ("YouTube Video " + item.id);
+      const thumbnail = meta?.thumbnail_url || ("https://i.ytimg.com/vi/" + item.id + "/hqdefault.jpg");
+      const payload = {
+        type: "movie",
+        title,
+        description: "",
+        year: null,
+        runtime_minutes: null,
+        rating: "",
+        poster_url: thumbnail,
+        backdrop_url: thumbnail,
+        trailer_url: "",
+        video_url: item.url,
+        featured: false,
+        status: meta ? "published" : "draft",
+        release_at: null,
+        genres: []
+      };
+      try {
+        const saved = await api("/api/content", {method:"POST", body:JSON.stringify(payload)});
+        existing.push({id:saved.id, title, video_url:item.url});
+        added++;
+        if (!meta) drafts++;
+      } catch (e) { failed++; }
+    }
+    status.textContent = "Finished. Added " + added + ", skipped duplicates " + skipped + ", saved as drafts because title lookup failed " + drafts + ", failed " + failed + ".";
+    $("notice").textContent = "YouTube import finished. Review the catalog list and edit any draft entries whose titles could not be retrieved.";
+    await loadList();
+  } catch (e) {
+    status.textContent = "Import stopped: " + e.message;
+  } finally {
+    button.disabled = false;
+  }
+}
+$("youtubeBulkImport").onclick = importYouTubeBulk;
+
+resetForm("movie");
 $("newShow").onclick = () => resetForm("show");
 $("refresh").onclick = loadList;
 $("filterType").onchange = loadList;
