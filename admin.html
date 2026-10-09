@@ -43,7 +43,15 @@ textarea{min-height:120px;resize:vertical}.two{display:grid;grid-template-column
 <div class="builder-card"><h3>Sections</h3><label>Featured</label><input id="builderFeaturedTitle"><label>Recently Added</label><input id="builderRecentTitle"><label>Watch Now</label><input id="builderWatchTitle"><label>TV Shows</label><input id="builderTvTitle"></div>
 <div class="builder-card"><h3>Buttons & Layout</h3><label>Watch button text</label><input id="builderWatchText"><label>Site width</label><input id="builderMaxWidth" type="range" min="900" max="1800" value="1280"><div class="muted"><span id="builderMaxWidthOut">1280</span> px</div><label class="chip"><input id="builderAdEnabled" type="checkbox"> Show advertisement</label><label>Advertisement text</label><input id="builderAdText"></div>
 <div class="builder-card"><h3>Footer</h3><label>About</label><textarea id="builderFooterAbout"></textarea><label>Contact</label><input id="builderFooterContact"><label>Copyright</label><input id="builderFooterCopyright"><label>Privacy</label><input id="builderFooterPrivacy"></div>
-</div></div></section><div id="notice" class="notice">Build your catalog here. Changes are saved directly to OrbitX.</div>
+</div></div></section><section class="panel" style="margin:0 0 22px">
+<h2>Bulk Import YouTube Movies</h2>
+<p class="muted">Paste one YouTube video link per line. ORBIT will look up each public video title and thumbnail, then add it to the catalog using YouTube playback. No video downloads.</p>
+<label for="youtubeBulkLinks">YouTube links</label>
+<textarea id="youtubeBulkLinks" rows="7" placeholder="https://www.youtube.com/watch?v=..."></textarea>
+<div class="actions"><button type="button" class="primary" id="youtubeBulkImport">Import YouTube Links</button></div>
+<div id="youtubeBulkStatus" class="muted" aria-live="polite"></div>
+</section>
+<div id="notice" class="notice">Build your catalog here. Changes are saved directly to OrbitX.</div>
 <div class="grid">
 <section class="panel">
 <h2 id="formTitle">Add Movie</h2>
