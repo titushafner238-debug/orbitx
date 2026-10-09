@@ -163,7 +163,7 @@ async function importYouTubeBulk() {
   if (!raw) { alert("Paste the YouTube links first."); return; }
   try { raw = decodeURIComponent(raw); } catch (_) {}
   const links = [...new Set(raw.split(/\s+/).map(x => x.trim()).filter(Boolean)
-    .map(x => x.replace(/[<>()[\\]"]/g, "")))];
+    .map(x => x.trim()))];
   const valid = [];
   for (const link of links) {
     try {
