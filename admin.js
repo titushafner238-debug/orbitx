@@ -162,14 +162,15 @@ async function importYouTubeBulk() {
   let raw = $("youtubeBulkLinks").value.trim();
   if (!raw) { alert("Paste the YouTube links first."); return; }
   try { raw = decodeURIComponent(raw); } catch (_) {}
-  const links = [...new Set(raw.split(/[\\n\\r\\t ,]+/).map(x => x.trim()).filter(Boolean)
+  const links = [...new Set(raw.split(/\s+/).map(x => x.trim()).filter(Boolean)
     .map(x => x.replace(/[<>()[\\]"]/g, "")))];
   const valid = [];
   for (const link of links) {
     try {
       const u = new URL(link);
-      if (!/(^|\\.)youtube\\.com$/.test(u.hostname) && u.hostname !== "youtu.be" && u.hostname !== "m.youtube.com") continue;
-      const id = u.hostname === "youtu.be" ? u.pathname.split("/").filter(Boolean)[0] : (u.searchParams.get("v") || u.pathname.match(/\\/(?:embed|shorts)\\/([^/?]+)/)?.[1]);
+      if (u.hostname !== "youtube.com" && !u.hostname.endsWith(".youtube.com") && u.hostname !== "youtu.be") continue;
+      const parts = u.pathname.split("/").filter(Boolean);
+      const id = u.hostname === "youtu.be" ? parts[0] : (u.searchParams.get("v") || (["embed", "shorts"].includes(parts[0]) ? parts[1] : ""));
       if (id) valid.push({id, url:"https://www.youtube.com/watch?v=" + id});
     } catch (_) {}
   }
