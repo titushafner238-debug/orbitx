@@ -663,7 +663,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
       return `<article class="movie-card" data-genres="${esc(genres.join("|"))}" tabindex="0" role="link">
         <div class="poster">
           ${i.poster_url
-            ? `<img src="${esc(i.poster_url)}" alt="${esc(i.title)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.textContent='POSTER'">`
+            ? `<img src="${esc(i.poster_url)}" alt="${esc(i.title)}" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.textContent='POSTER'">`
             : "POSTER"}
           <a href="${url}" class="watch-button" aria-label="Watch ${esc(i.title)}"><span class="watch-play-icon" aria-hidden="true">▶</span><span>Watch</span></a>
         </div>
