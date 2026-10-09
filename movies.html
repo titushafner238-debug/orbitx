@@ -294,7 +294,7 @@
             }
         }
     
-.account-nav{display:flex;align-items:center;gap:8px}.avatar-circle{width:30px;height:30px;border:1px solid #666;border-radius:50%;display:inline-grid;place-items:center;font-size:18px;color:#aaa}.main-nav{display:flex;gap:28px;align-items:center}.main-nav a{color:#bdbdbd;font-size:15px}.main-nav a:hover,.main-nav a.active{color:#fff}.search-box,.search{margin-left:auto}.search-box input,.search input{width:230px;padding:10px 14px;background:#171717;border:1px solid #333;border-radius:6px;color:#fff;outline:none}
+.account-nav{display:flex;align-items:center;gap:8px}.avatar-circle{width:30px;height:30px;border:1px solid #666;border-radius:50%;display:inline-grid;place-items:center;font-size:18px;color:#aaa}.main-nav{display:flex;gap:28px;align-items:center}.main-nav a{color:#bdbdbd;font-size:15px}.main-nav a:hover,.main-nav a.active{color:#fff}.search-page-button{display:inline-flex;align-items:center;gap:8px;color:#ddd!important;border:1px solid #333;border-radius:7px;padding:9px 12px;background:#171717;white-space:nowrap}.search-page-button:hover,.search-page-button.active{background:#fff;color:#000!important}.search-glass{display:inline-block;width:13px;height:13px;border:2px solid currentColor;border-radius:50%;position:relative}.search-glass:after{content:"";position:absolute;width:6px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}@media(max-width:750px){.search-page-button{margin:0 auto}}
 button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#000!important;border-color:#fff!important}\n</style>
 </head>
 
@@ -309,12 +309,8 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
         <a href="/">Home</a>
         <a href="/movies.html" class="active">Movies</a>
         <a href="/tv.html">TV</a>
+        <a href="/search.html" class="search-page-button" aria-label="Search ORBIT X" onclick="sessionStorage.setItem('orbitxSearchFrom', location.pathname + location.search)"><span class="search-glass" aria-hidden="true"></span><span>Search</span></a>
       </nav>
-
-    <div class="search">
-        <input type="text" id="searchBox" placeholder="Search movies..." aria-label="Search">
-      </div>
-
 </header>
 
 
@@ -680,7 +676,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
   }
 
   function applyFilters() {
-    const search = document.getElementById("searchBox").value.trim().toLowerCase();
+    const search = (document.getElementById("searchBox")?.value || "").trim().toLowerCase();
     const filtered = movies.filter(i => {
       const genres = String(i.genres || "").split("||").map(x => x.toLowerCase());
       const genreOK = activeGenre === "All" || genres.includes(activeGenre.toLowerCase());
@@ -698,7 +694,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
     applyFilters();
   };
 
-  document.getElementById("searchBox").addEventListener("input", applyFilters);
+  document.getElementById("searchBox")?.addEventListener("input", applyFilters);
 
   try {
     const r = await fetch("/api/public/content?type=movie");
