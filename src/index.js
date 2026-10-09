@@ -431,22 +431,34 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/movies.html") {
-      const html = MOVIES_HTML.replace("</body>", '<script src="/catalog.js"></script></body>');
-      return new Response(html, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
+    if (url.pathname === "/movies.html" || url.pathname === "/movies" || url.pathname === "/movies/") {
+      // Serve the real repository page. The old route returned a base64-embedded copy,
+      // which meant edits to movies.html never reached visitors.
+      const assetUrl = new URL(request.url);
+      assetUrl.pathname = "/movies.html";
+      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
+      if (page.ok) {
+        const html = await page.text();
+        return new Response(html, {status: page.status, headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
+      }
+      return new Response("Movies page could not be loaded.", {status: 503});
     }
 
-    if (url.pathname === "/tv.html") {
-      const page = await env.ASSETS.fetch(request);
+    if (url.pathname === "/tv.html" || url.pathname === "/tv" || url.pathname === "/tv/") {
+      // Use tv.html's own live catalog renderer. Injecting catalog.js here caused a
+      // second renderer to overwrite the TV page's grid and styling.
+      const assetUrl = new URL(request.url);
+      assetUrl.pathname = "/tv.html";
+      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
       if (page.ok) {
         let html = await page.text();
         html = html.replace(/<title>ORBIT - (Movies|TV Shows)<\/title>/g, "<title>ORBIT X — $1</title>")
           .replace(/<a href="index\.html" class="logo">\s*ORBIT\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>')
           .replace(/<a href="index\.html" class="logo">\s*ORBIT X\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>')
           .replace(/<p>\s*ORBIT — Free Entertainment\s*<\/p>/g, '<p>ORBIT X — Free Entertainment</p>');
-        html = html.replace("</body>", '<script src="/catalog.js"></script></body>');
-        return new Response(html,{status:page.status,headers:page.headers});
+        return new Response(html, {status: page.status, headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
       }
+      return new Response("TV Shows page could not be loaded.", {status: 503});
     }
 
     if (url.pathname === "/admin" || url.pathname === "/admin/" || url.pathname === "/admin.html") {
