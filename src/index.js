@@ -119,37 +119,77 @@ function publicContentWhere() {
 }
 
 async function posterProxy(url) {
+  // Try the original poster artwork first, then known public-domain image fallbacks.
+  // Wikimedia fallbacks are film stills where a verified theatrical poster is unavailable.
   const posters = {
-    "flying-deuces": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/The_Flying_Deuces_(1939)_1.jpg", referer:"https://commons.wikimedia.org/"},
-    "impact": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Coburn-Helen_Walker_in_Impact.jpg", referer:"https://commons.wikimedia.org/"},
-    "a-fair-exchange": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Getting_acquainted.jpg", referer:"https://commons.wikimedia.org/"},
-    "mclintock": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/H.W._Gim_in_McLintock!_(1963).jpg", referer:"https://commons.wikimedia.org/"},
-    "royal-wedding": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Royal_Wedding_(1951)_1.jpg", referer:"https://commons.wikimedia.org/"},
-    "my-favorite-brunette": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Arnt_My_Favorite_Brunette_(1947).jpg", referer:"https://commons.wikimedia.org/"},
-    "santa-fe-trail": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Santa_Fe_Trail.jpg", referer:"https://commons.wikimedia.org/"},
-    "tarzan-green-goddess": {url:"https://www.erbzine.com/mag63/grgodh3.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
-    "new-adventures-tarzan": {url:"https://www.erbzine.com/mag63/mvnadvh4.jpg", referer:"https://www.erbzine.com/mag63/0584.html"}
+    "flying-deuces": [
+      {url:"https://www.impawards.com/1939/posters/flying_deuces.jpg", referer:"https://www.impawards.com/1939/"},
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/The_Flying_Deuces_(1939)_1.jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "impact": [
+      {url:"https://www.impawards.com/1949/posters/impact.jpg", referer:"https://www.impawards.com/1949/"},
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Coburn-Helen_Walker_in_Impact.jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "a-fair-exchange": [
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Getting_acquainted.jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "mclintock": [
+      {url:"https://www.impawards.com/1963/posters/mclintock.jpg", referer:"https://www.impawards.com/1963/"},
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/H.W._Gim_in_McLintock!_(1963).jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "royal-wedding": [
+      {url:"https://www.impawards.com/1951/posters/royal_wedding.jpg", referer:"https://www.impawards.com/1951/"},
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Royal_Wedding_(1951)_1.jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "my-favorite-brunette": [
+      {url:"https://www.impawards.com/1947/posters/my_favorite_brunette.jpg", referer:"https://www.impawards.com/1947/"},
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Arnt_My_Favorite_Brunette_(1947).jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "santa-fe-trail": [
+      {url:"https://www.impawards.com/1940/posters/santa_fe_trail.jpg", referer:"https://www.impawards.com/1940/"},
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Santa_Fe_Trail.jpg", referer:"https://commons.wikimedia.org/"}
+    ],
+    "tarzan-green-goddess": [
+      {url:"https://www.erbzine.com/mag63/grgodh3.jpg", referer:"https://www.erbzine.com/mag63/0584.html"}
+    ],
+    "new-adventures-tarzan": [
+      {url:"https://www.erbzine.com/mag63/mvnadvh4.jpg", referer:"https://www.erbzine.com/mag63/0584.html"}
+    ]
   };
   const key = url.searchParams.get("key") || "";
-  const item = posters[key];
-  if (!item) return new Response("Poster not found.", {status:404, headers:{"Cache-Control":"no-store"}});
-  try {
-    const upstream = await fetch(item.url, {
-      headers: { "Referer": item.referer, "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8" },
-      redirect: "follow"
-    });
-    const type = upstream.headers.get("content-type") || "";
-    if (!upstream.ok || !type.toLowerCase().startsWith("image/")) {
-      return new Response("Poster source unavailable.", {status:502, headers:{"Cache-Control":"no-store"}});
+  const sources = posters[key];
+  if (!sources) return new Response("Poster not found.", {status:404, headers:{"Cache-Control":"no-store"}});
+  for (const item of sources) {
+    try {
+      const upstream = await fetch(item.url, {
+        headers: {
+          "User-Agent": "ORBIT-X/1.0 (poster image proxy)",
+          "Referer": item.referer,
+          "Accept": "image/avif,image/webp,image/apng,image/jpeg,image/png,image/*,*/*;q=0.8"
+        },
+        redirect: "follow"
+      });
+      if (!upstream.ok || !upstream.body) continue;
+      const type = (upstream.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+      // Reject HTML/error pages, but accept common image types even if the host labels them poorly.
+      const bytes = await upstream.arrayBuffer();
+      const b = new Uint8Array(bytes);
+      const looksLikeImage = (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) ||
+        (b.length >= 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) ||
+        (b.length >= 6 && String.fromCharCode(...b.slice(0, 6)).startsWith("GIF8")) ||
+        (b.length >= 12 && String.fromCharCode(...b.slice(0, 4)) === "RIFF" && String.fromCharCode(...b.slice(8, 12)) === "WEBP");
+      if (!looksLikeImage && !type.startsWith("image/")) continue;
+      const contentType = type.startsWith("image/") ? type : (b[0] === 0xff ? "image/jpeg" : "application/octet-stream");
+      const headers = new Headers();
+      headers.set("Content-Type", contentType);
+      headers.set("Cache-Control", "public, max-age=86400, s-maxage=604800");
+      headers.set("X-Content-Type-Options", "nosniff");
+      return new Response(bytes, {status:200, headers});
+    } catch (error) {
+      // Continue to the next known source.
     }
-    const headers = new Headers();
-    headers.set("Content-Type", type);
-    headers.set("Cache-Control", "public, max-age=86400, s-maxage=604800");
-    headers.set("X-Content-Type-Options", "nosniff");
-    return new Response(upstream.body, {status:200, headers});
-  } catch (error) {
-    return new Response("Poster source unavailable.", {status:502, headers:{"Cache-Control":"no-store"}});
   }
+  return new Response("Poster source unavailable.", {status:502, headers:{"Cache-Control":"no-store"}});
 }
 
 async function listContent(env, url, admin = false) {
