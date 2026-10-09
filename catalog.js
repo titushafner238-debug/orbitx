@@ -37,6 +37,43 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
   fill("#tv .movie-grid",featuredShows,"No featured TV shows yet.");
   fill("#tv-recommended .movie-grid",recommendedShows,"TV recommendations coming soon.");
   fill("#tv-recently-added .movie-grid",recentShows,"No recently added TV shows yet.");
+  // Disney+/Netflix-style horizontal carousels for homepage rows.
+  const carouselStyle=document.createElement("style");
+  carouselStyle.textContent=`
+    .orbit-carousel{position:relative;width:100%;min-width:0}
+    .orbit-carousel .movie-grid{display:flex!important;flex-wrap:nowrap;gap:18px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 12px;overscroll-behavior-x:contain}
+    .orbit-carousel .movie-grid::-webkit-scrollbar{display:none}
+    .orbit-carousel .movie-card{flex:0 0 calc((100% - 72px)/5);min-width:0;scroll-snap-align:start}
+    .orbit-carousel .orbit-row-arrow{position:absolute;z-index:5;top:38%;transform:translateY(-50%);width:42px;height:64px;border:0;border-radius:7px;background:rgba(8,8,8,.88);color:#fff;font-size:32px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 14px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s,background .18s}
+    .orbit-carousel:hover .orbit-row-arrow,.orbit-carousel:focus-within .orbit-row-arrow{opacity:1;pointer-events:auto}
+    .orbit-carousel .orbit-row-arrow:hover{background:rgba(45,45,45,.98)}
+    .orbit-carousel .orbit-row-arrow:focus-visible{opacity:1;pointer-events:auto;outline:2px solid #fff;outline-offset:2px}
+    .orbit-carousel .orbit-row-arrow.left{left:4px}
+    .orbit-carousel .orbit-row-arrow.right{right:4px}
+    .orbit-carousel .orbit-row-arrow[hidden]{display:none!important}
+    @media(max-width:1000px){.orbit-carousel .movie-card{flex-basis:calc((100% - 36px)/3)}}
+    @media(max-width:600px){.orbit-carousel .movie-card{flex-basis:calc((100% - 18px)/2)}.orbit-carousel .orbit-row-arrow{width:34px;height:52px;font-size:27px}.orbit-carousel .orbit-row-arrow.left{left:2px}.orbit-carousel .orbit-row-arrow.right{right:2px}}
+    @media(hover:none){.orbit-carousel .orbit-row-arrow{opacity:1;pointer-events:auto;background:rgba(8,8,8,.78)}}
+  `;
+  document.head.appendChild(carouselStyle);
+  document.querySelectorAll(".section .movie-grid").forEach(grid=>{
+    const section=grid.closest(".section");
+    if(!section||section.classList.contains("originals")||grid.dataset.orbitCarousel==="ready")return;
+    const count=grid.querySelectorAll(".movie-card").length;
+    if(count<=5)return;
+    grid.dataset.orbitCarousel="ready";
+    const wrap=document.createElement("div");wrap.className="orbit-carousel";
+    grid.parentNode.insertBefore(wrap,grid);wrap.appendChild(grid);
+    const left=document.createElement("button");left.type="button";left.className="orbit-row-arrow left";left.innerHTML="&#8249;";left.setAttribute("aria-label","Scroll "+(section.querySelector(".section-title")?.textContent||"titles")+" left");
+    const right=document.createElement("button");right.type="button";right.className="orbit-row-arrow right";right.innerHTML="&#8250;";right.setAttribute("aria-label","Scroll "+(section.querySelector(".section-title")?.textContent||"titles")+" right");
+    wrap.append(left,right);
+    const update=()=>{const max=grid.scrollWidth-grid.clientWidth;left.hidden=grid.scrollLeft<=3;right.hidden=max<=3||grid.scrollLeft>=max-3};
+    left.addEventListener("click",()=>grid.scrollBy({left:-grid.clientWidth*.85,behavior:"smooth"}));
+    right.addEventListener("click",()=>grid.scrollBy({left:grid.clientWidth*.85,behavior:"smooth"}));
+    grid.addEventListener("scroll",update,{passive:true});
+    if("ResizeObserver" in window)new ResizeObserver(update).observe(grid);else window.addEventListener("resize",update);
+    update();
+  });
   const hero=document.querySelector(".hero"),hi=promo[0];if(hero){const bg=settings.hero_backdrop||(hi&&(hi.backdrop_url||hi.poster_url));if(bg)hero.style.backgroundImage='linear-gradient(90deg,#080808 15%,rgba(8,8,8,.92) 40%,rgba(8,8,8,.45) 75%,rgba(8,8,8,.15)),url("'+String(bg).replace(/"/g,"%22")+'")';const h=hero.querySelector("h1");if(h)h.textContent=settings.hero_title||hi?.title||"ORBIT X";const p=hero.querySelector("p");if(p&&settings.hero_description)p.textContent=settings.hero_description}
   const ad=document.querySelector(".ad-space");if(ad){ad.textContent=settings.ad_enabled===false?"":(settings.ad_text||"ADVERTISEMENT");ad.style.display=settings.ad_enabled===false?"none":""}
   const featuredTitle=document.querySelector("#movies .section-title");if(featuredTitle&&settings.featured_title)featuredTitle.textContent=settings.featured_title;
