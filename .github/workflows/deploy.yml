@@ -27,3 +27,42 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: a1e1ddd8eff837c1f4f558c0c7502564
+      - name: Refresh placeholder movie titles from YouTube
+        run: |
+          node <<'NODE'
+          const { execFileSync } = require('node:child_process');
+          const ids = [
+            'JSj1mZ9-CAM','dAeVyZieW1U','f-vk0G5EWrk','cs6UK61vYqI','--ZAVwdQvoo','rjF63_-1548',
+            't_wJ7p1d7kU','CLLYrGrcAso','7VIB6D3SwKk','7vodgxAiqc4','SlUnAOFcmu4','IPaLgJag3No',
+            'L3F-9ZfXl_M','V1Nlk_pBqfc','L9YVnTGxPHs','saQOrNranuc','-zvhMjGWTUI','T-a8NiBvSs4',
+            'sFUc5KMYvB0','zNLTmEdDAPA','tKr9udblGv0','7SIY5LrE3Ls','r86pYHAWwSs','88gild2bj4A',
+            'usJZRDI_g00','TbiQYkCQb6c','ea5vNEO6Tew','S5DwXvxAMFs','QnxjFNkEOQg','bDUouOsYaTM',
+            'J3AnhYnfY_U','ZcGHSZxrQnY','ijDfbGEfEts','mMwIUGYIyx0','OnEAbR7n1sw','lGPZTq7kxQI'
+          ];
+          const esc = s => String(s).replace(/'/g, "''");
+          (async () => {
+            let updated = 0, failed = 0;
+            for (const id of ids) {
+              try {
+                const url = 'https://www.youtube.com/watch?v=' + id;
+                const res = await fetch('https://www.youtube.com/oembed?url=' + encodeURIComponent(url) + '&format=json');
+                if (!res.ok) throw new Error('oEmbed HTTP ' + res.status);
+                const data = await res.json();
+                const title = String(data.title || '').trim();
+                if (!title) throw new Error('No title');
+                const poster = data.thumbnail_url || ('https://i.ytimg.com/vi/' + id + '/hqdefault.jpg');
+                const sql = "UPDATE content SET title='" + esc(title.slice(0,240)) + "', poster_url=CASE WHEN poster_url='' OR poster_url LIKE '%hqdefault.jpg%' THEN '" + esc(poster) + "' ELSE poster_url END, backdrop_url=CASE WHEN backdrop_url='' OR backdrop_url LIKE '%hqdefault.jpg%' THEN '" + esc(poster) + "' ELSE backdrop_url END, updated_at=datetime('now') WHERE video_url LIKE '%" + id + "%' AND title LIKE 'YouTube Movie (%'";
+                execFileSync('npx', ['wrangler','d1','execute','orbitx-db','--remote','--command',sql], { stdio:'pipe', env:process.env });
+                console.log('Synced:', id, '=>', title);
+                updated++;
+              } catch (e) {
+                console.log('Could not sync', id + ':', e.message);
+                failed++;
+              }
+            }
+            console.log('YouTube title sync complete:', updated, 'processed;', failed, 'failed.');
+          })().catch(e => { console.error(e); process.exit(1); });
+          NODE
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: a1e1ddd8eff837c1f4f558c0c7502564
