@@ -197,8 +197,10 @@ async function saveContent(request, env) {
     body.year ? Number(body.year) : null,
     body.runtime_minutes ? Number(body.runtime_minutes) : null,
     String(body.rating || ""),
-    String(body.poster_url || ""),
-    String(body.backdrop_url || ""),
+    // A YouTube thumbnail is never a movie poster. Keep it out of poster_url.
+    (String(body.poster_url || "").includes("i.ytimg.com/vi/") ? "" : String(body.poster_url || "").trim()),
+    // YouTube thumbnails may be used as widescreen backdrops only.
+    (String(body.backdrop_url || "").trim() || (() => { const u = String(body.video_url || ""); const m = u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m ? "https://i.ytimg.com/vi/" + m[1] + "/hqdefault.jpg" : ""; })()),
     String(body.trailer_url || ""),
     String(body.video_url || ""),
     body.featured ? 1 : 0,
