@@ -228,7 +228,24 @@
         }
     
 .account-nav{display:flex;align-items:center;gap:8px}.avatar-circle{width:30px;height:30px;border:1px solid #666;border-radius:50%;display:inline-grid;place-items:center;font-size:18px;color:#aaa}.main-nav{display:flex;gap:28px;align-items:center}.main-nav a{color:#bdbdbd;font-size:15px}.main-nav a:hover,.main-nav a.active{color:#fff}.search-page-button{display:inline-flex;align-items:center;gap:8px;color:#ddd!important;border:1px solid #333;border-radius:7px;padding:9px 12px;background:#171717;white-space:nowrap}.search-page-button:hover,.search-page-button.active{background:#fff;color:#000!important}.search-glass{display:inline-block;width:13px;height:13px;border:2px solid currentColor;border-radius:50%;position:relative}.search-glass:after{content:"";position:absolute;width:6px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}@media(max-width:750px){.search-page-button{margin:0 auto}}
-button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#000!important;border-color:#fff!important}\n</style>
+button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#000!important;border-color:#fff!important}\n
+/* ORBIT X Netflix-inspired poster Watch button */
+.movie-grid .movie-card{background:transparent!important;overflow:visible;border-radius:8px;transition:transform .2s}
+.movie-grid .movie-card:hover{transform:translateY(-3px);background:transparent!important}
+.movie-grid .poster{position:relative;overflow:hidden;border-radius:8px;background:#171717;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.movie-grid .poster:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));opacity:.8;pointer-events:none}
+.movie-grid .poster img{display:block;width:100%;height:100%;object-fit:cover}
+.movie-grid .watch-button{position:absolute;z-index:2;left:10px;right:10px;bottom:10px;min-height:40px;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 12px;border:1px solid rgba(255,255,255,.75);border-radius:6px;background:#f5f5f5!important;color:#111!important;font-size:14px;font-weight:750;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.24);opacity:0;transform:translateY(5px);transition:opacity .18s,transform .18s,background .18s}
+.movie-grid .movie-card:hover .watch-button,.movie-grid .movie-card:focus-within .watch-button{opacity:1;transform:translateY(0)}
+.movie-grid .watch-button:hover{background:#e50914!important;border-color:#e50914!important;color:#fff!important}
+.movie-grid .watch-play-icon{font-size:13px;line-height:1}
+.movie-grid .movie-info{padding:12px 2px 5px;background:transparent}
+.movie-grid .movie-title{font-size:15px;line-height:1.35;margin-bottom:5px}
+.movie-grid .movie-meta{font-size:12px;color:#a0a0a0}
+@media(hover:none){.movie-grid .watch-button{opacity:1;transform:none;min-height:38px;left:8px;right:8px;bottom:8px;padding:8px 10px}}
+@media(max-width:750px){.movie-grid{gap:14px!important}}
+
+</style>
 </head>
 
 <body>
@@ -346,29 +363,14 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
     <!-- TV SHOW LIST -->
 
     <div class="show-header">
-
-        <h2>
-            All TV Shows
-        </h2>
-
-        <div class="show-count">
-            0 shows
-        </div>
-
+        <h2 id="showTitle">All TV Shows</h2>
+        <div class="show-count"><span id="showCount">0</span> shows</div>
     </div>
 
-
-    <div class="empty">
-
-        <h3>
-            TV Shows Coming Soon
-        </h3>
-
-        <p>
-            The ORBIT TV library is currently being built.
-            Public-domain television shows will appear here when they are added.
-        </p>
-
+    <div class="movie-grid show-grid" id="showGrid"></div>
+    <div class="empty" id="emptyMessage" style="display:none">
+        <h3>No TV shows yet</h3>
+        <p>Published TV shows added in the ORBIT admin area will appear here automatically.</p>
     </div>
 
 </main>
@@ -383,6 +385,69 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
 </footer>
 
 
-<script src="catalog.js?v=20261009-3"></script>
+<script>
+(async () => {
+  const grid = document.getElementById("showGrid");
+  const count = document.getElementById("showCount");
+  const empty = document.getElementById("emptyMessage");
+  const title = document.getElementById("showTitle");
+  let shows = [];
+  let activeGenre = "All";
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  function render(list) {
+    count.textContent = list.length;
+    empty.style.display = list.length ? "none" : "block";
+    grid.innerHTML = list.map(i => {
+      const meta = [i.year, i.rating, i.runtime_minutes ? i.runtime_minutes + " min" : ""].filter(Boolean).join(" · ");
+      const genres = String(i.genres || "").split("||").filter(Boolean);
+      const url = "/watch.html?slug=" + encodeURIComponent(i.slug);
+      return `<article class="movie-card" data-genres="${esc(genres.join("|"))}" tabindex="0" role="link">
+        <div class="poster" style="position:relative;height:275px">
+          ${i.poster_url ? `<img src="${esc(i.poster_url)}" alt="${esc(i.title)}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='POSTER'">` : "POSTER"}
+          <a href="${url}" class="watch-button" aria-label="Watch ${esc(i.title)}"><span class="watch-play-icon" aria-hidden="true">▶</span><span>Watch</span></a>
+        </div>
+        <div class="movie-info"><div class="movie-title">${esc(i.title)}</div><div class="movie-meta">${esc(meta || "TV Show")}</div></div>
+      </article>`;
+    }).join("");
+    grid.querySelectorAll(".movie-card").forEach(card => {
+      const href = card.querySelector(".watch-button")?.href;
+      if (href) {
+        card.addEventListener("click", e => { if (!e.target.closest("a")) location.href = href; });
+        card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); location.href = href; } });
+      }
+    });
+  }
+  function applyFilters() {
+    const search = (document.getElementById("searchBox")?.value || "").trim().toLowerCase();
+    const filtered = shows.filter(i => {
+      const genres = String(i.genres || "").split("||").map(x => x.toLowerCase());
+      const genreOK = activeGenre === "All" || genres.includes(activeGenre.toLowerCase());
+      return genreOK && (i.title + " " + (i.description || "")).toLowerCase().includes(search);
+    });
+    title.textContent = activeGenre === "All" ? "All TV Shows" : activeGenre + " TV Shows";
+    render(filtered);
+  }
+  window.filterShows = (genre, button) => {
+    document.querySelectorAll(".genre").forEach(x => x.classList.remove("selected"));
+    button.classList.add("selected"); activeGenre = genre; applyFilters();
+  };
+  document.querySelectorAll(".genre").forEach(button => {
+    const genre = button.textContent.trim();
+    button.setAttribute("onclick", "filterShows(" + JSON.stringify(genre) + ", this)");
+  });
+  document.getElementById("searchBox")?.addEventListener("input", applyFilters);
+  try {
+    const r = await fetch("/api/public/content?type=show", {cache:"no-store"});
+    const d = await r.json();
+    shows = (d.content || []).filter(i => i.type === "show");
+    applyFilters();
+  } catch (e) {
+    console.error(e);
+    grid.innerHTML = "<p>Could not load TV shows.</p>";
+    count.textContent = "0";
+    empty.style.display = "block";
+  }
+})();
+</script>
 </body>
 </html>
