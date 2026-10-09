@@ -460,32 +460,6 @@ export default {
       return new Response(ACCOUNT_HTML, {headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
     }
 
-    if (url.pathname === "/api/_metadata-sync-7f3c9a" && request.method === "GET" && url.searchParams.get("key") === "orbitx-onetime-sync-2026-10-09") {
-      const auth = await requireAdmin(request, env);
-      if (!auth) return authJson({error:"Admin access required."},403);
-      const rows = await env.DB.prepare("SELECT id, title, video_url FROM content WHERE type='movie' AND video_url LIKE '%youtube%' ORDER BY created_at").all();
-      const results = [];
-      for (const row of (rows.results || [])) {
-        const m = String(row.video_url || "").match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
-        if (!m) { results.push({id:row.id, error:"Could not parse video ID"}); continue; }
-        try {
-          const target = "https://www.youtube.com/watch?v=" + m[1];
-          const resp = await fetch("https://www.youtube.com/oembed?url=" + encodeURIComponent(target) + "&format=json", {headers:{"Accept":"application/json"}, cf:{cacheTtl:0}});
-          if (!resp.ok) { results.push({id:row.id, video_id:m[1], error:"YouTube metadata HTTP " + resp.status}); continue; }
-          const data = await resp.json();
-          if (!data.title || !String(data.title).trim()) { results.push({id:row.id, video_id:m[1], error:"No title returned"}); continue; }
-          const title = String(data.title).trim().slice(0,240);
-          const isPlaceholder = /^YouTube Movie\s*\(/i.test(row.title || "");
-          if (isPlaceholder) {
-            await env.DB.prepare("UPDATE content SET title=?, slug=?, poster_url=CASE WHEN poster_url='' OR poster_url LIKE '%hqdefault.jpg%' THEN ? ELSE poster_url END, backdrop_url=CASE WHEN backdrop_url='' OR backdrop_url LIKE '%hqdefault.jpg%' THEN ? ELSE backdrop_url END, updated_at=datetime('now') WHERE id=?")
-              .bind(title, "youtube-" + m[1].toLowerCase(), data.thumbnail_url || ("https://i.ytimg.com/vi/" + m[1] + "/hqdefault.jpg"), data.thumbnail_url || ("https://i.ytimg.com/vi/" + m[1] + "/hqdefault.jpg"), row.id).run();
-          }
-          results.push({id:row.id, video_id:m[1], old_title:row.title, title, author:data.author_name || "", thumbnail_url:data.thumbnail_url || "", updated:isPlaceholder});
-        } catch (e) { results.push({id:row.id, video_id:m[1], error:String(e.message || e)}); }
-      }
-      return json({count:results.length, results});
-    }
-
     if (url.pathname.startsWith("/api/")) {
       try {
         if (url.pathname === "/api/auth/signup" && request.method === "POST") return signup(request, env);
