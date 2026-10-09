@@ -118,6 +118,40 @@ function publicContentWhere() {
     AND (release_at IS NULL OR release_at <= datetime('now'))`;
 }
 
+async function posterProxy(url) {
+  const posters = {
+    "flying-deuces": {url:"https://www.impawards.com/1939/posters/flying_deuces.jpg", referer:"https://www.impawards.com/1939/"},
+    "impact": {url:"https://www.impawards.com/1949/posters/impact.jpg", referer:"https://www.impawards.com/1949/"},
+    "a-fair-exchange": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Getting_acquainted.jpg", referer:"https://commons.wikimedia.org/"},
+    "mclintock": {url:"https://www.impawards.com/1963/posters/mclintock.jpg", referer:"https://www.impawards.com/1963/"},
+    "royal-wedding": {url:"https://www.impawards.com/1951/posters/royal_wedding.jpg", referer:"https://www.impawards.com/1951/"},
+    "my-favorite-brunette": {url:"https://www.impawards.com/1947/posters/my_favorite_brunette.jpg", referer:"https://www.impawards.com/1947/"},
+    "santa-fe-trail": {url:"https://www.impawards.com/1940/posters/santa_fe_trail.jpg", referer:"https://www.impawards.com/1940/"},
+    "tarzan-green-goddess": {url:"https://www.erbzine.com/mag63/grgodh3.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
+    "new-adventures-tarzan": {url:"https://www.erbzine.com/mag63/mvnadvh4.jpg", referer:"https://www.erbzine.com/mag63/0584.html"}
+  };
+  const key = url.searchParams.get("key") || "";
+  const item = posters[key];
+  if (!item) return new Response("Poster not found.", {status:404, headers:{"Cache-Control":"no-store"}});
+  try {
+    const upstream = await fetch(item.url, {
+      headers: { "Referer": item.referer, "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8" },
+      redirect: "follow"
+    });
+    const type = upstream.headers.get("content-type") || "";
+    if (!upstream.ok || !type.toLowerCase().startsWith("image/")) {
+      return new Response("Poster source unavailable.", {status:502, headers:{"Cache-Control":"no-store"}});
+    }
+    const headers = new Headers();
+    headers.set("Content-Type", type);
+    headers.set("Cache-Control", "public, max-age=86400, s-maxage=604800");
+    headers.set("X-Content-Type-Options", "nosniff");
+    return new Response(upstream.body, {status:200, headers});
+  } catch (error) {
+    return new Response("Poster source unavailable.", {status:502, headers:{"Cache-Control":"no-store"}});
+  }
+}
+
 async function listContent(env, url, admin = false) {
   const type = url.searchParams.get("type");
   const q = url.searchParams.get("q");
@@ -476,6 +510,7 @@ export default {
 
     if (url.pathname.startsWith("/api/")) {
       try {
+        if (url.pathname === "/api/poster" && request.method === "GET") return posterProxy(url);
         if (url.pathname === "/api/auth/signup" && request.method === "POST") return signup(request, env);
         if (url.pathname === "/api/auth/login" && request.method === "POST") return login(request, env);
         if (url.pathname === "/api/auth/logout" && request.method === "POST") return logout(request, env);
