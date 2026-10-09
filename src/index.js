@@ -120,13 +120,13 @@ function publicContentWhere() {
 
 async function posterProxy(url) {
   const posters = {
-    "flying-deuces": {url:"https://www.impawards.com/1939/posters/flying_deuces.jpg", referer:"https://www.impawards.com/1939/"},
-    "impact": {url:"https://www.impawards.com/1949/posters/impact.jpg", referer:"https://www.impawards.com/1949/"},
+    "flying-deuces": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/The_Flying_Deuces_(1939)_1.jpg", referer:"https://commons.wikimedia.org/"},
+    "impact": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Coburn-Helen_Walker_in_Impact.jpg", referer:"https://commons.wikimedia.org/"},
     "a-fair-exchange": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Getting_acquainted.jpg", referer:"https://commons.wikimedia.org/"},
-    "mclintock": {url:"https://www.impawards.com/1963/posters/mclintock.jpg", referer:"https://www.impawards.com/1963/"},
-    "royal-wedding": {url:"https://www.impawards.com/1951/posters/royal_wedding.jpg", referer:"https://www.impawards.com/1951/"},
-    "my-favorite-brunette": {url:"https://www.impawards.com/1947/posters/my_favorite_brunette.jpg", referer:"https://www.impawards.com/1947/"},
-    "santa-fe-trail": {url:"https://www.impawards.com/1940/posters/santa_fe_trail.jpg", referer:"https://www.impawards.com/1940/"},
+    "mclintock": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/H.W._Gim_in_McLintock!_(1963).jpg", referer:"https://commons.wikimedia.org/"},
+    "royal-wedding": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Royal_Wedding_(1951)_1.jpg", referer:"https://commons.wikimedia.org/"},
+    "my-favorite-brunette": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Arnt_My_Favorite_Brunette_(1947).jpg", referer:"https://commons.wikimedia.org/"},
+    "santa-fe-trail": {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Santa_Fe_Trail.jpg", referer:"https://commons.wikimedia.org/"},
     "tarzan-green-goddess": {url:"https://www.erbzine.com/mag63/grgodh3.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
     "new-adventures-tarzan": {url:"https://www.erbzine.com/mag63/mvnadvh4.jpg", referer:"https://www.erbzine.com/mag63/0584.html"}
   };
