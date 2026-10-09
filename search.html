@@ -25,6 +25,7 @@
 <button class="collection-tile" type="button" data-collection="chaplin"><span class="collection-art"></span><span class="collection-copy"><span class="collection-eyebrow">ORBIT X Collection</span><h3>Charlie Chaplin</h3><p>Silent-film classics and comedy.</p></span></button>
 <button class="collection-tile" type="button" data-collection="christmas"><span class="collection-art"></span><span class="collection-copy"><span class="collection-eyebrow">Seasonal Collection</span><h3>Christmas Movies</h3><p>Holiday favorites for movie night.</p></span></button>
 <button class="collection-tile" type="button" data-collection="halloween"><span class="collection-art"></span><span class="collection-copy"><span class="collection-eyebrow">Seasonal Collection</span><h3>Halloween Movies</h3><p>Spooky classics and Halloween picks.</p></span></button>
+<button class="collection-tile" type="button" data-collection="tarzan"><span class="collection-art"></span><span class="collection-copy"><span class="collection-eyebrow">ORBIT X Collection</span><h3>Tarzan Collection</h3><p>Jungle adventures and classic Tarzan serials.</p></span></button>
 </div>
 </section>
 <section id="resultsSection" class="hidden" aria-live="polite"><h2 id="resultsHeading" class="results-heading">Search results</h2><div id="resultsGrid" class="movie-grid"></div><p id="resultsEmpty" class="empty-state hidden"></p></section>
@@ -39,7 +40,8 @@
  const collectionInfo={
   chaplin:{title:"Charlie Chaplin",match:i=>/charlie chaplin|the vagabond|the floorwalker|the rink|burlesque on carmen|shanghaied|the cure|the count|tillie's punctured|tillie.s punctured|one a\.m\.|kid auto races|making a living|mabel.s strange predicament|the good for nothing|a fair exchange/i.test(i.title||"")},
   christmas:{title:"Christmas Movies",match:i=>/christmas|santa claus|santa's|santa’s|holiday|winter wonderland|silent night/i.test([i.title,i.description,i.genres].filter(Boolean).join(" "))},
-  halloween:{title:"Halloween Movies",match:i=>/halloween|haunted|ghost|witch|monster|vampire|frankenstein|dracula|horror|spooky/i.test([i.title,i.description,i.genres].filter(Boolean).join(" "))}
+  halloween:{title:"Halloween Movies",match:i=>/halloween|haunted|ghost|witch|monster|vampire|frankenstein|dracula|horror|spooky/i.test([i.title,i.description,i.genres].filter(Boolean).join(" "))},
+  tarzan:{title:"Tarzan Collection",match:i=>/tarzan/i.test([i.title,i.description].filter(Boolean).join(" "))}
  };
  function card(i){const meta=[i.type==="show"?"TV Show":"Movie",i.year].filter(Boolean).join(" · ");return '<article class="movie-card"><a href="/watch.html?slug='+encodeURIComponent(i.slug)+'"><div class="poster">'+(i.poster_url?'<img src="'+esc(i.poster_url)+'" alt="'+esc(i.title)+'" loading="lazy" onerror="this.remove()">':'ORBIT X')+'</div><div class="movie-info"><div class="movie-title">'+esc(i.title)+'</div><div class="movie-meta">'+esc(meta)+'</div><span class="watch-button">View title</span></div></a></article>'}
  function showResults(list){$("collectionsSection").classList.add("hidden");$("collectionSection").classList.add("hidden");$("resultsSection").classList.remove("hidden");$("resultsHeading").textContent="Search results";$("resultsGrid").innerHTML=list.slice(0,60).map(card).join("");$("resultsEmpty").classList.toggle("hidden",list.length>0);$("resultsEmpty").textContent=list.length?"":"No matching movies or TV shows found."}
