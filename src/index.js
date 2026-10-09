@@ -536,19 +536,12 @@ export default {
       return Response.redirect(await b2SignedGet(env, key), 302);
     }
     if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
-    if (url.pathname === "/catalog.js" && request.method === "GET") return new Response(CATALOG_JS,{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store"}});
 
     if (url.pathname === "/schema.sql" || url.pathname.startsWith("/src/")) {
       return new Response("Not found", { status: 404 });
     }
 
-    const page = await env.ASSETS.fetch(request);
-    if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html") && page.ok) {
-      let html = await page.text();
-      html = html.replace("</body>", '<script src="/catalog.js"></script></body>');
-      return new Response(html, {status: page.status, headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
-    }
-    return page;
+    return env.ASSETS.fetch(request);
   }
 };
 
