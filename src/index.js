@@ -436,7 +436,7 @@ export default {
       // which meant edits to movies.html never reached visitors.
       const assetUrl = new URL(request.url);
       assetUrl.pathname = "/movies.html";
-      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
+      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), {method: request.method, headers: request.headers}));
       if (page.ok) {
         const html = await page.text();
         return new Response(html, {status: page.status, headers: {"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});
@@ -449,7 +449,7 @@ export default {
       // second renderer to overwrite the TV page's grid and styling.
       const assetUrl = new URL(request.url);
       assetUrl.pathname = "/tv.html";
-      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
+      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), {method: request.method, headers: request.headers}));
       if (page.ok) {
         let html = await page.text();
         html = html.replace(/<title>ORBIT - (Movies|TV Shows)<\/title>/g, "<title>ORBIT X — $1</title>")
