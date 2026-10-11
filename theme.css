@@ -24,7 +24,8 @@ header {
   border-bottom-color: var(--orbit-border) !important;
 }
 .logo {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   color: var(--orbit-starlight) !important;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif !important;
   font-weight: 900 !important;
@@ -32,6 +33,8 @@ header {
   text-transform: uppercase;
   text-shadow: 0 0 22px rgba(167, 139, 250, .10);
 }
+.logo .orbit-wordmark, .logo img { display: block; width: 205px; max-width: 48vw; height: auto; object-fit: contain; }
+@media (max-width: 600px) { .logo .orbit-wordmark, .logo img { width: 165px; } }
 a.logo::first-letter { color: var(--orbit-violet) !important; }
 nav a, .main-nav a { color: var(--orbit-muted); }
 nav a:hover, nav a.active, .main-nav a:hover, .main-nav a.active {
