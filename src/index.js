@@ -8,6 +8,8 @@ var __defProp22 = Object.defineProperty;
 var __name22 = /* @__PURE__ */ __name2((target, value) => __defProp22(target, "name", { value, configurable: true }), "__name");
 var __defProp222 = Object.defineProperty;
 var __name222 = /* @__PURE__ */ __name22((target, value) => __defProp222(target, "name", { value, configurable: true }), "__name");
+var __defProp2222 = Object.defineProperty;
+var __name2222 = /* @__PURE__ */ __name222((target, value) => __defProp2222(target, "name", { value, configurable: true }), "__name");
 var JSON_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store"
@@ -22,6 +24,7 @@ __name(json, "json");
 __name2(json, "json");
 __name22(json, "json");
 __name222(json, "json");
+__name2222(json, "json");
 async function b2Native(env) {
   if (!env.B2_KEY_ID || !env.B2_APP_KEY) throw new Error("Backblaze B2 credentials are not configured.");
   const auth = await fetch("https://api.backblazeb2.com/b2api/v4/b2_authorize_account", { headers: { Authorization: "Basic " + btoa(env.B2_KEY_ID + ":" + env.B2_APP_KEY) } });
@@ -49,6 +52,7 @@ __name(b2Native, "b2Native");
 __name2(b2Native, "b2Native");
 __name22(b2Native, "b2Native");
 __name222(b2Native, "b2Native");
+__name2222(b2Native, "b2Native");
 async function b2UploadBytes(env, key, bytes, contentType = "application/octet-stream") {
   const b = await b2Native(env);
   const body = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
@@ -77,6 +81,7 @@ __name(b2UploadBytes, "b2UploadBytes");
 __name2(b2UploadBytes, "b2UploadBytes");
 __name22(b2UploadBytes, "b2UploadBytes");
 __name222(b2UploadBytes, "b2UploadBytes");
+__name2222(b2UploadBytes, "b2UploadBytes");
 async function b2UploadStream(env, key, stream, contentType = "application/octet-stream", contentLength = null) {
   const b = await b2Native(env);
   const u = await fetch(b.auth.apiUrl + "/b2api/v4/b2_get_upload_url", {
@@ -109,6 +114,7 @@ __name(b2UploadStream, "b2UploadStream");
 __name2(b2UploadStream, "b2UploadStream");
 __name22(b2UploadStream, "b2UploadStream");
 __name222(b2UploadStream, "b2UploadStream");
+__name2222(b2UploadStream, "b2UploadStream");
 async function b2DownloadUrl(env, key) {
   const b = await b2Native(env);
   const u = await fetch(b.auth.apiUrl + "/b2api/v4/b2_get_download_authorization", { method: "POST", headers: { Authorization: b.auth.authorizationToken, "Content-Type": "application/json" }, body: JSON.stringify({ bucketId: b.bucket.bucketId, fileNamePrefix: key, validDurationInSeconds: 3600 }) });
@@ -120,6 +126,7 @@ __name(b2DownloadUrl, "b2DownloadUrl");
 __name2(b2DownloadUrl, "b2DownloadUrl");
 __name22(b2DownloadUrl, "b2DownloadUrl");
 __name222(b2DownloadUrl, "b2DownloadUrl");
+__name2222(b2DownloadUrl, "b2DownloadUrl");
 async function b2SignedGet(env, key) {
   return b2DownloadUrl(env, key);
 }
@@ -127,6 +134,7 @@ __name(b2SignedGet, "b2SignedGet");
 __name2(b2SignedGet, "b2SignedGet");
 __name22(b2SignedGet, "b2SignedGet");
 __name222(b2SignedGet, "b2SignedGet");
+__name2222(b2SignedGet, "b2SignedGet");
 async function b2SignedPutStream(env, key, stream, contentType = "application/octet-stream", contentLength = null) {
   await b2UploadStream(env, key, stream, contentType, contentLength);
 }
@@ -134,6 +142,7 @@ __name(b2SignedPutStream, "b2SignedPutStream");
 __name2(b2SignedPutStream, "b2SignedPutStream");
 __name22(b2SignedPutStream, "b2SignedPutStream");
 __name222(b2SignedPutStream, "b2SignedPutStream");
+__name2222(b2SignedPutStream, "b2SignedPutStream");
 function slugify(value) {
   return value.toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90);
 }
@@ -141,6 +150,7 @@ __name(slugify, "slugify");
 __name2(slugify, "slugify");
 __name22(slugify, "slugify");
 __name222(slugify, "slugify");
+__name2222(slugify, "slugify");
 function id(prefix = "orb") {
   return prefix + "_" + crypto.randomUUID().replaceAll("-", "");
 }
@@ -148,6 +158,7 @@ __name(id, "id");
 __name2(id, "id");
 __name22(id, "id");
 __name222(id, "id");
+__name2222(id, "id");
 function publicContentWhere() {
   return `status = 'published'
     AND (release_at IS NULL OR release_at <= datetime('now'))`;
@@ -156,6 +167,7 @@ __name(publicContentWhere, "publicContentWhere");
 __name2(publicContentWhere, "publicContentWhere");
 __name22(publicContentWhere, "publicContentWhere");
 __name222(publicContentWhere, "publicContentWhere");
+__name2222(publicContentWhere, "publicContentWhere");
 async function posterProxy(url) {
   const posters = {
     "flying-deuces": [
@@ -232,6 +244,7 @@ __name(posterProxy, "posterProxy");
 __name2(posterProxy, "posterProxy");
 __name22(posterProxy, "posterProxy");
 __name222(posterProxy, "posterProxy");
+__name2222(posterProxy, "posterProxy");
 async function listContent(env, url, admin = false) {
   const type = url.searchParams.get("type");
   const q = url.searchParams.get("q");
@@ -262,6 +275,7 @@ __name(listContent, "listContent");
 __name2(listContent, "listContent");
 __name22(listContent, "listContent");
 __name222(listContent, "listContent");
+__name2222(listContent, "listContent");
 async function saveContent(request, env) {
   const body = await request.json();
   const type = body.type === "show" ? "show" : "movie";
@@ -344,6 +358,7 @@ __name(saveContent, "saveContent");
 __name2(saveContent, "saveContent");
 __name22(saveContent, "saveContent");
 __name222(saveContent, "saveContent");
+__name2222(saveContent, "saveContent");
 async function deleteContent(request, env) {
   const body = await request.json();
   if (!body.id) return json({ error: "Content ID is required." }, 400);
@@ -354,6 +369,7 @@ __name(deleteContent, "deleteContent");
 __name2(deleteContent, "deleteContent");
 __name22(deleteContent, "deleteContent");
 __name222(deleteContent, "deleteContent");
+__name2222(deleteContent, "deleteContent");
 async function getGenres(env) {
   const result = await env.DB.prepare(
     "SELECT id, name, slug FROM genres ORDER BY name ASC"
@@ -364,6 +380,7 @@ __name(getGenres, "getGenres");
 __name2(getGenres, "getGenres");
 __name22(getGenres, "getGenres");
 __name222(getGenres, "getGenres");
+__name2222(getGenres, "getGenres");
 async function getSeasons(env, showId) {
   const result = await env.DB.prepare(`
     SELECT id, show_id, season_number, title, description
@@ -377,6 +394,7 @@ __name(getSeasons, "getSeasons");
 __name2(getSeasons, "getSeasons");
 __name22(getSeasons, "getSeasons");
 __name222(getSeasons, "getSeasons");
+__name2222(getSeasons, "getSeasons");
 async function saveSeason(request, env) {
   const body = await request.json();
   if (!body.show_id) return json({ error: "Show is required." }, 400);
@@ -402,6 +420,7 @@ __name(saveSeason, "saveSeason");
 __name2(saveSeason, "saveSeason");
 __name22(saveSeason, "saveSeason");
 __name222(saveSeason, "saveSeason");
+__name2222(saveSeason, "saveSeason");
 async function getEpisodes(env, seasonId) {
   const result = await env.DB.prepare(`
     SELECT id, season_id, episode_number, title, description, runtime_minutes,
@@ -416,6 +435,7 @@ __name(getEpisodes, "getEpisodes");
 __name2(getEpisodes, "getEpisodes");
 __name22(getEpisodes, "getEpisodes");
 __name222(getEpisodes, "getEpisodes");
+__name2222(getEpisodes, "getEpisodes");
 async function saveEpisode(request, env) {
   const body = await request.json();
   if (!body.season_id || !body.title) {
@@ -458,6 +478,7 @@ __name(saveEpisode, "saveEpisode");
 __name2(saveEpisode, "saveEpisode");
 __name22(saveEpisode, "saveEpisode");
 __name222(saveEpisode, "saveEpisode");
+__name2222(saveEpisode, "saveEpisode");
 async function upload(request, env) {
   const u = new URL(request.url);
   const folder = (u.searchParams.get("folder") || "uploads").replace(/[^a-z0-9_-]/gi, "") || "uploads";
@@ -480,6 +501,7 @@ __name(upload, "upload");
 __name2(upload, "upload");
 __name22(upload, "upload");
 __name222(upload, "upload");
+__name2222(upload, "upload");
 async function uploadUrl(request, env) {
   const body = await request.json();
   const folder = String(body.folder || "uploads").replace(/[^a-z0-9_-]/gi, "");
@@ -491,6 +513,7 @@ __name(uploadUrl, "uploadUrl");
 __name2(uploadUrl, "uploadUrl");
 __name22(uploadUrl, "uploadUrl");
 __name222(uploadUrl, "uploadUrl");
+__name2222(uploadUrl, "uploadUrl");
 async function importUrl(request, env) {
   const body = await request.json(), sourceUrl = String(body.url || "").trim();
   if (!/^https?:\/\//i.test(sourceUrl)) return json({ error: "A direct http(s) video URL is required." }, 400);
@@ -519,6 +542,7 @@ __name(importUrl, "importUrl");
 __name2(importUrl, "importUrl");
 __name22(importUrl, "importUrl");
 __name222(importUrl, "importUrl");
+__name2222(importUrl, "importUrl");
 async function ensureSiteSettings(env) {
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '')").run();
 }
@@ -526,6 +550,7 @@ __name(ensureSiteSettings, "ensureSiteSettings");
 __name2(ensureSiteSettings, "ensureSiteSettings");
 __name22(ensureSiteSettings, "ensureSiteSettings");
 __name222(ensureSiteSettings, "ensureSiteSettings");
+__name2222(ensureSiteSettings, "ensureSiteSettings");
 async function getSiteSettings(env) {
   await ensureSiteSettings(env);
   const r = await env.DB.prepare("SELECT key,value FROM site_settings ORDER BY key").all();
@@ -543,6 +568,7 @@ __name(getSiteSettings, "getSiteSettings");
 __name2(getSiteSettings, "getSiteSettings");
 __name22(getSiteSettings, "getSiteSettings");
 __name222(getSiteSettings, "getSiteSettings");
+__name2222(getSiteSettings, "getSiteSettings");
 async function publicSiteSettings(env) {
   return json({ settings: await getSiteSettings(env) });
 }
@@ -550,6 +576,7 @@ __name(publicSiteSettings, "publicSiteSettings");
 __name2(publicSiteSettings, "publicSiteSettings");
 __name22(publicSiteSettings, "publicSiteSettings");
 __name222(publicSiteSettings, "publicSiteSettings");
+__name2222(publicSiteSettings, "publicSiteSettings");
 async function saveSiteSettings(request, env) {
   await ensureSiteSettings(env);
   const body = await request.json();
@@ -565,6 +592,7 @@ __name(saveSiteSettings, "saveSiteSettings");
 __name2(saveSiteSettings, "saveSiteSettings");
 __name22(saveSiteSettings, "saveSiteSettings");
 __name222(saveSiteSettings, "saveSiteSettings");
+__name2222(saveSiteSettings, "saveSiteSettings");
 async function requireAdmin(request, env) {
   const u = await currentUser(request, env);
   if (!u) return null;
@@ -574,6 +602,7 @@ __name(requireAdmin, "requireAdmin");
 __name2(requireAdmin, "requireAdmin");
 __name22(requireAdmin, "requireAdmin");
 __name222(requireAdmin, "requireAdmin");
+__name2222(requireAdmin, "requireAdmin");
 async function adminUsers(env) {
   const r = await env.DB.prepare(`SELECT u.id,u.email,u.created_at,u.disabled,u.is_admin,COUNT(p.id) AS profiles FROM users u LEFT JOIN profiles p ON p.user_id=u.id GROUP BY u.id ORDER BY u.created_at DESC`).all();
   return json({ users: r.results || [] });
@@ -582,6 +611,7 @@ __name(adminUsers, "adminUsers");
 __name2(adminUsers, "adminUsers");
 __name22(adminUsers, "adminUsers");
 __name222(adminUsers, "adminUsers");
+__name2222(adminUsers, "adminUsers");
 var AUTH_COOKIE = "orbit_session";
 var SESSION_DAYS = 30;
 function avatarSvg(kind) {
@@ -596,6 +626,7 @@ __name(avatarSvg, "avatarSvg");
 __name2(avatarSvg, "avatarSvg");
 __name22(avatarSvg, "avatarSvg");
 __name222(avatarSvg, "avatarSvg");
+__name2222(avatarSvg, "avatarSvg");
 var AVATARS = [
   { id: "orbit-cat", name: "Cosmo Cat", icon: avatarSvg("cat") },
   { id: "orbit-fox", name: "Nova Fox", icon: avatarSvg("fox") },
@@ -620,6 +651,7 @@ __name(b64u, "b64u");
 __name2(b64u, "b64u");
 __name22(b64u, "b64u");
 __name222(b64u, "b64u");
+__name2222(b64u, "b64u");
 function fromB64u(s) {
   s = s.replace(/-/g, "+").replace(/_/g, "/");
   while (s.length % 4) s += "=";
@@ -631,6 +663,7 @@ __name(fromB64u, "fromB64u");
 __name2(fromB64u, "fromB64u");
 __name22(fromB64u, "fromB64u");
 __name222(fromB64u, "fromB64u");
+__name2222(fromB64u, "fromB64u");
 async function sha256Text(v) {
   return crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
 }
@@ -638,6 +671,7 @@ __name(sha256Text, "sha256Text");
 __name2(sha256Text, "sha256Text");
 __name22(sha256Text, "sha256Text");
 __name222(sha256Text, "sha256Text");
+__name2222(sha256Text, "sha256Text");
 async function hashPassword(p) {
   const salt = new Uint8Array(16);
   crypto.getRandomValues(salt);
@@ -649,6 +683,7 @@ __name(hashPassword, "hashPassword");
 __name2(hashPassword, "hashPassword");
 __name22(hashPassword, "hashPassword");
 __name222(hashPassword, "hashPassword");
+__name2222(hashPassword, "hashPassword");
 async function verifyPassword(p, stored) {
   const x = String(stored || "").split("$");
   if (x.length !== 4 || x[0] !== "pbkdf2") return false;
@@ -665,6 +700,7 @@ __name(verifyPassword, "verifyPassword");
 __name2(verifyPassword, "verifyPassword");
 __name22(verifyPassword, "verifyPassword");
 __name222(verifyPassword, "verifyPassword");
+__name2222(verifyPassword, "verifyPassword");
 function passwordError(p) {
   if (typeof p !== "string" || p.length < 8) return "Password must be at least 8 characters.";
   if (!/[A-Z]/.test(p)) return "Password needs at least one uppercase letter.";
@@ -677,6 +713,7 @@ __name(passwordError, "passwordError");
 __name2(passwordError, "passwordError");
 __name22(passwordError, "passwordError");
 __name222(passwordError, "passwordError");
+__name2222(passwordError, "passwordError");
 function cookieValue(req, name) {
   const h = req.headers.get("Cookie") || "";
   const x = h.split(";").map((v) => v.trim()).find((v) => v.startsWith(name + "="));
@@ -686,6 +723,7 @@ __name(cookieValue, "cookieValue");
 __name2(cookieValue, "cookieValue");
 __name22(cookieValue, "cookieValue");
 __name222(cookieValue, "cookieValue");
+__name2222(cookieValue, "cookieValue");
 async function sessionTokenHash(t) {
   return b64u(await sha256Text(t));
 }
@@ -693,6 +731,7 @@ __name(sessionTokenHash, "sessionTokenHash");
 __name2(sessionTokenHash, "sessionTokenHash");
 __name22(sessionTokenHash, "sessionTokenHash");
 __name222(sessionTokenHash, "sessionTokenHash");
+__name2222(sessionTokenHash, "sessionTokenHash");
 async function createSession(userId, env) {
   const b = new Uint8Array(32);
   crypto.getRandomValues(b);
@@ -704,6 +743,7 @@ __name(createSession, "createSession");
 __name2(createSession, "createSession");
 __name22(createSession, "createSession");
 __name222(createSession, "createSession");
+__name2222(createSession, "createSession");
 async function currentUser(req, env) {
   const token = cookieValue(req, AUTH_COOKIE);
   if (!token) return null;
@@ -714,6 +754,7 @@ __name(currentUser, "currentUser");
 __name2(currentUser, "currentUser");
 __name22(currentUser, "currentUser");
 __name222(currentUser, "currentUser");
+__name2222(currentUser, "currentUser");
 function sessionCookie(token, expires) {
   return AUTH_COOKIE + "=" + encodeURIComponent(token) + "; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=" + new Date(expires).toUTCString();
 }
@@ -721,6 +762,7 @@ __name(sessionCookie, "sessionCookie");
 __name2(sessionCookie, "sessionCookie");
 __name22(sessionCookie, "sessionCookie");
 __name222(sessionCookie, "sessionCookie");
+__name2222(sessionCookie, "sessionCookie");
 function clearSessionCookie() {
   return AUTH_COOKIE + "=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 }
@@ -728,6 +770,7 @@ __name(clearSessionCookie, "clearSessionCookie");
 __name2(clearSessionCookie, "clearSessionCookie");
 __name22(clearSessionCookie, "clearSessionCookie");
 __name222(clearSessionCookie, "clearSessionCookie");
+__name2222(clearSessionCookie, "clearSessionCookie");
 function authJson(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers } });
 }
@@ -735,6 +778,7 @@ __name(authJson, "authJson");
 __name2(authJson, "authJson");
 __name22(authJson, "authJson");
 __name222(authJson, "authJson");
+__name2222(authJson, "authJson");
 async function signup(req, env) {
   const b = await req.json(), email = String(b.email || "").trim().toLowerCase(), password = String(b.password || "");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return authJson({ error: "Please enter a valid email address." }, 400);
@@ -752,6 +796,7 @@ __name(signup, "signup");
 __name2(signup, "signup");
 __name22(signup, "signup");
 __name222(signup, "signup");
+__name2222(signup, "signup");
 async function login(req, env) {
   const b = await req.json(), email = String(b.email || "").trim().toLowerCase(), password = String(b.password || ""), u = await env.DB.prepare("SELECT id,email,password_hash FROM users WHERE email=? COLLATE NOCASE AND disabled=0").bind(email).first();
   if (!u || !await verifyPassword(password, u.password_hash)) return authJson({ error: "Email or password is incorrect." }, 401);
@@ -762,6 +807,7 @@ __name(login, "login");
 __name2(login, "login");
 __name22(login, "login");
 __name222(login, "login");
+__name2222(login, "login");
 async function logout(req, env) {
   const t = cookieValue(req, AUTH_COOKIE);
   if (t) await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await sessionTokenHash(t)).run();
@@ -771,6 +817,7 @@ __name(logout, "logout");
 __name2(logout, "logout");
 __name22(logout, "logout");
 __name222(logout, "logout");
+__name2222(logout, "logout");
 async function accountData(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ authenticated: false, avatars: AVATARS });
@@ -782,6 +829,7 @@ __name(accountData, "accountData");
 __name2(accountData, "accountData");
 __name22(accountData, "accountData");
 __name222(accountData, "accountData");
+__name2222(accountData, "accountData");
 async function saveProfile(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ error: "Please sign in." }, 401);
@@ -804,6 +852,7 @@ __name(saveProfile, "saveProfile");
 __name2(saveProfile, "saveProfile");
 __name22(saveProfile, "saveProfile");
 __name222(saveProfile, "saveProfile");
+__name2222(saveProfile, "saveProfile");
 async function deleteProfile(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ error: "Please sign in." }, 401);
@@ -816,6 +865,7 @@ __name(deleteProfile, "deleteProfile");
 __name2(deleteProfile, "deleteProfile");
 __name22(deleteProfile, "deleteProfile");
 __name222(deleteProfile, "deleteProfile");
+__name2222(deleteProfile, "deleteProfile");
 async function saveSettings(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ error: "Please sign in." }, 401);
@@ -827,6 +877,7 @@ __name(saveSettings, "saveSettings");
 __name2(saveSettings, "saveSettings");
 __name22(saveSettings, "saveSettings");
 __name222(saveSettings, "saveSettings");
+__name2222(saveSettings, "saveSettings");
 var ACCOUNT_HTML = `<!doctype html>
 <html lang="en">
 <head>
@@ -989,7 +1040,7 @@ footer{border-top:1px solid #342A43;padding:25px;text-align:center;color:#8E849D
 <\/script>
 </body>
 </html>`;
-var ORBIT_SIDEBAR_JS = `(()=>{if(location.pathname.startsWith("/admin"))return;const h=document.querySelector("header");if(!h||document.getElementById("orbit-global-header"))return;let logo=h.querySelector(".logo");if(!logo){logo=document.createElement("a");logo.className="logo";logo.href="/"}logo.href="/";logo.setAttribute("aria-label","ORBIT X home");if(!logo.querySelector("img"))logo.innerHTML='<img src="/orbitx-wordmark.svg" alt="ORBIT X">';const wrap=document.createElement("div");wrap.id="orbit-global-header";wrap.innerHTML='<button class="orbit-profile-trigger" id="orbitProfileTrigger" type="button" aria-expanded="false"><span class="orbit-avatar-outline"></span><span>Profile</span></button><a class="orbit-centered-logo" href="/" aria-label="ORBIT X home"></a><div class="orbit-global-search"><a href="/search.html" aria-label="Search ORBIT X"><span class="orbit-search-glass"></span></a></div>';wrap.querySelector(".orbit-centered-logo").appendChild(logo);h.replaceChildren(wrap);const layer=document.createElement("div");layer.id="orbitDrawerLayer";layer.innerHTML='<button class="orbit-drawer-scrim" type="button" aria-label="Close menu"></button><aside class="orbit-sidebar" id="orbitSidebar" aria-label="ORBIT X menu" aria-hidden="true"><div class="orbit-sidebar-head"><strong>Who\u2019s watching?</strong><button type="button" class="orbit-drawer-close" aria-label="Close menu">\xD7</button></div><a class="orbit-watching-profile" href="/account"><span class="orbit-profile-avatar" id="orbitProfileAvatar">\u25CB</span><span><strong id="orbitProfileName">Choose a profile</strong><small id="orbitProfileSub">Manage profiles and account</small></span></a><div class="orbit-side-divider"></div><a class="orbit-side-link" href="/account#settings"><span>\u2699</span>Settings</a><a class="orbit-side-link" href="/account#collections"><span>\u25A4</span>My Collection</a><a class="orbit-side-link" href="/account#continue-watching"><span>\u25B6</span>Continue Watching</a><a class="orbit-side-link" href="/tv.html#orbit-now"><span>\u25C9</span>Orbit Now</a><div class="orbit-side-divider"></div><a class="orbit-side-link" href="/movies.html"><span>\u25A3</span>Movies</a><a class="orbit-side-link" href="/tv.html"><span>\u25A4</span>TV Shows</a><a class="orbit-side-link" href="/tv.html#live-tv"><span>\u25C9</span>Live TV <small class="orbit-coming">Coming soon</small></a><a class="orbit-side-link" href="/search.html"><span class="orbit-side-search"></span>Search</a></aside>';document.body.appendChild(layer);const css=document.createElement("style");css.textContent='#orbit-global-header{position:relative;width:100%;height:100%;min-height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 clamp(14px,3.4vw,48px);gap:12px}header:has(#orbit-global-header){padding:0!important;gap:0!important;height:70px!important;min-height:64px!important;display:flex!important;justify-content:stretch!important;z-index:120!important}#orbit-global-header .orbit-profile-trigger{justify-self:start;display:inline-flex;align-items:center;gap:10px;background:transparent!important;color:#F8F6FC!important;border:0!important;padding:8px 10px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer}#orbit-global-header .orbit-profile-trigger:hover{background:#20172B!important;color:#B9A4FF!important}.orbit-avatar-outline{width:28px;height:28px;border:1.5px solid #A78BFA;border-radius:50%;display:inline-block;position:relative}.orbit-avatar-outline:before{content:"";position:absolute;width:7px;height:7px;border:1.5px solid currentColor;border-radius:50%;left:8.5px;top:4px}.orbit-avatar-outline:after{content:"";position:absolute;width:14px;height:7px;border:1.5px solid currentColor;border-radius:9px 9px 6px 6px;left:5px;bottom:3px}.orbit-centered-logo{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center;text-decoration:none}.orbit-centered-logo .logo{display:flex!important;align-items:center;justify-content:center}.orbit-centered-logo .logo img{display:block;width:205px;max-width:42vw;height:auto}.orbit-global-search{grid-column:3;grid-row:1;justify-self:end}.orbit-global-search a{width:40px;height:40px;display:grid;place-items:center;border:1px solid #342A43;border-radius:50%;color:#F8F6FC;background:#14111B}.orbit-global-search a:hover{background:#20172B;border-color:#A78BFA;color:#B9A4FF}.orbit-search-glass{width:14px;height:14px;border:2px solid currentColor;border-radius:50%;position:relative}.orbit-search-glass:after{content:"";position:absolute;width:7px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}#orbitDrawerLayer{position:fixed;inset:0;z-index:9999;pointer-events:none}.orbit-drawer-scrim{position:absolute;inset:0;width:100%;height:100%;border:0!important;background:rgba(0,0,0,.55)!important;opacity:0;pointer-events:none}.orbit-sidebar{position:absolute;left:0;top:0;bottom:0;width:min(360px,88vw);overflow:auto;background:#100D15;border-right:1px solid #49385E;box-shadow:20px 0 65px rgba(0,0,0,.45);padding:23px 18px 28px;transform:translateX(-105%);transition:transform .22s ease;pointer-events:auto;color:#F8F6FC}.orbit-drawer-scrim{transition:opacity .2s}#orbitDrawerLayer.open{pointer-events:auto}#orbitDrawerLayer.open .orbit-drawer-scrim{opacity:1;pointer-events:auto}#orbitDrawerLayer.open .orbit-sidebar{transform:translateX(0)}.orbit-sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;font-size:17px}.orbit-drawer-close{width:34px;height:34px;border:1px solid #342A43!important;border-radius:50%;background:#20172B!important;color:#fff!important;font-size:23px;cursor:pointer}.orbit-watching-profile{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #342A43;border-radius:11px;background:#171020;color:#F8F6FC;text-decoration:none}.orbit-profile-avatar{width:44px;height:44px;display:grid;place-items:center;flex:0 0 auto;border:1px solid #514162;border-radius:50%;background:#20172B;color:#B9A4FF;font-size:20px}.orbit-watching-profile strong,.orbit-watching-profile small{display:block}.orbit-watching-profile strong{font-size:14px}.orbit-watching-profile small{font-size:11px;color:#B9B2C6;margin-top:4px}.orbit-side-divider{height:1px;background:#342A43;margin:17px 3px}.orbit-side-link{min-height:44px;display:flex;align-items:center;gap:12px;padding:10px 12px;margin:3px 0;border-radius:8px;color:#E9E2F3;text-decoration:none;font-size:14px}.orbit-side-link:hover,.orbit-side-link:focus-visible{background:#20172B;color:#B9A4FF;outline:none}.orbit-side-link>span:first-child{width:23px;display:inline-flex;align-items:center;justify-content:center;color:#B9A4FF;font-size:19px;flex:0 0 auto}.orbit-coming{margin-left:auto;color:#8E849D;font-size:10px}.orbit-side-search{width:13px;height:13px;border:2px solid currentColor;border-radius:50%;position:relative;margin:0 5px}.orbit-side-search:after{content:"";position:absolute;width:6px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}@media(max-width:600px){#orbit-global-header .orbit-centered-logo .logo img{width:150px}#orbit-global-header .orbit-profile-trigger{gap:7px;padding-left:3px;font-size:12px}.orbit-avatar-outline{width:25px;height:25px}}';document.head.appendChild(css);const panel=document.getElementById("orbitSidebar"),trigger=document.getElementById("orbitProfileTrigger");function open(){layer.classList.add("open");panel.setAttribute("aria-hidden","false");trigger.setAttribute("aria-expanded","true")}function close(){layer.classList.remove("open");panel.setAttribute("aria-hidden","true");trigger.setAttribute("aria-expanded","false")}trigger.onclick=()=>layer.classList.contains("open")?close():open();trigger.addEventListener("mouseenter",()=>{if(window.matchMedia("(hover:hover) and (pointer:fine)").matches)open()});panel.addEventListener("mouseleave",()=>{if(window.matchMedia("(hover:hover) and (pointer:fine)").matches)close()});layer.querySelector(".orbit-drawer-scrim").onclick=close;layer.querySelector(".orbit-drawer-close").onclick=close;document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});panel.querySelectorAll("a").forEach(a=>a.onclick=close);fetch("/api/auth/me",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d)return;const p=d.profiles&&d.profiles[0];if(p){document.getElementById("orbitProfileName").textContent=p.name||"Profile";const av=(d.avatars||[]).find(a=>a.id===p.avatar_id);if(av&&av.icon)document.getElementById("orbitProfileAvatar").innerHTML=av.icon;document.getElementById("orbitProfileSub").textContent="Manage profiles and account"}else{document.getElementById("orbitProfileName").textContent="Sign in or choose a profile";document.getElementById("orbitProfileSub").textContent="Open profile settings"}}).catch(()=>{})})();`;
+var ORBIT_SIDEBAR_JS = "(()=>{if(location.pathname.startsWith(\"/admin\"))return;const h=document.querySelector(\"header\");if(!h||document.getElementById(\"orbit-global-header\"))return;let logo=h.querySelector(\".logo\");if(!logo){logo=document.createElement(\"a\");logo.className=\"logo\";logo.href=\"/\"}logo.href=\"/\";logo.setAttribute(\"aria-label\",\"ORBIT X home\");if(!logo.querySelector(\"img\"))logo.innerHTML='<img src=\"/orbitx-wordmark.svg\" alt=\"ORBIT X\">';const wrap=document.createElement(\"div\");wrap.id=\"orbit-global-header\";wrap.innerHTML='<button class=\"orbit-profile-trigger\" id=\"orbitProfileTrigger\" type=\"button\" aria-expanded=\"false\"><span class=\"orbit-avatar-outline\"></span><span>Profile</span></button><a class=\"orbit-centered-logo\" href=\"/\" aria-label=\"ORBIT X home\"></a><form class=\"orbit-global-search\" id=\"orbitGlobalSearch\" role=\"search\"><input id=\"orbitGlobalSearchInput\" type=\"search\" placeholder=\"Search ORBIT X\" aria-label=\"Search ORBIT X\"><button type=\"submit\" aria-label=\"Search\"><span class=\"orbit-search-glass\"></span></button></form>';wrap.querySelector(\".orbit-centered-logo\").appendChild(logo);h.replaceChildren(wrap);const layer=document.createElement(\"div\");layer.id=\"orbitDrawerLayer\";layer.innerHTML='<button class=\"orbit-drawer-scrim\" type=\"button\" aria-label=\"Close menu\"></button><aside class=\"orbit-sidebar\" id=\"orbitSidebar\" aria-label=\"ORBIT X menu\" aria-hidden=\"true\"><div class=\"orbit-sidebar-head\"><strong>Who’s watching?</strong><button type=\"button\" class=\"orbit-drawer-close\" aria-label=\"Close menu\">×</button></div><a class=\"orbit-watching-profile\" href=\"/account\"><span class=\"orbit-profile-avatar\" id=\"orbitProfileAvatar\">○</span><span><strong id=\"orbitProfileName\">Choose a profile</strong><small id=\"orbitProfileSub\">Manage profiles and account</small></span></a><div class=\"orbit-side-divider\"></div><a class=\"orbit-side-link\" href=\"/account#settings\"><span>⚙</span>Settings</a><a class=\"orbit-side-link\" href=\"/account#collections\"><span>▤</span>My Collection</a><a class=\"orbit-side-link\" href=\"/account#continue-watching\"><span>▶</span>Continue Watching</a><a class=\"orbit-side-link\" href=\"/tv.html#orbit-now\"><span>◉</span>Orbit Now</a><div class=\"orbit-side-divider\"></div><a class=\"orbit-side-link\" href=\"/movies.html\"><span>▣</span>Movies</a><a class=\"orbit-side-link\" href=\"/tv.html\"><span>▤</span>TV Shows</a><a class=\"orbit-side-link\" href=\"/tv.html#live-tv\"><span>◉</span>Live TV <small class=\"orbit-coming\">Coming soon</small></a><a class=\"orbit-side-link\" href=\"/search.html\"><span class=\"orbit-side-search\"></span>Search</a></aside>';document.body.appendChild(layer);const css=document.createElement(\"style\");css.textContent='#orbit-global-header{position:relative;width:100%;height:100%;min-height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 clamp(14px,3.4vw,48px);gap:12px}header:has(#orbit-global-header){padding:0!important;gap:0!important;height:70px!important;min-height:64px!important;display:flex!important;justify-content:stretch!important;z-index:120!important}#orbit-global-header .orbit-profile-trigger{justify-self:start;display:inline-flex;align-items:center;gap:10px;background:transparent!important;color:#F8F6FC!important;border:0!important;padding:8px 10px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer}#orbit-global-header .orbit-profile-trigger:hover{background:#20172B!important;color:#B9A4FF!important}.orbit-avatar-outline{width:28px;height:28px;border:1.5px solid #A78BFA;border-radius:50%;display:inline-block;position:relative}.orbit-avatar-outline:before{content:\"\";position:absolute;width:7px;height:7px;border:1.5px solid currentColor;border-radius:50%;left:8.5px;top:4px}.orbit-avatar-outline:after{content:\"\";position:absolute;width:14px;height:7px;border:1.5px solid currentColor;border-radius:9px 9px 6px 6px;left:5px;bottom:3px}.orbit-centered-logo{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center;text-decoration:none}.orbit-centered-logo .logo{display:flex!important;align-items:center;justify-content:center}.orbit-centered-logo .logo img{display:block;width:205px;max-width:42vw;height:auto}.orbit-global-search{grid-column:3;grid-row:1;justify-self:end;display:flex;align-items:center;gap:0;width:min(260px,28vw);height:40px;border:1px solid #342A43;border-radius:22px;background:#14111B;overflow:hidden}.orbit-global-search:focus-within{border-color:#A78BFA;box-shadow:0 0 0 2px rgba(167,139,250,.12)}.orbit-global-search input{min-width:0;width:100%;height:100%;padding:0 12px;border:0!important;outline:0;background:transparent!important;color:#F8F6FC;font-size:13px;box-shadow:none!important}.orbit-global-search input::placeholder{color:#8E849D}.orbit-global-search button{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border:0!important;border-radius:50%;color:#F8F6FC!important;background:transparent!important;cursor:pointer}.orbit-global-search button:hover{color:#B9A4FF!important;background:#20172B!important}.orbit-search-glass{width:14px;height:14px;border:2px solid currentColor;border-radius:50%;position:relative}.orbit-search-glass:after{content:\"\";position:absolute;width:7px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}#orbitDrawerLayer{position:fixed;inset:0;z-index:9999;pointer-events:none}.orbit-drawer-scrim{position:absolute;inset:0;width:100%;height:100%;border:0!important;background:rgba(0,0,0,.55)!important;opacity:0;pointer-events:none}.orbit-sidebar{position:absolute;left:0;top:0;bottom:0;width:min(360px,88vw);overflow:auto;background:#100D15;border-right:1px solid #49385E;box-shadow:20px 0 65px rgba(0,0,0,.45);padding:23px 18px 28px;transform:translateX(-105%);transition:transform .22s ease;pointer-events:auto;color:#F8F6FC}.orbit-drawer-scrim{transition:opacity .2s}#orbitDrawerLayer.open{pointer-events:auto}#orbitDrawerLayer.open .orbit-drawer-scrim{opacity:1;pointer-events:auto}#orbitDrawerLayer.open .orbit-sidebar{transform:translateX(0)}.orbit-sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;font-size:17px}.orbit-drawer-close{width:34px;height:34px;border:1px solid #342A43!important;border-radius:50%;background:#20172B!important;color:#fff!important;font-size:23px;cursor:pointer}.orbit-watching-profile{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #342A43;border-radius:11px;background:#171020;color:#F8F6FC;text-decoration:none}.orbit-profile-avatar{width:44px;height:44px;display:grid;place-items:center;flex:0 0 auto;border:1px solid #514162;border-radius:50%;background:#20172B;color:#B9A4FF;font-size:20px}.orbit-watching-profile strong,.orbit-watching-profile small{display:block}.orbit-watching-profile strong{font-size:14px}.orbit-watching-profile small{font-size:11px;color:#B9B2C6;margin-top:4px}.orbit-side-divider{height:1px;background:#342A43;margin:17px 3px}.orbit-side-link{min-height:44px;display:flex;align-items:center;gap:12px;padding:10px 12px;margin:3px 0;border-radius:8px;color:#E9E2F3;text-decoration:none;font-size:14px}.orbit-side-link:hover,.orbit-side-link:focus-visible{background:#20172B;color:#B9A4FF;outline:none}.orbit-side-link>span:first-child{width:23px;display:inline-flex;align-items:center;justify-content:center;color:#B9A4FF;font-size:19px;flex:0 0 auto}.orbit-coming{margin-left:auto;color:#8E849D;font-size:10px}.orbit-side-search{width:13px;height:13px;border:2px solid currentColor;border-radius:50%;position:relative;margin:0 5px}.orbit-side-search:after{content:\"\";position:absolute;width:6px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}@media(max-width:600px){#orbit-global-header .orbit-centered-logo .logo img{width:135px}#orbit-global-header .orbit-profile-trigger{gap:5px;padding-left:2px;font-size:11px}.orbit-avatar-outline{width:23px;height:23px}#orbit-global-header .orbit-global-search{width:118px;height:36px}#orbit-global-header .orbit-global-search input{padding:0 7px;font-size:11px}#orbit-global-header .orbit-global-search button{width:32px;flex-basis:32px;height:34px}}';document.head.appendChild(css);const searchForm=document.getElementById(\"orbitGlobalSearch\");if(searchForm)searchForm.addEventListener(\"submit\",e=>{e.preventDefault();const q=document.getElementById(\"orbitGlobalSearchInput\").value.trim();location.href=\"/search.html\"+(q?\"?q=\"+encodeURIComponent(q):\"\")});const panel=document.getElementById(\"orbitSidebar\"),trigger=document.getElementById(\"orbitProfileTrigger\");function open(){layer.classList.add(\"open\");panel.setAttribute(\"aria-hidden\",\"false\");trigger.setAttribute(\"aria-expanded\",\"true\")}function close(){layer.classList.remove(\"open\");panel.setAttribute(\"aria-hidden\",\"true\");trigger.setAttribute(\"aria-expanded\",\"false\")}trigger.onclick=()=>layer.classList.contains(\"open\")?close():open();trigger.addEventListener(\"mouseenter\",()=>{if(window.matchMedia(\"(hover:hover) and (pointer:fine)\").matches)open()});panel.addEventListener(\"mouseleave\",()=>{if(window.matchMedia(\"(hover:hover) and (pointer:fine)\").matches)close()});layer.querySelector(\".orbit-drawer-scrim\").onclick=close;layer.querySelector(\".orbit-drawer-close\").onclick=close;document.addEventListener(\"keydown\",e=>{if(e.key===\"Escape\")close()});panel.querySelectorAll(\"a\").forEach(a=>a.onclick=close);fetch(\"/api/auth/me\",{cache:\"no-store\"}).then(r=>r.ok?r.json():null).then(d=>{if(!d)return;const p=d.profiles&&d.profiles[0];if(p){document.getElementById(\"orbitProfileName\").textContent=p.name||\"Profile\";const av=(d.avatars||[]).find(a=>a.id===p.avatar_id);if(av&&av.icon)document.getElementById(\"orbitProfileAvatar\").innerHTML=av.icon;document.getElementById(\"orbitProfileSub\").textContent=\"Manage profiles and account\"}else{document.getElementById(\"orbitProfileName\").textContent=\"Sign in or choose a profile\";document.getElementById(\"orbitProfileSub\").textContent=\"Open profile settings\"}}).catch(()=>{})})();";
 var ORBIT_FEATURES_JS = `(()=>{const path=location.pathname;const read=k=>{try{const a=JSON.parse(localStorage.getItem(k)||"[]");return Array.isArray(a)?a:[]}catch{return[]}};const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));async function items(){try{const r=await fetch("/api/public/content",{cache:"no-store"});if(r.ok)return(await r.json()).content||[]}catch{}return[]}function card(i){return '<a class="orbit-mini-card" href="/watch.html?slug='+encodeURIComponent(i.series_slug||i.slug||"")+'">'+(i.poster_url?'<img src="'+esc(i.poster_url)+'" alt="" loading="lazy" onerror="this.remove()">':'<span class="orbit-mini-art">ORBIT X</span>')+'<span><strong>'+esc(i.episode_title?(i.title||"TV Show")+" \u2014 "+i.episode_title:i.title)+'</strong><small>'+esc(i.type==="show"?"TV Series":"Movie")+(i.year?" \xB7 "+esc(i.year):"")+'</small></span></a>'}const st=document.createElement("style");st.textContent='.orbit-mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:13px}.orbit-mini-card{display:block;min-width:0;border:1px solid #342A43;border-radius:9px;overflow:hidden;background:#14111B;color:#F8F6FC;text-decoration:none;transition:transform .16s,border-color .16s}.orbit-mini-card:hover{transform:translateY(-3px);border-color:#A78BFA}.orbit-mini-card img,.orbit-mini-art{display:flex;width:100%;aspect-ratio:2/3;object-fit:cover;align-items:center;justify-content:center;background:#20172B;color:#B9A4FF;font-weight:800}.orbit-mini-card>span:last-child{display:block;padding:9px}.orbit-mini-card strong{display:block;font-size:12px;line-height:1.4}.orbit-mini-card small{display:block;color:#B9B2C6;font-size:11px;margin-top:5px}.orbit-personal-section{margin:0 0 30px;padding:20px 0;color:#F8F6FC}.orbit-personal-section h2{font-size:25px;margin:0 0 8px}.orbit-personal-section p{font-size:13px;color:#B9B2C6;margin:0 0 15px}.orbit-pick-box{padding:18px;border:1px solid #342A43;border-radius:12px;background:linear-gradient(135deg,#171020,#0D0A12);margin:0 0 28px}.orbit-pick-controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.orbit-pick-controls label{display:grid;gap:6px;flex:1;min-width:150px;font-size:12px;color:#B9B2C6}.orbit-pick-controls select{width:100%;padding:11px;background:#0D0A12;color:#F8F6FC;border:1px solid #514162;border-radius:7px}.orbit-pick-controls button,.orbit-save-button,.orbit-modal button{border:1px solid #A78BFA!important;border-radius:7px;background:#A78BFA!important;color:#08070C!important;padding:11px 14px;font-weight:800;cursor:pointer}.orbit-save-button{background:#20172B!important;color:#F8F6FC!important;border-color:#514162!important}.orbit-save-modal{position:fixed;inset:0;z-index:10020;background:rgba(3,2,6,.8);display:none;align-items:center;justify-content:center;padding:18px}.orbit-save-modal.open{display:flex}.orbit-modal{width:min(460px,100%);max-height:85vh;overflow:auto;background:#100D15;border:1px solid #514162;border-radius:14px;padding:22px;color:#F8F6FC}.orbit-modal h2{font-size:22px;margin:0 0 7px}.orbit-modal p{font-size:13px;color:#B9B2C6;line-height:1.5;margin:0 0 15px}.orbit-modal .orbit-choice{display:block;width:100%;margin:7px 0;text-align:left;background:#20172B!important;color:#F8F6FC!important;border-color:#514162!important}.orbit-account-personal{max-width:1300px;margin:20px auto;padding:0 clamp(16px,4vw,48px)}@media(max-width:600px){.orbit-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.orbit-pick-box{padding:13px}}';document.head.appendChild(st);
 async function home(){const f=document.getElementById("movies");if(!f)return;const s=document.createElement("section");s.className="section";s.id="continue-watching";s.innerHTML='<h2 class="section-title">Continue Watching</h2><p class="section-subtitle">Pick up where you left off.</p><div class="orbit-mini-grid" id="orbitHomeProgress"></div><p id="orbitHomeEmpty" style="color:#8E849D;font-size:13px;margin-top:8px">Your movies and shows will appear here after you start watching.</p>';f.parentNode.insertBefore(s,f);const all=await items(),saved=read("orbitx-continue-watching");document.getElementById("orbitHomeProgress").innerHTML=saved.map(p=>{const i=all.find(x=>x.slug===(p.series_slug||p.slug))||p;return card(Object.assign({},i,p,{slug:p.series_slug||p.slug}))}).join("");document.getElementById("orbitHomeEmpty").hidden=!!saved.length}
 async function search(){const field=document.querySelector(".search-field");if(!field)return;const s=document.createElement("section");s.className="orbit-pick-box";s.innerHTML='<h2 style="font-size:23px;margin-bottom:7px">Pick My Orbit</h2><p style="font-size:13px;color:#B9B2C6;margin-bottom:15px">Choose your mood and runtime to find something to watch.</p><div class="orbit-pick-controls"><label>Mood<select id="orbitMood"><option value="any">Surprise me</option><option value="funny">Comedy</option><option value="mystery">Mystery</option><option value="adventure">Adventure</option><option value="family">Family friendly</option><option value="scifi">Sci-fi or fantasy</option><option value="drama">Drama</option></select></label><label>Runtime<select id="orbitTime"><option value="any">Any runtime</option><option value="60">Under 60 minutes</option><option value="90">Under 90 minutes</option><option value="120">Under 2 hours</option></select></label><button id="orbitPickButton" type="button">Find picks</button></div><div class="orbit-mini-grid" id="orbitPickResults" style="margin-top:16px"></div><p id="orbitPickNote" style="font-size:13px;color:#B9B2C6;margin-top:10px"></p>';field.insertAdjacentElement("afterend",s);const all=await items();document.getElementById("orbitPickButton").onclick=()=>{const m=document.getElementById("orbitMood").value,t=document.getElementById("orbitTime").value,rx={funny:/comedy|funny|stooges|chaplin/i,mystery:/mystery|detective|crime|sherlock/i,adventure:/adventure|action|western|tarzan/i,family:/family|kids|children|animation|cartoon/i,scifi:/sci-fi|science fiction|fantasy|space|monster/i,drama:/drama|romance|war|history/i};let a=all.filter(i=>(m==="any"||rx[m].test([i.title,i.description,i.genres,i.rating].join(" ")))&&(t==="any"||!i.runtime_minutes||Number(i.runtime_minutes)<=Number(t)));if(!a.length&&m!=="any")a=all.filter(i=>t==="any"||!i.runtime_minutes||Number(i.runtime_minutes)<=Number(t));a.sort(()=>Math.random()-.5);document.getElementById("orbitPickResults").innerHTML=a.slice(0,6).map(card).join("");document.getElementById("orbitPickNote").textContent=a.length?"Here are your picks.":"No matches yet. Try another mood or runtime."}}
@@ -1007,6 +1058,7 @@ function patchOrbitHtml(html) {
 }
 __name(patchOrbitHtml, "patchOrbitHtml");
 __name2(patchOrbitHtml, "patchOrbitHtml");
+__name22(patchOrbitHtml, "patchOrbitHtml");
 var index_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
