@@ -150,14 +150,15 @@ async function posterProxy(url) {
       {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Santa_Fe_Trail.jpg", referer:"https://commons.wikimedia.org/"}
     ],
     "tarzan-green-goddess": [
-      {url:"https://www.erbzine.com/mag63/grgodh3.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
+      {url:"https://www.erbzine.com/mag5/grgodh3.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
       {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Tarzan_and_the_Green_Goddess.jpg", referer:"https://commons.wikimedia.org/"}
     ],
     "new-adventures-tarzan": [
-      {url:"https://www.erbzine.com/mag63/mvnadvh4.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
+      {url:"https://www.erbzine.com/mag5/mvnadvh4.jpg", referer:"https://www.erbzine.com/mag63/0584.html"},
       {url:"https://commons.wikimedia.org/wiki/Special:FilePath/NewAdventuresTarzan_title.png", referer:"https://commons.wikimedia.org/"}
     ],
     "sherlock-secret-weapon": [
+      {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Sherlock_Holmes_and_the_Secret_Weapon_3.jpg", referer:"https://commons.wikimedia.org/"},
       {url:"https://commons.wikimedia.org/wiki/Special:FilePath/William_Post_Jr._in_Sherlock_Holmes_and_the_Secret_Weapon_(1942).png", referer:"https://commons.wikimedia.org/"}
     ]
   };
