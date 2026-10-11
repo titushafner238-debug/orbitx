@@ -3,6 +3,8 @@ let currentType = "movie";
 let contentItems = [];
 let seasons = [];
 let currentSeasonId = null;
+let currentEpisodeId = null;
+let currentEpisodeStatus = "draft";
 
 async function api(url, options = {}) {
   const res = await fetch(url, {
@@ -281,22 +283,43 @@ $("saveSeason").onclick = async () => {
 };
 async function loadEpisodes(seasonId) {
   currentSeasonId = seasonId;
+  currentEpisodeId = null;
+  currentEpisodeStatus = "draft";
   $("episodeEditor").style.display = "block";
+  $("episodeNumber").value = "1";
+  $("episodeTitle").value = "";
+  $("episodeDescription").value = "";
+  $("episodeVideo").value = "";
+  $("episodeCaptionsUrl").value = "";
+  $("saveEpisode").textContent = "Save Episode";
   const data = await api("/api/episodes?season_id=" + encodeURIComponent(seasonId));
   $("episodeList").innerHTML = data.episodes.map(e =>
-    `<div class="item"><strong>E${e.episode_number}: ${esc(e.title)}</strong><small>${esc(e.status)}</small></div>`
+    `<div class="item" data-episode="${esc(e.id)}"><strong>E${e.episode_number}: ${esc(e.title)}</strong><small>${esc(e.status)}</small></div>`
   ).join("") || '<p class="muted">No episodes yet.</p>';
+  document.querySelectorAll("[data-episode]").forEach(el => el.onclick = () => {
+    const e = data.episodes.find(x => x.id === el.dataset.episode);
+    if (!e) return;
+    currentEpisodeId = e.id;
+    currentEpisodeStatus = e.status || "draft";
+    $("episodeNumber").value = e.episode_number || 1;
+    $("episodeTitle").value = e.title || "";
+    $("episodeDescription").value = e.description || "";
+    $("episodeVideo").value = e.video_url || "";
+    $("episodeCaptionsUrl").value = e.captions_url || "";
+    $("saveEpisode").textContent = "Update Episode";
+  });
 }
 $("saveEpisode").onclick = async () => {
   if (!currentSeasonId) return alert("Choose a season first.");
   await api("/api/episodes", {method:"POST",body:JSON.stringify({
+    id:currentEpisodeId || undefined,
     season_id:currentSeasonId,
     episode_number:$("episodeNumber").value,
     title:$("episodeTitle").value,
     description:$("episodeDescription").value,
     video_url:$("episodeVideo").value,
     captions_url:$("episodeCaptionsUrl").value.trim(),
-    status:"draft"
+    status:currentEpisodeStatus || "draft"
   })});
   await loadEpisodes(currentSeasonId);
 };
