@@ -64,6 +64,7 @@ async function editContent(id) {
   $("backdropUrl").value = item.backdrop_url || "";
   $("trailerUrl").value = item.trailer_url || "";
   $("videoUrl").value = item.video_url || "";
+  $("captionsUrl").value = item.captions_url || "";
   $("featured").checked = !!item.featured;
   $("posterPreview").innerHTML = item.poster_url ? `<img src="${esc(item.poster_url)}">` : "Poster preview";
   $("backdropPreview").innerHTML = item.backdrop_url ? `<img src="${esc(item.backdrop_url)}">` : "Netflix-style backdrop preview";
