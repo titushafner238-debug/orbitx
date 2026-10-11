@@ -53,6 +53,8 @@
  fetch("/api/public/content",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{items=d.content||[];const params=new URLSearchParams(location.search);if(params.get("collection"))showCollection(params.get("collection"));else if(params.get("q")){input.value=params.get("q");input.dispatchEvent(new Event("input"))}}).catch(()=>{items=[];});
 })();
 </script>
-<script src="/orbit-features.js?v=20261011-lunar-purple"></script>
+
+<script src="/orbit-sidebar.js?v=20261011-sidebar"></script>
+<script src="/orbit-features.js?v=20261011-page-specific"></script>
 </body>
 </html>
