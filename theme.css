@@ -1,0 +1,130 @@
+/* ORBIT X — Lunar Purple theme
+   Shared brand colors: Deep Space #08070C, Nebula #20172B,
+   Starlight #F8F6FC, Violet #A78BFA.
+*/
+:root {
+  color-scheme: dark;
+  --orbit-deep-space: #08070C;
+  --orbit-nebula: #20172B;
+  --orbit-starlight: #F8F6FC;
+  --orbit-violet: #A78BFA;
+  --orbit-violet-bright: #B9A4FF;
+  --orbit-muted: #B9B2C6;
+  --orbit-border: #342A43;
+  --orbit-panel: #14111B;
+  --orbit-panel-hover: #211A2B;
+}
+html { background: var(--orbit-deep-space); }
+body {
+  background: var(--orbit-deep-space) !important;
+  color: var(--orbit-starlight);
+}
+header {
+  background: rgba(8, 7, 12, .97) !important;
+  border-bottom-color: var(--orbit-border) !important;
+}
+.logo {
+  color: var(--orbit-starlight) !important;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 3.5px !important;
+  text-transform: uppercase;
+  text-shadow: 0 0 22px rgba(167, 139, 250, .10);
+}
+a.logo::first-letter { color: var(--orbit-violet) !important; }
+nav a, .main-nav a { color: var(--orbit-muted); }
+nav a:hover, nav a.active, .main-nav a:hover, .main-nav a.active {
+  color: var(--orbit-violet-bright) !important;
+}
+.search-page-button, .search-box input, .search input, .search-field {
+  background: var(--orbit-panel) !important;
+  border-color: var(--orbit-border) !important;
+}
+.search-page-button:hover, .search-page-button.active {
+  background: var(--orbit-violet) !important;
+  color: var(--orbit-deep-space) !important;
+  border-color: var(--orbit-violet) !important;
+}
+input, select, textarea {
+  accent-color: var(--orbit-violet);
+}
+input:focus, select:focus, textarea:focus, .search-field:focus-within {
+  border-color: var(--orbit-violet) !important;
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, .13);
+}
+button, .button, .watch-button {
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.button-primary, .watch-button, .search-submit, button.primary, .btn-primary {
+  background: var(--orbit-violet) !important;
+  color: var(--orbit-deep-space) !important;
+  border-color: var(--orbit-violet) !important;
+}
+.button-primary:hover, .watch-button:hover, .search-submit:hover, button.primary:hover, .btn-primary:hover {
+  background: var(--orbit-violet-bright) !important;
+  color: var(--orbit-deep-space) !important;
+  border-color: var(--orbit-violet-bright) !important;
+}
+.button-secondary, button.secondary, .btn-secondary {
+  background: var(--orbit-nebula) !important;
+  color: var(--orbit-starlight) !important;
+  border-color: var(--orbit-border) !important;
+}
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--orbit-violet) !important;
+  outline-offset: 3px;
+}
+.hero {
+  background:
+    linear-gradient(90deg, rgba(8,7,12,.98) 12%, rgba(8,7,12,.90) 42%, rgba(8,7,12,.38) 78%, rgba(8,7,12,.14)),
+    radial-gradient(circle at 75% 40%, #38294C, var(--orbit-deep-space) 68%) !important;
+}
+.hero-label, .eyebrow, .section-kicker { color: var(--orbit-violet-bright) !important; }
+.section, main, .page { color: var(--orbit-starlight); }
+.originals, .original-box, .collection-tile, .movie-card, .show-card, .episode-card {
+  background-color: var(--orbit-panel) !important;
+  border-color: var(--orbit-border) !important;
+}
+.originals {
+  border-top-color: var(--orbit-border) !important;
+  border-bottom-color: var(--orbit-border) !important;
+}
+.original-box {
+  background: linear-gradient(135deg, #20172B, #0D0A12) !important;
+}
+.movie-card:hover, .show-card:hover, .episode-card:hover, .collection-tile:hover {
+  background-color: var(--orbit-panel-hover) !important;
+  border-color: var(--orbit-violet) !important;
+}
+.genre, .genre-chip, .filter-chip, .tab-button {
+  background: var(--orbit-panel) !important;
+  border-color: var(--orbit-border) !important;
+  color: var(--orbit-muted) !important;
+}
+.genre:hover, .genre.selected, .genre.active, .genre-chip.active, .filter-chip.active, .tab-button.active {
+  background: var(--orbit-violet) !important;
+  border-color: var(--orbit-violet) !important;
+  color: var(--orbit-deep-space) !important;
+}
+.poster { background: linear-gradient(145deg, #30253E, #100D15) !important; }
+.ad-space {
+  background: #0D0A12 !important;
+  border-color: #3A2D4B !important;
+}
+.collection-art {
+  background: linear-gradient(110deg, rgba(8,7,12,.88), rgba(8,7,12,.18)), linear-gradient(135deg, #49345F, #100D15) !important;
+}
+.collection-tile[data-collection="christmas"] .collection-art {
+  background: linear-gradient(110deg, rgba(8,7,12,.86), rgba(8,7,12,.12)), linear-gradient(135deg, #49345F, #15101D) !important;
+}
+.collection-tile[data-collection="halloween"] .collection-art {
+  background: linear-gradient(110deg, rgba(8,7,12,.86), rgba(8,7,12,.12)), linear-gradient(135deg, #654078, #150D1D) !important;
+}
+.collection-eyebrow, .movie-meta, .page-header p, .section-subtitle { color: #B9B2C6; }
+footer { border-top-color: var(--orbit-border) !important; color: #8E849D !important; }
+footer a:hover { color: var(--orbit-violet-bright) !important; }
+/* Purple selection and browser controls; movie posters remain untouched. */
+::selection { background: var(--orbit-violet); color: var(--orbit-deep-space); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
