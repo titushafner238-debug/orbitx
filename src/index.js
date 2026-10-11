@@ -209,7 +209,7 @@ async function listContent(env, url, admin = false) {
   if (!admin) where.push(publicContentWhere());
   const sql = `
     SELECT id, type, title, slug, description, year, runtime_minutes, rating,
-           poster_url, backdrop_url, trailer_url, video_url, featured,
+           poster_url, backdrop_url, trailer_url, video_url, captions_url, featured,
            status, release_at, created_at, updated_at,
            COALESCE((SELECT group_concat(g.name, '||') FROM content_genres cg JOIN genres g ON g.id = cg.genre_id WHERE cg.content_id = content.id), '') AS genres
     FROM content
@@ -233,9 +233,9 @@ async function saveContent(request, env) {
   await env.DB.prepare(`
     INSERT INTO content (
       id, type, title, slug, description, year, runtime_minutes, rating,
-      poster_url, backdrop_url, trailer_url, video_url, featured,
+      poster_url, backdrop_url, trailer_url, video_url, captions_url, featured,
       status, release_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     ON CONFLICT(id) DO UPDATE SET
       type=excluded.type,
       title=excluded.title,
@@ -248,6 +248,7 @@ async function saveContent(request, env) {
       backdrop_url=excluded.backdrop_url,
       trailer_url=excluded.trailer_url,
       video_url=excluded.video_url,
+      captions_url=excluded.captions_url,
       featured=excluded.featured,
       status=excluded.status,
       release_at=excluded.release_at,
@@ -271,6 +272,7 @@ async function saveContent(request, env) {
     })(),
     String(body.trailer_url || ""),
     String(body.video_url || ""),
+    String(body.captions_url || ""),
     body.featured ? 1 : 0,
     status,
     releaseAt
@@ -346,7 +348,7 @@ __name(saveSeason, "saveSeason");
 async function getEpisodes(env, seasonId) {
   const result = await env.DB.prepare(`
     SELECT id, season_id, episode_number, title, description, runtime_minutes,
-           thumbnail_url, video_url, status, release_at
+           thumbnail_url, video_url, captions_url, status, release_at
     FROM episodes
     WHERE season_id = ?
     ORDER BY episode_number ASC
@@ -364,8 +366,8 @@ async function saveEpisode(request, env) {
   await env.DB.prepare(`
     INSERT INTO episodes (
       id, season_id, episode_number, title, description, runtime_minutes,
-      thumbnail_url, video_url, status, release_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      thumbnail_url, video_url, captions_url, status, release_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     ON CONFLICT(id) DO UPDATE SET
       episode_number=excluded.episode_number,
       title=excluded.title,
@@ -373,6 +375,7 @@ async function saveEpisode(request, env) {
       runtime_minutes=excluded.runtime_minutes,
       thumbnail_url=excluded.thumbnail_url,
       video_url=excluded.video_url,
+      captions_url=excluded.captions_url,
       status=excluded.status,
       release_at=excluded.release_at,
       updated_at=datetime('now')
@@ -385,6 +388,7 @@ async function saveEpisode(request, env) {
     body.runtime_minutes ? Number(body.runtime_minutes) : null,
     String(body.thumbnail_url || ""),
     String(body.video_url || ""),
+    String(body.captions_url || ""),
     status,
     body.release_at || null
   ).run();
