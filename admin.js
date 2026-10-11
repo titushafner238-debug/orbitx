@@ -106,6 +106,7 @@ async function save(statusOverride) {
     backdrop_url: $("backdropUrl").value.trim(),
     trailer_url: $("trailerUrl").value.trim(),
     video_url: $("videoUrl").value.trim(),
+    captions_url: $("captionsUrl").value.trim(),
     genres,
     featured: $("featured").checked
   };
@@ -293,6 +294,7 @@ $("saveEpisode").onclick = async () => {
     title:$("episodeTitle").value,
     description:$("episodeDescription").value,
     video_url:$("episodeVideo").value,
+    captions_url:$("episodeCaptionsUrl").value.trim(),
     status:"draft"
   })});
   await loadEpisodes(currentSeasonId);
