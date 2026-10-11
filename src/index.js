@@ -6,6 +6,8 @@ var __defProp2 = Object.defineProperty;
 var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
 var __defProp22 = Object.defineProperty;
 var __name22 = /* @__PURE__ */ __name2((target, value) => __defProp22(target, "name", { value, configurable: true }), "__name");
+var __defProp222 = Object.defineProperty;
+var __name222 = /* @__PURE__ */ __name22((target, value) => __defProp222(target, "name", { value, configurable: true }), "__name");
 var JSON_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store"
@@ -19,6 +21,7 @@ function json(data, status = 200) {
 __name(json, "json");
 __name2(json, "json");
 __name22(json, "json");
+__name222(json, "json");
 async function b2Native(env) {
   if (!env.B2_KEY_ID || !env.B2_APP_KEY) throw new Error("Backblaze B2 credentials are not configured.");
   const auth = await fetch("https://api.backblazeb2.com/b2api/v4/b2_authorize_account", { headers: { Authorization: "Basic " + btoa(env.B2_KEY_ID + ":" + env.B2_APP_KEY) } });
@@ -45,6 +48,7 @@ async function b2Native(env) {
 __name(b2Native, "b2Native");
 __name2(b2Native, "b2Native");
 __name22(b2Native, "b2Native");
+__name222(b2Native, "b2Native");
 async function b2UploadBytes(env, key, bytes, contentType = "application/octet-stream") {
   const b = await b2Native(env);
   const body = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
@@ -72,6 +76,7 @@ async function b2UploadBytes(env, key, bytes, contentType = "application/octet-s
 __name(b2UploadBytes, "b2UploadBytes");
 __name2(b2UploadBytes, "b2UploadBytes");
 __name22(b2UploadBytes, "b2UploadBytes");
+__name222(b2UploadBytes, "b2UploadBytes");
 async function b2UploadStream(env, key, stream, contentType = "application/octet-stream", contentLength = null) {
   const b = await b2Native(env);
   const u = await fetch(b.auth.apiUrl + "/b2api/v4/b2_get_upload_url", {
@@ -103,6 +108,7 @@ async function b2UploadStream(env, key, stream, contentType = "application/octet
 __name(b2UploadStream, "b2UploadStream");
 __name2(b2UploadStream, "b2UploadStream");
 __name22(b2UploadStream, "b2UploadStream");
+__name222(b2UploadStream, "b2UploadStream");
 async function b2DownloadUrl(env, key) {
   const b = await b2Native(env);
   const u = await fetch(b.auth.apiUrl + "/b2api/v4/b2_get_download_authorization", { method: "POST", headers: { Authorization: b.auth.authorizationToken, "Content-Type": "application/json" }, body: JSON.stringify({ bucketId: b.bucket.bucketId, fileNamePrefix: key, validDurationInSeconds: 3600 }) });
@@ -113,30 +119,35 @@ async function b2DownloadUrl(env, key) {
 __name(b2DownloadUrl, "b2DownloadUrl");
 __name2(b2DownloadUrl, "b2DownloadUrl");
 __name22(b2DownloadUrl, "b2DownloadUrl");
+__name222(b2DownloadUrl, "b2DownloadUrl");
 async function b2SignedGet(env, key) {
   return b2DownloadUrl(env, key);
 }
 __name(b2SignedGet, "b2SignedGet");
 __name2(b2SignedGet, "b2SignedGet");
 __name22(b2SignedGet, "b2SignedGet");
+__name222(b2SignedGet, "b2SignedGet");
 async function b2SignedPutStream(env, key, stream, contentType = "application/octet-stream", contentLength = null) {
   await b2UploadStream(env, key, stream, contentType, contentLength);
 }
 __name(b2SignedPutStream, "b2SignedPutStream");
 __name2(b2SignedPutStream, "b2SignedPutStream");
 __name22(b2SignedPutStream, "b2SignedPutStream");
+__name222(b2SignedPutStream, "b2SignedPutStream");
 function slugify(value) {
   return value.toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90);
 }
 __name(slugify, "slugify");
 __name2(slugify, "slugify");
 __name22(slugify, "slugify");
+__name222(slugify, "slugify");
 function id(prefix = "orb") {
   return prefix + "_" + crypto.randomUUID().replaceAll("-", "");
 }
 __name(id, "id");
 __name2(id, "id");
 __name22(id, "id");
+__name222(id, "id");
 function publicContentWhere() {
   return `status = 'published'
     AND (release_at IS NULL OR release_at <= datetime('now'))`;
@@ -144,6 +155,7 @@ function publicContentWhere() {
 __name(publicContentWhere, "publicContentWhere");
 __name2(publicContentWhere, "publicContentWhere");
 __name22(publicContentWhere, "publicContentWhere");
+__name222(publicContentWhere, "publicContentWhere");
 async function posterProxy(url) {
   const posters = {
     "flying-deuces": [
@@ -219,6 +231,7 @@ async function posterProxy(url) {
 __name(posterProxy, "posterProxy");
 __name2(posterProxy, "posterProxy");
 __name22(posterProxy, "posterProxy");
+__name222(posterProxy, "posterProxy");
 async function listContent(env, url, admin = false) {
   const type = url.searchParams.get("type");
   const q = url.searchParams.get("q");
@@ -248,6 +261,7 @@ async function listContent(env, url, admin = false) {
 __name(listContent, "listContent");
 __name2(listContent, "listContent");
 __name22(listContent, "listContent");
+__name222(listContent, "listContent");
 async function saveContent(request, env) {
   const body = await request.json();
   const type = body.type === "show" ? "show" : "movie";
@@ -329,6 +343,7 @@ async function saveContent(request, env) {
 __name(saveContent, "saveContent");
 __name2(saveContent, "saveContent");
 __name22(saveContent, "saveContent");
+__name222(saveContent, "saveContent");
 async function deleteContent(request, env) {
   const body = await request.json();
   if (!body.id) return json({ error: "Content ID is required." }, 400);
@@ -338,6 +353,7 @@ async function deleteContent(request, env) {
 __name(deleteContent, "deleteContent");
 __name2(deleteContent, "deleteContent");
 __name22(deleteContent, "deleteContent");
+__name222(deleteContent, "deleteContent");
 async function getGenres(env) {
   const result = await env.DB.prepare(
     "SELECT id, name, slug FROM genres ORDER BY name ASC"
@@ -347,6 +363,7 @@ async function getGenres(env) {
 __name(getGenres, "getGenres");
 __name2(getGenres, "getGenres");
 __name22(getGenres, "getGenres");
+__name222(getGenres, "getGenres");
 async function getSeasons(env, showId) {
   const result = await env.DB.prepare(`
     SELECT id, show_id, season_number, title, description
@@ -359,6 +376,7 @@ async function getSeasons(env, showId) {
 __name(getSeasons, "getSeasons");
 __name2(getSeasons, "getSeasons");
 __name22(getSeasons, "getSeasons");
+__name222(getSeasons, "getSeasons");
 async function saveSeason(request, env) {
   const body = await request.json();
   if (!body.show_id) return json({ error: "Show is required." }, 400);
@@ -383,6 +401,7 @@ async function saveSeason(request, env) {
 __name(saveSeason, "saveSeason");
 __name2(saveSeason, "saveSeason");
 __name22(saveSeason, "saveSeason");
+__name222(saveSeason, "saveSeason");
 async function getEpisodes(env, seasonId) {
   const result = await env.DB.prepare(`
     SELECT id, season_id, episode_number, title, description, runtime_minutes,
@@ -396,6 +415,7 @@ async function getEpisodes(env, seasonId) {
 __name(getEpisodes, "getEpisodes");
 __name2(getEpisodes, "getEpisodes");
 __name22(getEpisodes, "getEpisodes");
+__name222(getEpisodes, "getEpisodes");
 async function saveEpisode(request, env) {
   const body = await request.json();
   if (!body.season_id || !body.title) {
@@ -437,6 +457,7 @@ async function saveEpisode(request, env) {
 __name(saveEpisode, "saveEpisode");
 __name2(saveEpisode, "saveEpisode");
 __name22(saveEpisode, "saveEpisode");
+__name222(saveEpisode, "saveEpisode");
 async function upload(request, env) {
   const u = new URL(request.url);
   const folder = (u.searchParams.get("folder") || "uploads").replace(/[^a-z0-9_-]/gi, "") || "uploads";
@@ -458,6 +479,7 @@ async function upload(request, env) {
 __name(upload, "upload");
 __name2(upload, "upload");
 __name22(upload, "upload");
+__name222(upload, "upload");
 async function uploadUrl(request, env) {
   const body = await request.json();
   const folder = String(body.folder || "uploads").replace(/[^a-z0-9_-]/gi, "");
@@ -468,6 +490,7 @@ async function uploadUrl(request, env) {
 __name(uploadUrl, "uploadUrl");
 __name2(uploadUrl, "uploadUrl");
 __name22(uploadUrl, "uploadUrl");
+__name222(uploadUrl, "uploadUrl");
 async function importUrl(request, env) {
   const body = await request.json(), sourceUrl = String(body.url || "").trim();
   if (!/^https?:\/\//i.test(sourceUrl)) return json({ error: "A direct http(s) video URL is required." }, 400);
@@ -495,12 +518,14 @@ async function importUrl(request, env) {
 __name(importUrl, "importUrl");
 __name2(importUrl, "importUrl");
 __name22(importUrl, "importUrl");
+__name222(importUrl, "importUrl");
 async function ensureSiteSettings(env) {
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '')").run();
 }
 __name(ensureSiteSettings, "ensureSiteSettings");
 __name2(ensureSiteSettings, "ensureSiteSettings");
 __name22(ensureSiteSettings, "ensureSiteSettings");
+__name222(ensureSiteSettings, "ensureSiteSettings");
 async function getSiteSettings(env) {
   await ensureSiteSettings(env);
   const r = await env.DB.prepare("SELECT key,value FROM site_settings ORDER BY key").all();
@@ -517,12 +542,14 @@ async function getSiteSettings(env) {
 __name(getSiteSettings, "getSiteSettings");
 __name2(getSiteSettings, "getSiteSettings");
 __name22(getSiteSettings, "getSiteSettings");
+__name222(getSiteSettings, "getSiteSettings");
 async function publicSiteSettings(env) {
   return json({ settings: await getSiteSettings(env) });
 }
 __name(publicSiteSettings, "publicSiteSettings");
 __name2(publicSiteSettings, "publicSiteSettings");
 __name22(publicSiteSettings, "publicSiteSettings");
+__name222(publicSiteSettings, "publicSiteSettings");
 async function saveSiteSettings(request, env) {
   await ensureSiteSettings(env);
   const body = await request.json();
@@ -537,6 +564,7 @@ async function saveSiteSettings(request, env) {
 __name(saveSiteSettings, "saveSiteSettings");
 __name2(saveSiteSettings, "saveSiteSettings");
 __name22(saveSiteSettings, "saveSiteSettings");
+__name222(saveSiteSettings, "saveSiteSettings");
 async function requireAdmin(request, env) {
   const u = await currentUser(request, env);
   if (!u) return null;
@@ -545,6 +573,7 @@ async function requireAdmin(request, env) {
 __name(requireAdmin, "requireAdmin");
 __name2(requireAdmin, "requireAdmin");
 __name22(requireAdmin, "requireAdmin");
+__name222(requireAdmin, "requireAdmin");
 async function adminUsers(env) {
   const r = await env.DB.prepare(`SELECT u.id,u.email,u.created_at,u.disabled,u.is_admin,COUNT(p.id) AS profiles FROM users u LEFT JOIN profiles p ON p.user_id=u.id GROUP BY u.id ORDER BY u.created_at DESC`).all();
   return json({ users: r.results || [] });
@@ -552,6 +581,7 @@ async function adminUsers(env) {
 __name(adminUsers, "adminUsers");
 __name2(adminUsers, "adminUsers");
 __name22(adminUsers, "adminUsers");
+__name222(adminUsers, "adminUsers");
 var AUTH_COOKIE = "orbit_session";
 var SESSION_DAYS = 30;
 function avatarSvg(kind) {
@@ -565,6 +595,7 @@ function avatarSvg(kind) {
 __name(avatarSvg, "avatarSvg");
 __name2(avatarSvg, "avatarSvg");
 __name22(avatarSvg, "avatarSvg");
+__name222(avatarSvg, "avatarSvg");
 var AVATARS = [
   { id: "orbit-cat", name: "Cosmo Cat", icon: avatarSvg("cat") },
   { id: "orbit-fox", name: "Nova Fox", icon: avatarSvg("fox") },
@@ -588,6 +619,7 @@ function b64u(bytes) {
 __name(b64u, "b64u");
 __name2(b64u, "b64u");
 __name22(b64u, "b64u");
+__name222(b64u, "b64u");
 function fromB64u(s) {
   s = s.replace(/-/g, "+").replace(/_/g, "/");
   while (s.length % 4) s += "=";
@@ -598,12 +630,14 @@ function fromB64u(s) {
 __name(fromB64u, "fromB64u");
 __name2(fromB64u, "fromB64u");
 __name22(fromB64u, "fromB64u");
+__name222(fromB64u, "fromB64u");
 async function sha256Text(v) {
   return crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
 }
 __name(sha256Text, "sha256Text");
 __name2(sha256Text, "sha256Text");
 __name22(sha256Text, "sha256Text");
+__name222(sha256Text, "sha256Text");
 async function hashPassword(p) {
   const salt = new Uint8Array(16);
   crypto.getRandomValues(salt);
@@ -614,6 +648,7 @@ async function hashPassword(p) {
 __name(hashPassword, "hashPassword");
 __name2(hashPassword, "hashPassword");
 __name22(hashPassword, "hashPassword");
+__name222(hashPassword, "hashPassword");
 async function verifyPassword(p, stored) {
   const x = String(stored || "").split("$");
   if (x.length !== 4 || x[0] !== "pbkdf2") return false;
@@ -629,6 +664,7 @@ async function verifyPassword(p, stored) {
 __name(verifyPassword, "verifyPassword");
 __name2(verifyPassword, "verifyPassword");
 __name22(verifyPassword, "verifyPassword");
+__name222(verifyPassword, "verifyPassword");
 function passwordError(p) {
   if (typeof p !== "string" || p.length < 8) return "Password must be at least 8 characters.";
   if (!/[A-Z]/.test(p)) return "Password needs at least one uppercase letter.";
@@ -640,20 +676,23 @@ function passwordError(p) {
 __name(passwordError, "passwordError");
 __name2(passwordError, "passwordError");
 __name22(passwordError, "passwordError");
+__name222(passwordError, "passwordError");
 function cookieValue(req, name) {
   const h = req.headers.get("Cookie") || "";
   const x = h.split(";").map((v) => v.trim()).find((v) => v.startsWith(name + "="));
   return x ? decodeURIComponent(x.slice(name.length + 1)) : null;
 }
 __name(cookieValue, "cookieValue");
-__name2(cookieValue,"cookieValue");
+__name2(cookieValue, "cookieValue");
 __name22(cookieValue, "cookieValue");
+__name222(cookieValue, "cookieValue");
 async function sessionTokenHash(t) {
   return b64u(await sha256Text(t));
 }
 __name(sessionTokenHash, "sessionTokenHash");
 __name2(sessionTokenHash, "sessionTokenHash");
 __name22(sessionTokenHash, "sessionTokenHash");
+__name222(sessionTokenHash, "sessionTokenHash");
 async function createSession(userId, env) {
   const b = new Uint8Array(32);
   crypto.getRandomValues(b);
@@ -664,6 +703,7 @@ async function createSession(userId, env) {
 __name(createSession, "createSession");
 __name2(createSession, "createSession");
 __name22(createSession, "createSession");
+__name222(createSession, "createSession");
 async function currentUser(req, env) {
   const token = cookieValue(req, AUTH_COOKIE);
   if (!token) return null;
@@ -673,24 +713,28 @@ async function currentUser(req, env) {
 __name(currentUser, "currentUser");
 __name2(currentUser, "currentUser");
 __name22(currentUser, "currentUser");
+__name222(currentUser, "currentUser");
 function sessionCookie(token, expires) {
   return AUTH_COOKIE + "=" + encodeURIComponent(token) + "; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=" + new Date(expires).toUTCString();
 }
 __name(sessionCookie, "sessionCookie");
 __name2(sessionCookie, "sessionCookie");
 __name22(sessionCookie, "sessionCookie");
+__name222(sessionCookie, "sessionCookie");
 function clearSessionCookie() {
   return AUTH_COOKIE + "=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 }
 __name(clearSessionCookie, "clearSessionCookie");
 __name2(clearSessionCookie, "clearSessionCookie");
 __name22(clearSessionCookie, "clearSessionCookie");
+__name222(clearSessionCookie, "clearSessionCookie");
 function authJson(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers } });
 }
 __name(authJson, "authJson");
 __name2(authJson, "authJson");
 __name22(authJson, "authJson");
+__name222(authJson, "authJson");
 async function signup(req, env) {
   const b = await req.json(), email = String(b.email || "").trim().toLowerCase(), password = String(b.password || "");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return authJson({ error: "Please enter a valid email address." }, 400);
@@ -707,6 +751,7 @@ async function signup(req, env) {
 __name(signup, "signup");
 __name2(signup, "signup");
 __name22(signup, "signup");
+__name222(signup, "signup");
 async function login(req, env) {
   const b = await req.json(), email = String(b.email || "").trim().toLowerCase(), password = String(b.password || ""), u = await env.DB.prepare("SELECT id,email,password_hash FROM users WHERE email=? COLLATE NOCASE AND disabled=0").bind(email).first();
   if (!u || !await verifyPassword(password, u.password_hash)) return authJson({ error: "Email or password is incorrect." }, 401);
@@ -716,6 +761,7 @@ async function login(req, env) {
 __name(login, "login");
 __name2(login, "login");
 __name22(login, "login");
+__name222(login, "login");
 async function logout(req, env) {
   const t = cookieValue(req, AUTH_COOKIE);
   if (t) await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await sessionTokenHash(t)).run();
@@ -724,6 +770,7 @@ async function logout(req, env) {
 __name(logout, "logout");
 __name2(logout, "logout");
 __name22(logout, "logout");
+__name222(logout, "logout");
 async function accountData(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ authenticated: false, avatars: AVATARS });
@@ -734,6 +781,7 @@ async function accountData(req, env) {
 __name(accountData, "accountData");
 __name2(accountData, "accountData");
 __name22(accountData, "accountData");
+__name222(accountData, "accountData");
 async function saveProfile(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ error: "Please sign in." }, 401);
@@ -755,6 +803,7 @@ async function saveProfile(req, env) {
 __name(saveProfile, "saveProfile");
 __name2(saveProfile, "saveProfile");
 __name22(saveProfile, "saveProfile");
+__name222(saveProfile, "saveProfile");
 async function deleteProfile(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ error: "Please sign in." }, 401);
@@ -766,6 +815,7 @@ async function deleteProfile(req, env) {
 __name(deleteProfile, "deleteProfile");
 __name2(deleteProfile, "deleteProfile");
 __name22(deleteProfile, "deleteProfile");
+__name222(deleteProfile, "deleteProfile");
 async function saveSettings(req, env) {
   const u = await currentUser(req, env);
   if (!u) return authJson({ error: "Please sign in." }, 401);
@@ -776,6 +826,7 @@ async function saveSettings(req, env) {
 __name(saveSettings, "saveSettings");
 __name2(saveSettings, "saveSettings");
 __name22(saveSettings, "saveSettings");
+__name222(saveSettings, "saveSettings");
 var ACCOUNT_HTML = `<!doctype html>
 <html lang="en">
 <head>
@@ -955,6 +1006,7 @@ function patchOrbitHtml(html) {
   return html.replace("</body>", '<script src="/orbit-sidebar.js?v=20261011-sidebar"><\/script><script src="/orbit-features.js?v=20261011-page-specific"><\/script></body>');
 }
 __name(patchOrbitHtml, "patchOrbitHtml");
+__name2(patchOrbitHtml, "patchOrbitHtml");
 var index_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
