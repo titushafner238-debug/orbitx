@@ -66,6 +66,11 @@ button, .button, .watch-button {
   color: var(--orbit-deep-space) !important;
   border-color: var(--orbit-violet-bright) !important;
 }
+.movie-grid .watch-button:hover, .movie-grid .watch-button:focus-visible {
+  background: var(--orbit-violet-bright) !important;
+  color: var(--orbit-deep-space) !important;
+  border-color: var(--orbit-violet-bright) !important;
+}
 .button-secondary, button.secondary, .btn-secondary {
   background: var(--orbit-nebula) !important;
   color: var(--orbit-starlight) !important;
