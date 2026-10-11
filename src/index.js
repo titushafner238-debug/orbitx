@@ -211,6 +211,16 @@ async function posterProxy(url) {
     ]
   };
   const key = url.searchParams.get("key") || "";
+  if (key === "sherlock-secret-weapon") {
+    try {
+      const meta = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/Sherlock_Holmes_and_the_Secret_Weapon", { headers: { "User-Agent": "ORBIT-X/1.0 (poster image proxy)", "Accept": "application/json" } });
+      if (meta.ok) {
+        const data = await meta.json();
+        const posterUrl = data.originalimage?.source || data.thumbnail?.source;
+        if (posterUrl && Array.isArray(posters[key])) posters[key].unshift({ url: posterUrl, referer: "https://en.wikipedia.org/wiki/Sherlock_Holmes_and_the_Secret_Weapon" });
+      }
+    } catch {}
+  }
   const sources = posters[key];
   if (!sources) return new Response("Poster not found.", { status: 404, headers: { "Cache-Control": "no-store" } });
   for (const item of sources) {
