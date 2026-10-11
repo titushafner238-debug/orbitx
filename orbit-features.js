@@ -10,7 +10,13 @@
  const read=(key,fallback=[])=>{try{const v=JSON.parse(localStorage.getItem(key)||"null");return Array.isArray(v)?v:fallback}catch{return fallback}};
  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
- const card=item=>'<a class="oxf-card" href="/watch.html?slug='+encodeURIComponent(item.slug||"")+'">'+(item.poster_url?'<img src="'+esc(item.poster_url)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'<span class="oxf-art">ORBIT X</span>')+'<span class="oxf-card-copy"><strong>'+esc(item.title||"Untitled")+'</strong><small>'+esc(item.type==="show"?"TV Series":"Movie")+(item.year?" · "+esc(item.year):"")+'</small></span></a>';
+ const card=item=>{
+  const slug=item.series_slug||item.slug||"";
+  const episodeParams=item.type==="show"&&item.season_number?"&season="+encodeURIComponent(item.season_number)+"&episode="+encodeURIComponent(item.episode_number||1):"";
+  const displayTitle=item.episode_title?(item.title||"TV Show")+" — "+item.episode_title:(item.title||"Untitled");
+  const episodeMeta=item.type==="show"&&item.season_number?" · S"+item.season_number+" E"+(item.episode_number||1):"";
+  return '<a class="oxf-card" href="/watch.html?slug='+encodeURIComponent(slug)+episodeParams+'">'+(item.poster_url?'<img src="'+esc(item.poster_url)+'" alt="" loading="lazy" onerror="this.remove()">':'<span class="oxf-art">ORBIT X</span>')+'<span class="oxf-card-copy"><strong>'+esc(displayTitle)+'</strong><small>'+esc(item.type==="show"?"TV Series":"Movie")+(item.year?" · "+esc(item.year):"")+episodeMeta+'</small></span></a>';
+ };
  const css=`
  #orbit-feature-hub{max-width:1500px;margin:0 auto;padding:25px clamp(16px,4vw,55px) 50px;color:#F8F6FC}
  #orbit-feature-hub *{box-sizing:border-box}
