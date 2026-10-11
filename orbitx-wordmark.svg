@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="310" height="58" viewBox="0 0 310 58" role="img" aria-labelledby="title desc">
+<title id="title">ORBIT X</title><desc id="desc">ORBIT X custom wordmark in starlight white and lunar violet.</desc>
+<defs><linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>
+<g fill="none" stroke="url(#violet)" stroke-width="1.8" opacity=".95"><ellipse cx="21" cy="28" rx="18" ry="9" transform="rotate(-28 21 28)"/><ellipse cx="21" cy="28" rx="18" ry="9" transform="rotate(52 21 28)"/></g>
+<circle cx="21" cy="28" r="4" fill="#F8F6FC"/>
+<text x="45" y="39" fill="#F8F6FC" font-family="Trebuchet MS,Arial,sans-serif" font-size="32" font-weight="900" letter-spacing="2.5">RBIT</text>
+<text x="173" y="39" fill="url(#violet)" font-family="Trebuchet MS,Arial,sans-serif" font-size="32" font-weight="900" letter-spacing="1">X</text>
+<path d="M45 47H204" stroke="#A78BFA" stroke-width="1" opacity=".42"/>
+</svg>
