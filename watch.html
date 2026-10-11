@@ -1,101 +1,73 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ORBIT X</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Watch — ORBIT X</title>
+<link rel="stylesheet" href="/theme.css?v=20261011-lunar-purple">
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#080808;color:#fff;font-family:Arial,Helvetica,sans-serif}
-.hero{min-height:72vh;background:#111 center/cover no-repeat;position:relative}
-.shade{position:absolute;inset:0;background:linear-gradient(90deg,#080808 8%,rgba(8,8,8,.82) 42%,rgba(8,8,8,.25) 80%),linear-gradient(0deg,#080808,transparent 55%)}
-.content{position:relative;z-index:1;max-width:700px;padding:13vh 7vw 80px}
-.back{color:#bbb;text-decoration:none}
-.back:hover{color:#fff}
-.title{font-size:clamp(42px,6vw,70px);line-height:1.05;margin:30px 0 15px}
-.meta{color:#bbb;margin-bottom:20px}
-.desc{font-size:18px;line-height:1.7;color:#ddd}
-.buttons{display:flex;gap:10px;margin-top:25px;flex-wrap:wrap}
-.btn{padding:13px 20px;background:#fff;color:#000;border-radius:6px;text-decoration:none;font-weight:bold}
-.btn.alt{background:#292929;color:#fff}
-main{max-width:1100px;margin:auto;padding:35px 6vw 70px}
-.player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
-.player iframe,.player video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-.error{color:#ffb9c0}
+:root{--bg:#08070C;--panel:#14111B;--violet:#A78BFA;--text:#F8F6FC;--muted:#B9B2C6}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+header{height:70px;padding:0 clamp(16px,4vw,56px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #342A43;background:rgba(8,7,12,.96);position:sticky;top:0;z-index:20}
+.logo img{display:block;width:205px;max-width:48vw;height:auto}.top-nav{display:flex;gap:22px;align-items:center}.top-nav a{color:#B9B2C6;text-decoration:none}.top-nav a:hover{color:#B9A4FF}
+.hero{min-height:520px;position:relative;background:#100D15 center/cover no-repeat}.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,7,12,.98) 3%,rgba(8,7,12,.85) 43%,rgba(8,7,12,.22) 100%),linear-gradient(0deg,#08070C 0%,transparent 60%)}
+.hero-content{position:relative;z-index:1;max-width:850px;padding:80px clamp(20px,7vw,100px) 64px}.back{display:inline-block;color:#D7CDEE;text-decoration:none;margin-bottom:25px}.back:hover{color:#fff}
+.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#B9A4FF;font-weight:800;margin-bottom:12px}.title{font-size:clamp(38px,6vw,68px);line-height:1.03;margin:0 0 15px;letter-spacing:-.025em}.meta{color:#D2C9E0;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}.pill{border:1px solid #514162;border-radius:5px;padding:4px 8px;font-size:12px}.desc{font-size:17px;line-height:1.7;color:#E0D9E8;max-width:720px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.btn{border:1px solid #514162;border-radius:7px;background:#20172B;color:#F8F6FC;padding:12px 17px;font-weight:750;text-decoration:none;cursor:pointer;display:inline-flex;gap:9px;align-items:center}.btn.primary{background:#A78BFA;color:#08070C;border-color:#A78BFA}.btn:hover{background:#B9A4FF;color:#08070C;border-color:#B9A4FF}
+main{max-width:1280px;margin:0 auto;padding:26px clamp(16px,4vw,56px) 70px}.section-title{font-size:24px;margin:0 0 15px}.player-section{margin:0 0 32px}.player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border:1px solid #342A43;border-radius:12px;overflow:hidden}.player iframe,.player video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}.empty{padding:24px;border:1px solid #342A43;border-radius:10px;background:#14111B;color:#B9B2C6;line-height:1.6}
+.episode-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}.field label{display:block;font-size:13px;color:#B9B2C6;margin-bottom:7px}.field select{width:100%;background:#14111B;color:#F8F6FC;border:1px solid #514162;border-radius:7px;padding:12px;font:inherit}.episode-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px}.episode{border:1px solid #342A43;background:#14111B;border-radius:9px;padding:14px;text-align:left;color:#F8F6FC;cursor:pointer}.episode:hover,.episode.active{border-color:#A78BFA;background:#20172B}.episode small{display:block;color:#B9B2C6;margin-top:6px;line-height:1.4}
+.recommend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:14px}.rec-card{background:#14111B;border:1px solid #342A43;border-radius:8px;overflow:hidden;color:inherit;text-decoration:none}.rec-card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#20172B}.rec-card strong{display:block;padding:10px;font-size:13px;line-height:1.4}
+.modal{position:fixed;inset:0;background:rgba(3,2,6,.92);z-index:100;display:none;align-items:center;justify-content:center;padding:22px}.modal.open{display:flex}.modal-inner{width:min(100%,1000px);position:relative}.modal-close{position:absolute;right:0;bottom:calc(100% + 12px);border:1px solid #514162;border-radius:50%;background:#20172B;color:#fff;width:42px;height:42px;font-size:24px;cursor:pointer}.modal .player{border-radius:8px}.status{color:#B9A4FF;font-size:13px;min-height:20px;margin-top:12px}
+footer{border-top:1px solid #342A43;padding:25px;text-align:center;color:#8E849D;font-size:13px}
+@media(max-width:650px){header{height:auto;min-height:64px;gap:12px;flex-wrap:wrap;padding:12px 16px}.logo img{width:165px}.top-nav{gap:13px;font-size:13px}.hero{min-height:430px}.hero-content{padding-top:50px}.desc{font-size:15px}.episode-controls{grid-template-columns:1fr}main{padding-top:22px}.recommend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
-<style id="orbit-design-style"></style>    <link rel="stylesheet" href="/theme.css?v=20261011-lunar-purple">
 </head>
 <body>
-<section class="hero" id="hero">
-<div class="shade"></div>
-<div class="content">
-<a class="back" href="/">← Back to ORBIT X</a>
-<h1 class="title" id="title">Loading…</h1>
-<div class="meta" id="meta"></div>
-<p class="desc" id="desc"></p>
-<div class="buttons" id="buttons"></div>
-</div>
+<header><a class="logo" href="/" aria-label="ORBIT X home"><img src="/orbitx-wordmark.svg" alt="ORBIT X"></a><nav class="top-nav" aria-label="Main navigation"><a href="/">Home</a><a href="/movies.html">Movies</a><a href="/tv.html">TV</a><a href="/search.html">Search</a><a href="/account">Profile</a></nav></header>
+<section class="hero" id="hero"><div class="shade"></div><div class="hero-content">
+<a class="back" id="backLink" href="/">← Back to ORBIT X</a><div class="kicker" id="kicker">ORBIT X • NOW STREAMING</div><h1 class="title" id="title">Loading title…</h1><div class="meta" id="meta"></div><p class="desc" id="desc"></p>
+<div class="actions" id="actions"></div><div class="status" id="status" role="status" aria-live="polite"></div>
+</div></section>
+<main>
+<section id="episodeSection" hidden>
+<h2 class="section-title">Choose your episode</h2>
+<div class="episode-controls"><div class="field"><label for="seasonSelect">Season</label><select id="seasonSelect"><option>Loading seasons…</option></select></div><div class="field"><label for="episodeSelect">Episode</label><select id="episodeSelect"><option>Choose an episode</option></select></div></div>
+<div id="episodeList" class="episode-list"></div>
 </section>
-<main id="media"></main>
+<section class="player-section" id="playerSection"><h2 class="section-title" id="playerHeading">Watch</h2><div id="playerArea" class="empty">Choose Watch Now to start playback. If a title has no playable video attached, ORBIT X will tell you.</div></section>
+<section id="moreSection" hidden><h2 class="section-title">More to explore</h2><div id="moreGrid" class="recommend-grid"></div></section>
+</main>
+<div class="modal" id="trailerModal" role="dialog" aria-modal="true" aria-label="Trailer"><div class="modal-inner"><button class="modal-close" id="closeTrailer" aria-label="Close trailer">×</button><div id="trailerPlayer"></div></div></div>
+<footer>ORBIT X — Free Entertainment</footer>
+<script src="/site.js"></script>
 <script>
-function esc(value){
-  return String(value ?? "").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[c]));
-}
-function youtubeId(value){
-  try{
-    const u=new URL(String(value));
-    const host=u.hostname.replace(/^www\./,"").toLowerCase();
-    if(host==="youtu.be") return u.pathname.split("/").filter(Boolean)[0] || "";
-    if(host==="youtube.com" || host==="m.youtube.com"){
-      if(u.pathname==="/watch") return u.searchParams.get("v") || "";
-      if(u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || "";
-      if(u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2] || "";
-    }
-  }catch(e){}
-  return "";
-}
-(async()=>{
-  const slug=new URLSearchParams(location.search).get("slug");
-  const titleEl=document.getElementById("title");
-  const media=document.getElementById("media");
-  if(!slug){titleEl.textContent="Movie not found";return;}
-  try{
-    const r=await fetch("/api/public/content?type=movie",{cache:"no-store"});
-    if(!r.ok) throw new Error("Content request failed: "+r.status);
-    const d=await r.json();
-    const x=(d.content||[]).find(i=>String(i.slug)===String(slug));
-    if(!x){titleEl.textContent="Movie not found";return;}
-    document.title="ORBIT X — "+x.title;
-    titleEl.textContent=x.title;
-    document.getElementById("desc").textContent=x.description||"";
-    document.getElementById("meta").textContent=[x.year,x.rating,x.runtime_minutes?x.runtime_minutes+" min":""].filter(Boolean).join(" · ");
-
-    const hero=document.getElementById("hero");
-    const heroImage=x.backdrop_url||x.poster_url;
-    if(heroImage) hero.style.backgroundImage='url("'+String(heroImage).replace(/"/g,"%22")+'")';
-
-    const buttons=document.getElementById("buttons");
-    if(x.video_url){
-      buttons.innerHTML='<a class="btn" href="#watch">Watch now</a>'+(x.trailer_url?'<a class="btn alt" target="_blank" rel="noopener" href="'+esc(x.trailer_url)+'">Trailer</a>':"");
-      const yt=youtubeId(x.video_url);
-      if(yt){
-        media.innerHTML='<h2 id="watch">Watch</h2><div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(yt)+'?rel=0&modestbranding=1" title="'+esc(x.title)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>';
-      }else{
-        media.innerHTML='<h2 id="watch">Watch</h2><div class="player"><video controls playsinline preload="metadata" src="'+esc(x.video_url)+'"></video></div>';
-      }
-    }else if(x.trailer_url){
-      buttons.innerHTML='<a class="btn alt" target="_blank" rel="noopener" href="'+esc(x.trailer_url)+'">Trailer</a>';
-      media.innerHTML='<p>No movie video has been attached yet.</p>';
-    }else{
-      media.innerHTML='<p>No video has been attached to this movie yet.</p>';
-    }
-  }catch(e){
-    console.error("ORBIT watch error",e);
-    titleEl.textContent="Could not load movie";
-    media.innerHTML='<p class="error">There was a problem loading this movie. Please try again.</p>';
-  }
+(()=> {
+ const $=id=>document.getElementById(id);
+ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+ const params=new URLSearchParams(location.search),slug=params.get("slug");
+ const progressKey="orbitx-continue-watching",listKey="orbitx-my-list";
+ let item=null,allItems=[],seasons=[],episodes=[],selectedEpisode=null,activeMediaUrl="";
+ function youtubeId(value){try{const u=new URL(String(value));const h=u.hostname.replace(/^www\./,"").toLowerCase();if(h==="youtu.be")return u.pathname.split("/").filter(Boolean)[0]||"";if(["youtube.com","m.youtube.com","youtube-nocookie.com"].includes(h)){if(u.pathname==="/watch")return u.searchParams.get("v")||"";for(const p of ["embed","shorts","live"])if(u.pathname.startsWith("/"+p+"/"))return u.pathname.split("/")[2]||""}}catch{}return""}
+ function videoEmbed(url,title){const id=youtubeId(url);if(id)return '<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?rel=0&modestbranding=1&autoplay=1&enablejsapi=1" title="'+esc(title)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>';return '<div class="player"><video controls playsinline preload="metadata" src="'+esc(url)+'" aria-label="'+esc(title)+'"></video></div>'}
+ function getList(){try{return JSON.parse(localStorage.getItem(listKey)||"[]")}catch{return[]}}
+ function setStatus(text){$("status").textContent=text||""}
+ function setContinue(entry){try{const current=JSON.parse(localStorage.getItem(progressKey)||"[]").filter(x=>x.slug!==entry.slug);current.unshift(entry);localStorage.setItem(progressKey,JSON.stringify(current.slice(0,30)))}catch{}}
+ function renderActions(){const saved=getList().some(x=>x.slug===item.slug);const canWatch=!!(item.video_url||(item.type==="show"&&episodes.some(e=>e.video_url)));$("actions").innerHTML=(canWatch?'<button class="btn primary" id="watchNow">▶ Watch Now</button>':'')+(item.trailer_url?'<button class="btn" id="trailerButton">▷ Watch Trailer</button>':'')+'<button class="btn" id="myListButton">'+(saved?"✓ In My List":"+ My List")+'</button>'+(item.type==="show"?'':'<button class="btn" id="shareButton">↗ Share</button>');$("watchNow")?.addEventListener("click",()=>{if(item.type==="show"){if(selectedEpisode)playEpisode(selectedEpisode);else if(episodes[0]){selectEpisode(episodes[0]);playEpisode(episodes[0])}else setStatus("No published episodes with video are available yet.")}else playUrl(item.video_url,item.title,item.slug)});$("trailerButton")?.addEventListener("click",openTrailer);$("myListButton")?.addEventListener("click",toggleList);$("shareButton")?.addEventListener("click",shareTitle)}
+ function toggleList(){const list=getList(),idx=list.findIndex(x=>x.slug===item.slug);if(idx>=0)list.splice(idx,1);else list.unshift({slug:item.slug,title:item.title,poster_url:item.poster_url||"",type:item.type});localStorage.setItem(listKey,JSON.stringify(list));renderActions();setStatus(idx>=0?"Removed from My List.":"Added to My List on this device.")}
+ async function shareTitle(){try{if(navigator.share)await navigator.share({title:item.title,url:location.href});else{await navigator.clipboard.writeText(location.href);setStatus("Title link copied.")}}catch{}}
+ function playUrl(url,title,progressSlug){if(!url){setStatus("A video has not been attached to this title yet.");return}activeMediaUrl=url;$("playerHeading").textContent="Now Playing";$("playerArea").className="";$("playerArea").innerHTML=videoEmbed(url,title);$("playerSection").scrollIntoView({behavior:"smooth",block:"start"});setContinue({slug:progressSlug||item.slug,title:item.title,poster_url:item.poster_url||"",type:item.type,season_number:selectedEpisode?.season_number||null,episode_number:selectedEpisode?.episode_number||null,updated_at:Date.now(),url});setStatus("Playback opened. Your continue-watching entry is saved on this device.");const v=$("playerArea").querySelector("video");if(v){v.addEventListener("timeupdate",()=>{if(v.duration&&Number.isFinite(v.duration)){try{const data=JSON.parse(localStorage.getItem(progressKey)||"[]"),entry=data.find(x=>x.slug===(progressSlug||item.slug));if(entry){entry.current_time=v.currentTime;entry.duration=v.duration;localStorage.setItem(progressKey,JSON.stringify(data))}}catch{}}})}}
+ function playEpisode(ep){selectedEpisode=ep;const epSlug=item.slug+"-s"+ep.season_number+"e"+ep.episode_number;playUrl(ep.video_url, item.title+" — "+ep.title, epSlug);$("playerHeading").textContent="S"+ep.season_number+" E"+ep.episode_number+" · "+ep.title}
+ function selectEpisode(ep){selectedEpisode=ep;$("episodeSelect").value=String(ep.id);$("episodeList").querySelectorAll(".episode").forEach(b=>b.classList.toggle("active",b.dataset.id===String(ep.id)));$("episodeSelect").dispatchEvent(new Event("change",{bubbles:false}));}
+ function renderEpisodeOptions(){const s=$("seasonSelect"),e=$("episodeSelect");s.innerHTML=seasons.map(x=>'<option value="'+esc(x.id)+'">Season '+esc(x.season_number)+(x.title?' — '+esc(x.title):"")+'</option>').join("");const season=seasons.find(x=>String(x.id)===s.value)||seasons[0];episodes=season?season.episodes||[]:[];e.innerHTML=episodes.map(x=>'<option value="'+esc(x.id)+'">Episode '+esc(x.episode_number)+': '+esc(x.title)+'</option>').join("")||'<option value="">No published episodes</option>';renderEpisodeList();const first=episodes[0];if(first)selectedEpisode=first}
+ function renderEpisodeList(){$("episodeList").innerHTML=episodes.map(ep=>'<button type="button" class="episode '+(selectedEpisode&&String(selectedEpisode.id)===String(ep.id)?"active":"")+'" data-id="'+esc(ep.id)+'"><strong>S'+esc(ep.season_number)+' E'+esc(ep.episode_number)+' · '+esc(ep.title)+'</strong><small>'+esc(ep.description||"")+'</small></button>').join("")||'<div class="empty">No published episodes are available in this season yet.</div>';$("episodeList").querySelectorAll("[data-id]").forEach(b=>b.addEventListener("click",()=>{const ep=episodes.find(x=>String(x.id)===b.dataset.id);if(ep){selectEpisode(ep);playEpisode(ep)}}))}
+ async function loadShowSeasons(){const attempts=["/api/seasons?show_id="+encodeURIComponent(item.id),"/api/public/seasons?show_id="+encodeURIComponent(item.id)];for(const url of attempts){try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)continue;const d=await r.json();const raw=d.seasons||[];const got=[];for(const s of raw){let epData={episodes:[]};for(const eu of ["/api/episodes?season_id="+encodeURIComponent(s.id),"/api/public/episodes?season_id="+encodeURIComponent(s.id)]){try{const er=await fetch(eu,{cache:"no-store"});if(er.ok){epData=await er.json();break}}catch{}}got.push({...s,episodes:(epData.episodes||[]).filter(e=>e.status==="published"||!e.status).sort((a,b)=>a.episode_number-b.episode_number).map(e=>({...e,season_number:s.season_number}))})}seasons=got.sort((a,b)=>a.season_number-b.season_number);if(seasons.length)return true}catch{}}return false}
+ function openTrailer(){const url=item.trailer_url;if(!url)return;const id=youtubeId(url);$("trailerPlayer").innerHTML=id?'<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?autoplay=1&rel=0" title="'+esc(item.title)+' trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>':'<div class="player"><video controls autoplay playsinline src="'+esc(url)+'"></video></div>';$("trailerModal").classList.add("open");$("closeTrailer").focus()}
+ function closeTrailer(){$("trailerModal").classList.remove("open");$("trailerPlayer").innerHTML="";$("trailerButton")?.focus()}
+ $("closeTrailer").addEventListener("click",closeTrailer);$("trailerModal").addEventListener("click",e=>{if(e.target===$("trailerModal"))closeTrailer()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeTrailer();if(e.key===" "&&!/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement?.tagName||"")&&$("playerArea").querySelector("video")){e.preventDefault();const v=$("playerArea").querySelector("video");v.paused?v.play():v.pause()}})
+ function renderMore(){const items=allItems.filter(x=>x.slug!==item.slug&&x.type===item.type).slice(0,8);if(!items.length)return;$("moreSection").hidden=false;$("moreGrid").innerHTML=items.map(x=>'<a class="rec-card" href="/watch.html?slug='+encodeURIComponent(x.slug)+'">'+(x.poster_url?'<img src="'+esc(x.poster_url)+'" alt="" loading="lazy">':'<div style="aspect-ratio:2/3;background:#20172B"></div>')+'<strong>'+esc(x.title)+'</strong></a>').join("")}
+ async function init(){if(!slug){$("title").textContent="Title not found";$("playerArea").textContent="Open a title from Home, Movies, TV, or Search.";return}try{const r=await fetch("/api/public/content",{cache:"no-store"});if(!r.ok)throw Error("Content request failed ("+r.status+")");const d=await r.json();allItems=d.content||[];item=allItems.find(x=>String(x.slug)===slug);if(!item){$("title").textContent="Title not found";$("desc").textContent="This title may have been unpublished or its link may be out of date.";return}document.title="ORBIT X — "+item.title;$("title").textContent=item.title;$("desc").textContent=item.description||"Discover this title on ORBIT X.";$("kicker").textContent=item.type==="show"?"ORBIT X • SERIES":"ORBIT X • FEATURE";$("meta").innerHTML=[item.year,item.rating,item.runtime_minutes?item.runtime_minutes+" min":"",item.type==="show"?"TV Series":"Movie"].filter(Boolean).map(x=>'<span class="pill">'+esc(x)+'</span>').join("");const heroImage=item.backdrop_url||item.poster_url;if(heroImage)$("hero").style.backgroundImage='url("'+String(heroImage).replace(/"/g,"%22")+'")';$("backLink").href=item.type==="show"?"/tv.html":"/movies.html";$("backLink").textContent=item.type==="show"?"← Back to TV":"← Back to Movies";
+ if(item.type==="show"){$("episodeSection").hidden=false;const ok=await loadShowSeasons();if(ok){renderEpisodeOptions();$("seasonSelect").addEventListener("change",()=>{const s=seasons.find(x=>String(x.id)===$("seasonSelect").value);episodes=s?.episodes||[];selectedEpisode=episodes[0]||null;renderEpisodeOptions();renderActions()});$("episodeSelect").addEventListener("change",()=>{selectedEpisode=episodes.find(x=>String(x.id)===$("episodeSelect").value)||null;renderEpisodeList()})}else{$("seasonSelect").innerHTML='<option value="">Seasons not available</option>';$("episodeSelect").innerHTML='<option value="">No episode data returned</option>';$("episodeList").innerHTML='<div class="empty">This show page is ready for seasons and episodes, but the season/episode API could not be reached. Add and publish episodes in ORBIT Admin, then check that the public season and episode endpoints are enabled.</div>'}}
+ renderActions();renderMore();const resume=JSON.parse(localStorage.getItem(progressKey)||"[]").find(x=>x.slug===item.slug);if(resume)setStatus("Continue watching is available on this device. Use Watch Now to resume this title.");}catch(e){console.error("ORBIT watch page:",e);$("title").textContent="Could not load title";$("playerArea").textContent="There was a problem loading this title. Please refresh and try again."}}
+ init();
 })();
 </script>
 </body>
