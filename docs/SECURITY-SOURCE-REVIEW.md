@@ -1,0 +1,81 @@
+# Orbit X Streaming — Source-Level Security Review
+
+**Review date:** 2026-10-13  
+**Reviewed ref:** `main` (read-only source inspection)  
+**Status:** Preliminary static review only. No live requests, exploit attempts, penetration test, or deployment changes were performed.
+
+## Critical finding: management writes appear reachable without an admin check
+
+In `src/index.js`, the Worker route dispatcher contains direct calls to privileged handlers without an explicit `requireAdmin(request, env)` guard in the route branch:
+
+| Route | Handler | Source-level observation |
+|---|---|---|
+| `POST /api/site-settings` | `saveSiteSettings` | Direct call; handler writes allowlisted site settings to D1 |
+| `POST /api/content` | `saveContent` | Direct call; handler inserts/updates catalog records |
+| `POST /api/content/delete` | `deleteContent` | Direct call; handler deletes a content row by ID |
+| `POST /api/seasons` | `saveSeason` | Direct call; inspect full handler and enforce admin authorization |
+| `POST /api/episodes` | `saveEpisode` | Direct call; inspect full handler and enforce admin authorization |
+| `POST /api/upload-url` | `uploadUrl` | Direct call; currently returns a generated key/path only, not an upload credential. Review whether it should be admin-only and rate-limited, but the stronger confirmed issue is the unguarded catalog/settings mutation routes. |
+
+The neighboring `POST /api/upload` and `POST /api/import-url` branches do explicitly call `requireAdmin`, which makes the missing checks on the routes above especially important to resolve. The `GET /api/content` branch is also admin-guarded, while `GET /api/public/content` is intended to be public.
+
+### Impact if confirmed
+
+A remote caller may be able to change site settings, create or modify catalog entries, delete titles, or alter TV seasons/episodes without being an administrator. The upload-url route appears to only generate a random storage key/path; it is not evidence by itself that a caller can upload bytes. The exact impact depends on handler behavior and the live deployed version. Treat this as a **release-blocking authorization concern** until fixed and tested.
+
+### Required remediation
+
+1. Coordinate with the current streaming-site editor so the fix is made in the active source of truth, not as a competing edit from this planning branch.
+2. Enforce server-side admin authorization on every management mutation route, including settings, content, delete, seasons, episodes, and upload URL creation where appropriate.
+3. Prefer a shared route guard or authorization inside each privileged handler so a future route cannot accidentally omit the check.
+4. Verify that only an authenticated account with `is_admin = 1` can invoke each privileged operation.
+5. Test each route as: signed out, signed in as ordinary user, and signed in as admin. Expected result: signed-out and ordinary-user requests return 401/403 and cause no database or storage changes; admin request succeeds with valid input.
+6. Check CSRF/origin protection for cookie-authenticated state-changing routes. `SameSite=Lax` is useful but should not be treated as a complete authorization or CSRF review.
+7. Re-run the negative tests against a preview deployment, attach evidence to the PR, then merge/deploy only after owner approval.
+
+## Additional P1 finding: public season/episode endpoints do not filter unpublished records
+
+The current `GET /api/seasons` handler returns all seasons for a supplied `show_id`, and `GET /api/episodes` returns episode records including `status`, `release_at`, and `video_url` without a published/release-time filter. These GET routes are publicly reachable in the dispatcher.
+
+This is distinct from `GET /api/public/content`, which calls `listContent(..., false)` and applies a published/release-time filter. If draft or scheduled seasons/episodes exist, callers who obtain or guess a show/season ID may be able to discover unreleased metadata or direct media URLs.
+
+**Required review/fix:** filter public season/episode responses to content whose parent show is published and whose episode status is published with `release_at IS NULL OR release_at <= datetime('now')`. If the admin editor needs drafts, create a separate admin-only path or pass an explicit server-validated admin mode. Test with a draft show, a scheduled episode, a published episode, and a release time in the future. This is a source-inspection concern; live database contents and actual exposure have not been tested.
+
+## Patch status after the initial finding
+
+A proposed fix has now been applied to `src/index.js` on branch `prep/orbit-x-app-store-launch` (commit `48cc636e3e1cb97bd038f5e1ad6ab74163e0683b`), without changing `main` or deploying to Cloudflare.
+
+The branch change:
+- Adds `requireAdmin` checks to the five catalog/settings mutation routes identified above.
+- Keeps admin season/episode reads able to see drafts while filtering public season responses to published shows whose release time has arrived.
+- Filters public episode responses to published episodes whose release time has arrived, and whose parent show is published and released.
+
+A follow-up source-text regression check passed for all five mutation guards, both public filtering clauses, and the admin draft-access path. This is **not a JavaScript build, integration test, live authorization test, or database test**. Before merge, still run requests as signed-out, ordinary-user, and admin identities against a preview database, and confirm the admin editor can still create/edit draft shows, seasons, and episodes. Verify the active editor has not made newer changes that need to be incorporated.
+
+## Other source-inspection observations
+
+### Existing positive controls
+
+- SQL queries in the inspected account handlers generally use D1 prepared statements and bound parameters.
+- The account code hashes passwords with PBKDF2 and a per-password random salt.
+- Session tokens are generated with a cryptographically secure random source; the database stores a token hash rather than the raw token.
+- The session cookie is configured with `HttpOnly`, `Secure`, and `SameSite=Lax`; session lookup checks expiry and disabled-account state.
+- Profile update/delete handlers check the profile's `user_id` against the authenticated account.
+
+These controls are encouraging, but source inspection alone does not prove the full system is secure.
+
+### Remaining items to verify
+
+- Authentication/signup/login rate limiting and abuse controls.
+- CSRF/origin checks on cookie-authenticated writes.
+- Email verification and password-reset flow; account deletion and session revocation across devices.
+- Input/body-size limits and consistent safe error responses.
+- Correct authorization on every admin/catalog/media/settings endpoint, including less frequently used routes.
+- Public season/episode APIs do not expose drafts, scheduled content, or unreleased video URLs.
+- Whether public media/upload URLs can expose unlisted content or allow abuse.
+- Secrets are only in Cloudflare secrets/settings and are not committed to the public repository.
+- Privacy disclosures reflect the actual data and ad/analytics SDKs.
+
+## Important limitation
+
+This review did not call the live Worker endpoints, inspect the live D1 data, or verify which commit is currently deployed. The active editor may already have changed the code since the reviewed `main` ref. Confirm the finding against the latest working tree and preview before taking action. No production files were modified by this review.
