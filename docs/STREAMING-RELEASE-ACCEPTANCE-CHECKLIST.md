@@ -45,6 +45,12 @@ Status labels: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`. Source inspection is not
 - [ ] Repeated retries do not duplicate saved titles or collection items.
 - [ ] Existing localStorage state is imported only through a safe, idempotent migration flow.
 
+### Public API content visibility
+
+- [ ] `GET /api/seasons` and `GET /api/episodes` never expose draft/scheduled seasons or episodes, future release metadata, or unreleased media URLs to public callers.
+- [ ] A draft show with draft episodes, a published show with a future-scheduled episode, and a published episode are tested separately.
+- [ ] Admin editing can still view drafts through a separate server-authorized path if that is required.
+
 ### Playback and content rights
 
 - [ ] Every published movie/episode has a working, authorized playback URL and correct metadata.
