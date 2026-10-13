@@ -109,6 +109,21 @@ Status labels: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`. Source inspection is not
 - [ ] A documented rollback path exists for each production release.
 - [ ] A named owner can respond to copyright complaints, security reports, and account-support requests.
 
+## Immediate P0 security blocker found by source inspection
+
+The current `main` branch route dispatcher appears to expose state-changing management endpoints without calling `requireAdmin` in the route handler:
+
+- `POST /api/site-settings` calls `saveSiteSettings` directly.
+- `POST /api/content` calls `saveContent` directly.
+- `POST /api/content/delete` calls `deleteContent` directly.
+- `POST /api/seasons` calls `saveSeason` directly.
+- `POST /api/episodes` calls `saveEpisode` directly.
+- `POST /api/upload-url` calls `uploadUrl` directly (confirm whether this endpoint is intended to be public and whether it can create or expose privileged storage operations).
+
+This is a **source-inspection finding, not a live exploit test**. It must be verified against the current deployment and the active editor's latest code. If confirmed, it could allow unauthenticated visitors to alter catalog/settings or delete content; therefore, do not open the site to a wider audience or submit apps until the routes are protected and negative authorization tests pass. The admin check should be enforced server-side in the route handler (and/or in each privileged handler), not merely by hiding admin UI. For all management routes, test signed-out, ordinary-user, and admin sessions. Review CSRF/origin protection for cookie-authenticated writes at the same time.
+
+Do **not** patch these production routes from this prep branch while another chat is actively editing them. Coordinate the finding with that editor, make the fix in the active workstream, and verify on a preview deployment before merge/deploy.
+
 ## Current source-inspection notes (not runtime verification)
 
 - The repository's `wrangler.jsonc` declares Worker `orbitx`, entrypoint `src/index.js`, static assets directory `.`, and D1 binding `DB`.
