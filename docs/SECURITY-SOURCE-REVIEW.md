@@ -15,13 +15,13 @@ In `src/index.js`, the Worker route dispatcher contains direct calls to privileg
 | `POST /api/content/delete` | `deleteContent` | Direct call; handler deletes a content row by ID |
 | `POST /api/seasons` | `saveSeason` | Direct call; inspect full handler and enforce admin authorization |
 | `POST /api/episodes` | `saveEpisode` | Direct call; inspect full handler and enforce admin authorization |
-| `POST /api/upload-url` | `uploadUrl` | Direct call; verify whether it creates upload permissions or otherwise exposes privileged storage operations |
+| `POST /api/upload-url` | `uploadUrl` | Direct call; currently returns a generated key/path only, not an upload credential. Review whether it should be admin-only and rate-limited, but the stronger confirmed issue is the unguarded catalog/settings mutation routes. |
 
 The neighboring `POST /api/upload` and `POST /api/import-url` branches do explicitly call `requireAdmin`, which makes the missing checks on the routes above especially important to resolve. The `GET /api/content` branch is also admin-guarded, while `GET /api/public/content` is intended to be public.
 
 ### Impact if confirmed
 
-A remote caller may be able to change site settings, create or modify catalog entries, delete titles, or alter TV seasons/episodes without being an administrator. The exact impact depends on handler behavior and the live deployed version. Treat this as a **release-blocking authorization concern** until fixed and tested.
+A remote caller may be able to change site settings, create or modify catalog entries, delete titles, or alter TV seasons/episodes without being an administrator. The upload-url route appears to only generate a random storage key/path; it is not evidence by itself that a caller can upload bytes. The exact impact depends on handler behavior and the live deployed version. Treat this as a **release-blocking authorization concern** until fixed and tested.
 
 ### Required remediation
 
