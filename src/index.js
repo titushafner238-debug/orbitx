@@ -1022,6 +1022,7 @@ var index_default = {
       }
     }
     if (url.pathname === "/site.js") return new Response(SITE_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" } });
+    if (url.pathname === "/books" || url.pathname === "/books.html") return env.ASSETS.fetch(new Request(new URL("/books.html", url.origin), request));
     if (url.pathname === "/about.html") return new Response(patchOrbitHtml(ABOUT_HTML), { headers: { "content-type": "text/html; charset=utf-8" } });
     if (url.pathname === "/about") return new Response(patchOrbitHtml(ABOUT_HTML), { headers: { "content-type": "text/html; charset=utf-8" } });
     if (url.pathname === "/contact.html") return new Response(patchOrbitHtml(CONTACT_HTML), { headers: { "content-type": "text/html; charset=utf-8" } });
