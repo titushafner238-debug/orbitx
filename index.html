@@ -434,6 +434,16 @@
 .account-nav{display:flex;align-items:center;gap:8px}.avatar-circle{width:30px;height:30px;border:1px solid #666;border-radius:50%;display:inline-grid;place-items:center;font-size:18px;color:#aaa}.main-nav{display:flex;gap:28px;align-items:center}.main-nav a{color:#bdbdbd;font-size:15px}.main-nav a:hover,.main-nav a.active{color:#fff}.search-page-button{display:inline-flex;align-items:center;gap:8px;color:#ddd!important;border:1px solid #333;border-radius:7px;padding:9px 12px;background:#171717;white-space:nowrap}.search-page-button:hover,.search-page-button.active{background:#fff;color:#000!important}.search-glass{display:inline-block;width:13px;height:13px;border:2px solid currentColor;border-radius:50%;position:relative}.search-glass:after{content:"";position:absolute;width:6px;height:2px;background:currentColor;right:-5px;bottom:-3px;transform:rotate(45deg)}@media(max-width:750px){.search-page-button{margin:0 auto}}
 button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#000!important;border-color:#fff!important}\n</style>
     <link rel="stylesheet" href="/theme.css?v=20261011-lunar-purple">
+<style>
+:root{--orbit-purple:#9b7bff}
+.hub-intro{padding:38px 5% 12px;max-width:1440px;margin:auto}.hub-intro h2{font-size:clamp(25px,3vw,36px);margin-bottom:10px}.hub-intro>p{color:#bdbdbd;max-width:760px;line-height:1.65}
+.hub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-top:22px}
+.hub-card{background:linear-gradient(145deg,#171321,#101010 72%);border:1px solid #302747;border-radius:14px;padding:22px;min-height:150px;display:flex;flex-direction:column;gap:10px;transition:transform .18s,border-color .18s}
+a.hub-card:hover{transform:translateY(-3px);border-color:var(--orbit-purple)}.hub-icon{font-size:25px;color:var(--orbit-purple)}.hub-card h3{font-size:18px}.hub-card p{font-size:14px;color:#bdb8c9;line-height:1.5}.hub-link{margin-top:auto;color:#c7b7ff;font-size:14px;font-weight:700}.hub-card.soon{opacity:.78}.hub-card.soon .hub-link{color:#aaa}
+.hub-columns{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-top:22px}.hub-panel{border:1px solid #292333;background:#111;border-radius:14px;padding:24px}.hub-panel h3{font-size:21px;margin-bottom:12px}.hub-panel p,.hub-panel li{color:#c0bdc7;line-height:1.65;font-size:14px}.hub-list{list-style:none;display:grid;gap:12px}.hub-list li{border-bottom:1px solid #29252f;padding-bottom:11px}.hub-list li:last-child{border:0;padding-bottom:0}.hub-tag{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#d3c7ff;background:#2b2045;padding:5px 8px;border-radius:5px;margin-bottom:10px}.hub-cta{display:inline-block;margin-top:14px;background:var(--orbit-purple);color:#0a0712;padding:10px 14px;border-radius:7px;font-weight:800}
+@media(max-width:850px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-columns{grid-template-columns:1fr}}@media(max-width:460px){.hub-intro{padding:28px 20px 8px}.hub-grid{gap:10px}.hub-card{padding:16px;min-height:165px}.hub-panel{padding:18px}}
+</style>
+
 </head>
 
 <body>
@@ -495,12 +505,50 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
 </section>
 
 
+
+<section class="hub-intro" id="orbit-hub">
+  <span class="hub-tag">Your Orbit, all in one place</span><h2>Welcome to the Orbit X hub.</h2>
+  <p>Find your next watch, explore Orbit projects, discover special offers, and keep up with what’s being built — all from one home base.</p>
+  <div class="hub-grid">
+    <a class="hub-card" href="/movies.html"><span class="hub-icon">▶</span><h3>Orbit X Streaming</h3><p>Explore movies, television, classics, and new additions to the library.</p><span class="hub-link">Explore streaming →</span></a>
+    <a class="hub-card" href="#orbit-updates"><span class="hub-icon">✦</span><h3>What’s New</h3><p>Project announcements, new features, and what’s coming next.</p><span class="hub-link">See updates ↓</span></a>
+    <a class="hub-card" href="#orbit-deals"><span class="hub-icon">◇</span><h3>Deals & Offers</h3><p>Special offers, free promotions, and future Orbit deals.</p><span class="hub-link">Browse offers ↓</span></a>
+    <a class="hub-card" href="#orbit-projects"><span class="hub-icon">⌘</span><h3>All Orbit Projects</h3><p>Access Orbit X’s entertainment, games, AI, books, and music projects.</p><span class="hub-link">Explore projects ↓</span></a>
+  </div>
+  <div class="hub-columns">
+    <div class="hub-panel" id="orbit-updates"><span class="hub-tag">The latest</span><h3>What’s new at Orbit X</h3>
+      <ul class="hub-list">
+        <li><strong>Orbit X Streaming</strong><br>Explore the growing movie and TV library, including classic favorites.</li>
+        <li><strong>Orbit X Gaming</strong><br>The game hub and original haunted-house adventure <em>Hollowveil</em> are in development.</li>
+        <li><strong>Orbit X AI</strong><br>A standalone AI experience is planned as part of the Orbit X family.</li>
+        <li><strong>More ways to explore</strong><br>Music, books, creator content, and other entertainment are planned for future releases.</li>
+      </ul><p style="margin-top:14px;font-size:12px">This page will be the central place for announcements as projects launch.</p>
+    </div>
+    <div class="hub-panel" id="orbit-deals"><span class="hub-tag">Deals & promotions</span><h3>Orbit offers</h3>
+      <p>Orbit X is building a dedicated place for promotions, partner offers, and future member benefits. We’ll list an offer here when it’s available, with its terms and end date.</p>
+      <p style="margin-top:12px"><strong>Nothing to buy to browse the current streaming library.</strong> No paid deal is being advertised here yet.</p><a class="hub-cta" href="/movies.html">Explore free entertainment</a>
+    </div>
+  </div>
+</section>
+
 <!-- ADVERTISEMENT SPACE -->
 
 <div class="ad-space">
     ADVERTISEMENT
 </div>
 
+
+
+<section class="hub-intro" id="orbit-projects"><span class="hub-tag">The Orbit universe</span><h2>Explore all Orbit X projects</h2>
+<p>One brand, multiple experiences. Open available services here; projects that aren’t launched yet are clearly marked as coming soon.</p>
+<div class="hub-grid">
+<a class="hub-card" href="/"><span class="hub-icon">◉</span><h3>Orbit X Home</h3><p>Your starting point for news, project links, and announcements.</p><span class="hub-link">You’re here ✓</span></a>
+<a class="hub-card" href="/movies.html"><span class="hub-icon">▣</span><h3>Orbit X Streaming</h3><p>Movies and TV, with search and title discovery.</p><span class="hub-link">Open streaming →</span></a>
+<div class="hub-card soon"><span class="hub-icon">🎮</span><h3>Orbit X Gaming</h3><p>A game discovery hub including the original game Hollowveil.</p><span class="hub-link">Coming soon</span></div>
+<div class="hub-card soon"><span class="hub-icon">✧</span><h3>Orbit X AI</h3><p>A separate Orbit-themed AI website.</p><span class="hub-link">Coming soon</span></div>
+<div class="hub-card soon"><span class="hub-icon">♫</span><h3>Orbit X Music</h3><p>A dedicated home for music and audio.</p><span class="hub-link">Coming soon</span></div>
+<div class="hub-card soon"><span class="hub-icon">▤</span><h3>Orbit X Books</h3><p>A place to discover and read books, including public-domain works.</p><span class="hub-link">Coming soon</span></div>
+</div></section>
 
 <!-- MOVIE SECTIONS -->
 <section class="section" id="movies">
