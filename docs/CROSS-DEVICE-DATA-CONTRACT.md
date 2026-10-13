@@ -8,6 +8,10 @@ The current database schema already has accounts, sessions, profiles, and user s
 
 The contract below is intentionally profile-scoped. The authenticated account owns the data; the selected profile is only accepted after the server confirms that it belongs to that account.
 
+## Preference scope decision
+
+The current `user_settings` table is keyed by `user_id`, so its language, sound, volume, and blind-mode preferences are account-level, not profile-specific. The current account page also keeps dark mode in browser `localStorage`, so dark mode does not sync across devices today. Before implementing sync, explicitly decide which settings belong to the whole account and which belong to an individual viewer profile. If the UI intends each profile to have its own preferences, add a `profile_settings` table keyed by `profile_id`; do not silently change the meaning of existing account-wide settings.
+
 ## Proposed tables
 
 Add these only through a reviewed, versioned migration after checking the live D1 schema and taking a recoverable backup. Do not replace or re-import `schema.sql` into the production database.
