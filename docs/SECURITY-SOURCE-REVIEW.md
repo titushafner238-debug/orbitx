@@ -33,6 +33,14 @@ A remote caller may be able to change site settings, create or modify catalog en
 6. Check CSRF/origin protection for cookie-authenticated state-changing routes. `SameSite=Lax` is useful but should not be treated as a complete authorization or CSRF review.
 7. Re-run the negative tests against a preview deployment, attach evidence to the PR, then merge/deploy only after owner approval.
 
+## Additional P1 finding: public season/episode endpoints do not filter unpublished records
+
+The current `GET /api/seasons` handler returns all seasons for a supplied `show_id`, and `GET /api/episodes` returns episode records including `status`, `release_at`, and `video_url` without a published/release-time filter. These GET routes are publicly reachable in the dispatcher.
+
+This is distinct from `GET /api/public/content`, which calls `listContent(..., false)` and applies a published/release-time filter. If draft or scheduled seasons/episodes exist, callers who obtain or guess a show/season ID may be able to discover unreleased metadata or direct media URLs.
+
+**Required review/fix:** filter public season/episode responses to content whose parent show is published and whose episode status is published with `release_at IS NULL OR release_at <= datetime('now')`. If the admin editor needs drafts, create a separate admin-only path or pass an explicit server-validated admin mode. Test with a draft show, a scheduled episode, a published episode, and a release time in the future. This is a source-inspection concern; live database contents and actual exposure have not been tested.
+
 ## Other source-inspection observations
 
 ### Existing positive controls
@@ -52,6 +60,7 @@ These controls are encouraging, but source inspection alone does not prove the f
 - Email verification and password-reset flow; account deletion and session revocation across devices.
 - Input/body-size limits and consistent safe error responses.
 - Correct authorization on every admin/catalog/media/settings endpoint, including less frequently used routes.
+- Public season/episode APIs do not expose drafts, scheduled content, or unreleased video URLs.
 - Whether public media/upload URLs can expose unlisted content or allow abuse.
 - Secrets are only in Cloudflare secrets/settings and are not committed to the public repository.
 - Privacy disclosures reflect the actual data and ad/analytics SDKs.
