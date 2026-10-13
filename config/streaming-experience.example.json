@@ -1,0 +1,38 @@
+{
+  "$schema": "./streaming-experience.schema.json",
+  "intro": {
+    "enabled": false,
+    "videoUrl": "",
+    "posterUrl": "",
+    "playOnFirstVisit": true,
+    "playBeforeEveryTitle": true,
+    "allowSkip": true,
+    "skipAfterSeconds": 2,
+    "maxDurationSeconds": 8,
+    "notes": "Add the approved HTTPS intro video URL here when the Camp/Orbit intro is ready. Disabled until a real URL is supplied and tested."
+  },
+  "ads": {
+    "enabled": false,
+    "provider": "none",
+    "maxPreRollAds": 3,
+    "minimumAds": 0,
+    "maxAdDurationSeconds": 30,
+    "skipAfterSeconds": 5,
+    "showBeforeMovies": true,
+    "showBeforeEpisodes": true,
+    "showBeforeIntro": false,
+    "fallbackToContentWhenNoFill": true,
+    "neverSimulateAds": true,
+    "youtubeHostedContent": "do-not-inject-third-party-pre-roll",
+    "notes": "Off until an approved ad provider, valid ad tag/SDK, privacy disclosures, and content rights are confirmed. The app must respect provider responses and policy limits."
+  },
+  "accountExperience": {
+    "rememberWatchProgress": true,
+    "syncAcrossDevices": true,
+    "rememberFavorites": true,
+    "rememberWatchlist": true,
+    "rememberPreferences": true,
+    "profileScopedData": true,
+    "notes": "Target behavior. Requires server-side per-user/per-profile endpoints; browser localStorage alone does not sync across devices."
+  }
+}
