@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orbit X Streaming Experience Configuration",
+  "type": "object",
+  "required": ["intro", "ads", "accountExperience"],
+  "properties": {
+    "intro": {
+      "type": "object",
+      "required": ["enabled", "videoUrl", "playOnFirstVisit", "playBeforeEveryTitle", "allowSkip"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "videoUrl": { "type": "string" },
+        "posterUrl": { "type": "string" },
+        "playOnFirstVisit": { "type": "boolean" },
+        "playBeforeEveryTitle": { "type": "boolean" },
+        "allowSkip": { "type": "boolean" },
+        "skipAfterSeconds": { "type": "integer", "minimum": 0, "maximum": 15 },
+        "maxDurationSeconds": { "type": "integer", "minimum": 1, "maximum": 15 },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "ads": {
+      "type": "object",
+      "required": ["enabled", "provider", "maxPreRollAds", "minimumAds", "fallbackToContentWhenNoFill"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "provider": { "type": "string", "enum": ["none", "google-ima", "approved-vast-provider"] },
+        "maxPreRollAds": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "minimumAds": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "maxAdDurationSeconds": { "type": "integer", "minimum": 5, "maximum": 60 },
+        "skipAfterSeconds": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "showBeforeMovies": { "type": "boolean" },
+        "showBeforeEpisodes": { "type": "boolean" },
+        "showBeforeIntro": { "type": "boolean" },
+        "fallbackToContentWhenNoFill": { "type": "boolean" },
+        "neverSimulateAds": { "const": true },
+        "youtubeHostedContent": { "type": "string", "const": "do-not-inject-third-party-pre-roll" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "accountExperience": {
+      "type": "object",
+      "required": ["rememberWatchProgress", "syncAcrossDevices", "rememberFavorites", "rememberWatchlist", "rememberPreferences", "profileScopedData"],
+      "properties": {
+        "rememberWatchProgress": { "type": "boolean" },
+        "syncAcrossDevices": { "type": "boolean" },
+        "rememberFavorites": { "type": "boolean" },
+        "rememberWatchlist": { "type": "boolean" },
+        "rememberPreferences": { "type": "boolean" },
+        "profileScopedData": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
