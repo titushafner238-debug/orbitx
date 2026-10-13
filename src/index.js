@@ -1022,7 +1022,16 @@ var index_default = {
       }
     }
     if (url.pathname === "/site.js") return new Response(SITE_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" } });
-    if (url.pathname === "/books" || url.pathname === "/books.html") return env.ASSETS.fetch(new Request(new URL("/books.html", url.origin), request));
+    if (url.pathname === "/books" || url.pathname === "/books/" || url.pathname === "/books.html") {
+      const assetUrl = new URL(request.url);
+      assetUrl.pathname = "/books.html";
+      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), { method: request.method, headers: request.headers }));
+      if (page.ok) {
+        return new Response(await page.text(), { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      }
+      console.error("Orbit X Books asset could not be loaded:", page.status);
+      return new Response("Orbit X Books could not be loaded right now. Please try again shortly.", { status: 503, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
+    }
     if (url.pathname === "/about.html") return new Response(patchOrbitHtml(ABOUT_HTML), { headers: { "content-type": "text/html; charset=utf-8" } });
     if (url.pathname === "/about") return new Response(patchOrbitHtml(ABOUT_HTML), { headers: { "content-type": "text/html; charset=utf-8" } });
     if (url.pathname === "/contact.html") return new Response(patchOrbitHtml(CONTACT_HTML), { headers: { "content-type": "text/html; charset=utf-8" } });
