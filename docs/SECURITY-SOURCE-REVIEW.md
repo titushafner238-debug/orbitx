@@ -41,6 +41,17 @@ This is distinct from `GET /api/public/content`, which calls `listContent(..., f
 
 **Required review/fix:** filter public season/episode responses to content whose parent show is published and whose episode status is published with `release_at IS NULL OR release_at <= datetime('now')`. If the admin editor needs drafts, create a separate admin-only path or pass an explicit server-validated admin mode. Test with a draft show, a scheduled episode, a published episode, and a release time in the future. This is a source-inspection concern; live database contents and actual exposure have not been tested.
 
+## Patch status after the initial finding
+
+A proposed fix has now been applied to `src/index.js` on branch `prep/orbit-x-app-store-launch` (commit `48cc636e3e1cb97bd038f5e1ad6ab74163e0683b`), without changing `main` or deploying to Cloudflare.
+
+The branch change:
+- Adds `requireAdmin` checks to the five catalog/settings mutation routes identified above.
+- Keeps admin season/episode reads able to see drafts while filtering public season responses to published shows whose release time has arrived.
+- Filters public episode responses to published episodes whose release time has arrived, and whose parent show is published and released.
+
+A follow-up source-text regression check passed for all five mutation guards, both public filtering clauses, and the admin draft-access path. This is **not a JavaScript build, integration test, live authorization test, or database test**. Before merge, still run requests as signed-out, ordinary-user, and admin identities against a preview database, and confirm the admin editor can still create/edit draft shows, seasons, and episodes. Verify the active editor has not made newer changes that need to be incorporated.
+
 ## Other source-inspection observations
 
 ### Existing positive controls
