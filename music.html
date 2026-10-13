@@ -21,6 +21,7 @@
 <button data-page="library"><span class="ico">▤</span>Your library</button>
 <button data-page="playlists"><span class="ico">♫</span>Playlists</button>
 <button data-page="upload"><span class="ico">＋</span>Add your music</button>
+<a href="/music-admin.html"><span class="ico">⚙</span>Catalog manager</a>
 </nav></div>
 <div class="navgroup"><p class="navtitle">DISCOVER</p><nav class="nav">
 <button data-mood="Chill"><span class="ico">☾</span>Chill</button><button data-mood="Focus"><span class="ico">◉</span>Focus</button><button data-mood="Energy"><span class="ico">ϟ</span>Energy</button>
@@ -78,8 +79,8 @@ function editTrack(id){const t=tracks.find(x=>x.id===id);if(!t)return;editingId=
 $('cancelEdit').onclick=()=>$('editDialog').close();
 $('editForm').onsubmit=async e=>{e.preventDefault();const t=tracks.find(x=>x.id===editingId);if(!t)return;t.name=$('editTitle').value.trim();t.artist=$('editArtist').value.trim();t.album=$('editAlbum').value.trim();t.genre=$('editGenre').value.trim();t.year=$('editYear').value||'';const f=$('editCover').files[0];if(f)t.cover=await readCover(f);await dbPut(t);$('editDialog').close();renderAll();if(current===tracks.findIndex(x=>x.id===t.id))updateNowPlaying(t)};
 function updateNowPlaying(t){$('nowTitle').textContent=t.name;$('nowArtist').textContent=[t.artist,t.album].filter(Boolean).join(' · ')||'Unknown artist';const m=document.querySelector('.miniart');m.innerHTML=art(t)}
-function playQueue(ids,index){const list=ids.filter(id=>tracks.some(t=>t.id===id));if(!list.length)return;window._orbitQueue=list;playTrack(list[Math.max(0,index)])}
-function playTrack(id){const t=tracks.find(x=>x.id===id);if(!t)return;const src=urlFor(t);if(!src){alert('This track has no audio file attached. Edit the catalog entry or add an audio file.');return}current=tracks.findIndex(x=>x.id===id);audio.src=src;audio.play().then(()=>$('playBtn').textContent='Ⅱ').catch(()=>{$('playBtn').textContent='▶';alert('This audio format may not be supported by your browser.')});updateNowPlaying(t);document.title=t.name+' — Orbit X Music'}
+function playQueue(ids,index){const list=ids.filter(id=>tracks.some(t=>t.id===id));if(!list.length)return;window._orbitQueue=list;playTrack(list[Math.max(0,index)],true)}
+function playTrack(id,preserveQueue=false){if(!preserveQueue)window._orbitQueue=tracks.map(t=>t.id);const t=tracks.find(x=>x.id===id);if(!t)return;const src=urlFor(t);if(!src){alert('This track has no audio file attached. Edit the catalog entry or add an audio file.');return}current=tracks.findIndex(x=>x.id===id);audio.src=src;audio.play().then(()=>$('playBtn').textContent='Ⅱ').catch(()=>{$('playBtn').textContent='▶';alert('This audio format may not be supported by your browser.')});updateNowPlaying(t);document.title=t.name+' — Orbit X Music'}
 $('playBtn').onclick=()=>{if(current<0){if(tracks.length)playTrack(tracks[0].id);else page('upload');return}if(audio.paused){audio.play().then(()=>$('playBtn').textContent='Ⅱ').catch(()=>{});}else{audio.pause();$('playBtn').textContent='▶'}};
 $('nextBtn').onclick=()=>{const q=window._orbitQueue||tracks.map(t=>t.id);if(q.length){const cur=q.indexOf(tracks[current]?.id);playTrack(q[(cur+1+q.length)%q.length])}};
 $('prevBtn').onclick=()=>{const q=window._orbitQueue||tracks.map(t=>t.id);if(q.length){const cur=q.indexOf(tracks[current]?.id);playTrack(q[(cur-1+q.length)%q.length])}};
