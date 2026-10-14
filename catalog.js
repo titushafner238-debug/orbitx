@@ -83,7 +83,7 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
     const left=document.createElement("button");left.type="button";left.className="orbit-row-arrow left";left.innerHTML="&#8249;";left.setAttribute("aria-label","Scroll "+(section.querySelector(".section-title")?.textContent||"titles")+" left");
     const right=document.createElement("button");right.type="button";right.className="orbit-row-arrow right";right.innerHTML="&#8250;";right.setAttribute("aria-label","Scroll "+(section.querySelector(".section-title")?.textContent||"titles")+" right");
     wrap.append(left,right);
-    const update=()=>{const max=grid.scrollWidth-grid.clientWidth;const mobile=window.matchMedia("(max-width:600px)").matches;const showArrows=count>(mobile?2:5)&&max>3;left.hidden=!showArrows;right.hidden=!showArrows;};
+    const update=()=>{const max=grid.scrollWidth-grid.clientWidth;const showArrows=count>2;left.hidden=!showArrows;right.hidden=!showArrows;};
     left.addEventListener("click",()=>{const max=grid.scrollWidth-grid.clientWidth;if(grid.scrollLeft<=3)grid.scrollTo({left:max,behavior:"smooth"});else grid.scrollBy({left:-grid.clientWidth*.85,behavior:"smooth"});});
     right.addEventListener("click",()=>{const max=grid.scrollWidth-grid.clientWidth;if(grid.scrollLeft>=max-3)grid.scrollTo({left:0,behavior:"smooth"});else grid.scrollBy({left:grid.clientWidth*.85,behavior:"smooth"});});
     grid.addEventListener("scroll",update,{passive:true});
