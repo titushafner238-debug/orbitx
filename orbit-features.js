@@ -38,8 +38,8 @@ async function home(){
    if(soonGrid){
      const upcoming=(soonData.content||[]);
      soonGrid.innerHTML=upcoming.map(x=>movieCard(x,"coming")).join("");
-     setupShelf(section,soonGrid,"Coming Soon");
      if(section)section.hidden=!upcoming.length;
+     setupShelf(section,soonGrid,"Coming Soon");
    }
  }catch(e){console.warn("Coming Soon shelf could not load",e)}
  const progress=document.getElementById("orbitHomeProgress"),empty=document.getElementById("orbitHomeEmpty");
