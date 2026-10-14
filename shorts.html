@@ -720,7 +720,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
   try {
     const r = await fetch("/api/public/content?type=movie");
     const d = await r.json();
-    movies = (d.content || []).filter(i => Number(i.runtime_minutes) > 0 && Number(i.runtime_minutes) <= 15);
+    movies = (d.content || []).filter(i => i.runtime_minutes != null && String(i.runtime_minutes).trim() !== "" && Number(i.runtime_minutes) >= 0 && Number(i.runtime_minutes) <= 15);
     applyFilters();
   } catch (e) {
     console.error(e);
