@@ -967,7 +967,7 @@ var index_default = {
       if (page.ok) {
         let html = await page.text();
         html = html.replace(/<title>ORBIT - (Movies|TV Shows)<\/title>/g, "<title>ORBIT X \u2014 $1</title>").replace(/<a href="index\.html" class="logo">\s*ORBIT\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>').replace(/<a href="index\.html" class="logo">\s*ORBIT X\s*<\/a>/g, '<a href="/" class="logo" aria-label="ORBIT X home">ORBIT X</a>').replace(/<p>\s*ORBIT — Free Entertainment\s*<\/p>/g, "<p>ORBIT X \u2014 Free Entertainment</p>");
-        return new Response(html, { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+        return new Response(patchOrbitHtml(html), { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
       }
       return new Response("TV Shows page could not be loaded.", { status: 503 });
     }
