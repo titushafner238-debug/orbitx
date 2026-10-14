@@ -160,7 +160,8 @@ __name22(id, "id");
 __name222(id, "id");
 __name2222(id, "id");
 function publicContentWhere() {
-  return `(status = 'published' OR (status = 'scheduled' AND release_at IS NOT NULL AND release_at <= datetime('now')))
+  return `(status = 'published' OR (status = 'scheduled' AND release_at IS NOT NULL AND release_at <= datetime('now')
+    AND (lower(video_url) LIKE '%.mp4' OR lower(video_url) LIKE '%.mp4?%' OR lower(video_url) LIKE '%.webm' OR lower(video_url) LIKE '%.webm?%' OR lower(video_url) LIKE '%.m3u8' OR lower(video_url) LIKE '%.m3u8?%')))
     AND (release_at IS NULL OR release_at <= datetime('now'))`;
 }
 __name(publicContentWhere, "publicContentWhere");
@@ -269,7 +270,7 @@ async function listContent(env, url, admin = false) {
     where.push("(title LIKE ? OR description LIKE ?)");
     args.push("%" + q + "%", "%" + q + "%");
   }
-  if (!admin) where.push(coming ? "(status = 'scheduled' OR (status = 'published' AND release_at > datetime('now'))) AND (release_at IS NULL OR release_at > datetime('now'))" : publicContentWhere());
+  if (!admin) where.push(coming ? "(status = 'scheduled' OR (status = 'published' AND release_at > datetime('now')))" : publicContentWhere());
   const sql = `
     SELECT id, type, title, slug, description, year, runtime_minutes, rating,
            poster_url, backdrop_url, trailer_url, video_url, captions_url, featured,
