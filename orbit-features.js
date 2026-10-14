@@ -16,7 +16,7 @@ async function home(){
    const soonData=soonResponse.ok?await soonResponse.json():{content:[]};
    const soonGrid=document.getElementById("comingSoonGrid");
    if(soonGrid){
-     const upcoming=(soonData.content||[]).filter(x=>x.status==="scheduled");
+     const upcoming=(soonData.content||[]);
      soonGrid.innerHTML=upcoming.map(x=>{
        const trailer=x.trailer_url||("https://www.youtube.com/results?search_query="+encodeURIComponent(x.title+" "+(x.year||"")+" official trailer"));
        return '<article class="card soon-card">'+(x.poster_url?'<img src="'+esc(x.poster_url)+'" alt="'+esc(x.title)+'" loading="lazy" onerror="this.remove()">':'<div class="card-poster-fallback">ORBIT X</div>')+'<div class="card-info"><h3>'+esc(x.title)+'</h3><p>'+esc(x.year||"Coming soon")+' · Coming November 1</p><a class="watch-button soon-trailer-button" href="'+esc(trailer)+'" target="_blank" rel="noopener noreferrer">Watch Trailer</a><span class="soon-unavailable-label">Not available to watch yet</span></div></article>';
