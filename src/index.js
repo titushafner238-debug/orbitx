@@ -972,7 +972,7 @@ var index_default = {
       return new Response("TV Shows page could not be loaded.", { status: 503 });
     }
     if (url.pathname === "/admin" || url.pathname === "/admin/" || url.pathname === "/admin.html") {
-      return new Response(ADMIN_HTML, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      return new Response(patchOrbitHtml(ADMIN_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     }
     if (url.pathname === "/watch.html") {
       return new Response(patchOrbitHtml(WATCH_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
