@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Settings — ORBIT X</title>
+<link rel="stylesheet" href="/theme.css?v=20261014-settings">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08070C;color:#F8F6FC;font-family:Inter,Arial,sans-serif}.settings-wrap{max-width:1050px;margin:0 auto;padding:32px clamp(16px,4vw,36px) 70px}.eyebrow{color:#B9A4FF;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.settings-wrap h1{font-size:clamp(30px,5vw,44px);margin:10px 0}.intro{color:#B9B2C6;line-height:1.65;max-width:720px;margin-bottom:24px}.settings-card{background:#14111B;border:1px solid #342A43;border-radius:16px;padding:clamp(18px,3vw,30px);margin:16px 0}.settings-card h2{margin:0 0 18px;font-size:22px}.settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}.setting{padding:16px;border:1px solid #342A43;border-radius:11px;background:#100D15;min-width:0}.setting h3{font-size:15px;margin:0 0 8px}.setting p{font-size:12px;line-height:1.5;color:#B9B2C6;margin:0 0 12px}.setting select,.setting input[type=range]{width:100%;accent-color:#A78BFA}.setting select{padding:11px;background:#08070C;color:#F8F6FC;border:1px solid #514162;border-radius:8px}.switch{display:flex;align-items:center;gap:10px;font-size:13px;margin:10px 0}.switch input,.orbit-extra-option input{accent-color:#A78BFA;width:17px;height:17px;flex:0 0 auto}.range{display:flex;gap:12px;align-items:center;margin-top:10px}.range input{flex:1}.range output{min-width:42px;color:#B9A4FF;font-size:12px}.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}.btn{border:1px solid #514162;border-radius:9px;background:#20172B;color:#F8F6FC;padding:12px 16px;font-weight:800;cursor:pointer;text-decoration:none}.btn.primary{background:#A78BFA;color:#08070C;border-color:#A78BFA}.btn:disabled{opacity:.6;cursor:wait}#settingsMsg{color:#B9A4FF;font-size:13px}.note{color:#8E849D;font-size:12px;line-height:1.6;margin-top:16px}.orbit-extra-settings{grid-column:1/-1}.orbit-extra-settings label{display:flex;align-items:center;gap:9px;color:#F8F6FC;font-size:13px;margin:0;padding:9px 0}.orbit-extra-settings label:has(select){display:block}@media(max-width:600px){.settings-wrap{padding-top:24px}.settings-card{padding:16px}}
+</style>
+</head>
+<body>
+<header>
+<a class="logo" href="/" aria-label="ORBIT X home"><img class="orbit-wordmark" src="/orbitx-wordmark.svg?v=20261014-restored-logo2" alt="ORBIT X"></a>
+</header>
+<main class="settings-wrap">
+<div class="eyebrow">Your ORBIT X experience</div>
+<h1>Settings</h1>
+<p class="intro">Personalize how ORBIT X looks, sounds, and plays. Your choices are saved on this device. Sign in to sync supported preferences with your account.</p>
+<section class="settings-card" id="settings">
+<h2>Appearance &amp; accessibility</h2>
+<div class="settings">
+<div class="setting"><h3>Language</h3><p>Choose the language for supported navigation and settings labels.</p><select id="language"><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option></select></div>
+<div class="setting"><h3>Peaceful Sounds</h3><label class="switch"><input id="soundEnabled" type="checkbox" checked> Sound effects on</label><div class="range"><input id="soundVolume" type="range" min="0" max="100" value="55"><output id="volumeOut">55%</output></div><p>Soft interface sounds where supported.</p></div>
+<div class="setting"><h3>Blind Mode</h3><label class="switch"><input id="blindMode" type="checkbox"> Read focused content aloud</label><p>Uses your device’s built-in speech features where supported.</p></div>
+<div class="setting"><h3>Dark Mode</h3><label class="switch"><input id="darkMode" type="checkbox" checked> Use dark appearance</label><p>Turn off to use a light appearance on supported pages.</p></div>
+</div>
+<div class="actions"><button id="saveSettings" class="btn primary" type="button">Save Settings</button><a class="btn" href="/">Back to ORBIT X</a><span id="settingsMsg" role="status" aria-live="polite"></span></div>
+<p class="note">Language coverage varies by page. Catalog titles and descriptions remain in their original language; subtitle choices only apply when a matching subtitle track exists.</p>
+</section>
+</main>
+<script src="/site.js"></script>
+</body>
+</html>
