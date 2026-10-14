@@ -978,10 +978,10 @@ var index_default = {
       return new Response(patchOrbitHtml(WATCH_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     }
     if (url.pathname === "/collections" || url.pathname === "/collections/" || url.pathname === "/collections.html") {
-      return new Response(COLLECTIONS_HTML, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      return new Response(patchOrbitHtml(COLLECTIONS_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     }
     if (url.pathname === "/orbit-now" || url.pathname === "/orbit-now/" || url.pathname === "/orbit-now.html") {
-      return new Response(ORBIT_NOW_HTML, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      return new Response(patchOrbitHtml(ORBIT_NOW_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     }
     if (url.pathname === "/settings" || url.pathname === "/settings/") {
       return new Response(patchOrbitHtml(ACCOUNT_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
@@ -1102,6 +1102,7 @@ var index_default = {
       if (!key || key.includes("..")) return new Response("Not found", { status: 404 });
       return Response.redirect(await b2SignedGet(env, key), 302);
     }
+    if (url.pathname === "/content-request.html" || url.pathname === "/donate.html") { const page = await env.ASSETS.fetch(request); if (!page.ok) return page; const ct = page.headers.get("content-type") || ""; if (!ct.includes("text/html")) return page; return new Response(patchOrbitHtml(await page.text()), { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } }); }
     if (url.pathname === "/admin.js" && request.method === "GET") return new Response(ADMIN_JS, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" } });
     if (url.pathname === "/schema.sql" || url.pathname.startsWith("/src/")) {
       return new Response("Not found", { status: 404 });
