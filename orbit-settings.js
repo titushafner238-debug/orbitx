@@ -69,6 +69,7 @@ try{const r=await fetch("/api/settings",{method:"POST",credentials:"include",hea
 }
 function animateIn(){if(prefs.reduceMotion||matchMedia("(prefers-reduced-motion: reduce)").matches)return;const targets=[...document.querySelectorAll("main,.hero,.section,.card,.soon-card")].filter(el=>!el.closest(".orbit-phase1-layer"));targets.forEach((el,i)=>{if(i<18){el.classList.add("orbit-entrance");el.style.animationDelay=Math.min(i*35,350)+"ms"}})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>{addControls();apply();animateIn()},{once:true});else{addControls();apply();animateIn()}
-window.addEventListener("storage",e=>{if(e.key==="orbitx-extra-settings"){prefs=read();apply()}});\nsetTimeout(translatePage,500);setTimeout(translatePage,1400);
+window.addEventListener("storage",e=>{if(e.key==="orbitx-extra-settings"){prefs=read();apply()}});
+setTimeout(translatePage,500);setTimeout(translatePage,1400);
 new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1)syncDynamic(n)}).observe(document.documentElement,{subtree:true,childList:true});
 })();
