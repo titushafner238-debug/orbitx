@@ -992,6 +992,24 @@ var index_default = {
     if (url.pathname.startsWith("/api/")) {
       try {
         if (url.pathname === "/api/poster" && request.method === "GET") return posterProxy(url);
+        if (url.pathname === "/api/content-requests" && request.method === "POST") {
+          const b = await request.json();
+          const title = String(b.title || "").trim().slice(0, 180);
+          const type = String(b.content_type || "movie").trim();
+          const sourceUrl = String(b.source_url || "").trim().slice(0, 2048);
+          const reason = String(b.reason || "").trim().slice(0, 1000);
+          const email = String(b.contact_email || "").trim().slice(0, 254);
+          if (!title) return json({ error: "Please enter a title." }, 400);
+          if (!["movie", "short film", "documentary", "TV show", "kids/family"].includes(type)) return json({ error: "Please choose a valid content type." }, 400);
+          let parsed;
+          try { parsed = new URL(sourceUrl); } catch (_) { return json({ error: "Please provide a valid source link." }, 400); }
+          if (!["http:", "https:"].includes(parsed.protocol)) return json({ error: "The source link must use HTTP or HTTPS." }, 400);
+          if (email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return json({ error: "Please enter a valid email address." }, 400);
+          const year = b.year == null || b.year === "" ? null : Number(b.year);
+          if (year !== null && (!Number.isInteger(year) || year < 1888 || year > 2100)) return json({ error: "Please enter a valid year." }, 400);
+          await env.DB.prepare("INSERT INTO content_requests (id,title,year,content_type,source_url,reason,contact_email) VALUES (?,?,?,?,?,?,?)").bind(id("request"), title, year, type, sourceUrl, reason, email).run();
+          return json({ ok: true }, 201);
+        }
         if (url.pathname === "/api/auth/signup" && request.method === "POST") return signup(request, env);
         if (url.pathname === "/api/auth/login" && request.method === "POST") return login(request, env);
         if (url.pathname === "/api/auth/logout" && request.method === "POST") return logout(request, env);
