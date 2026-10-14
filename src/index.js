@@ -1017,8 +1017,7 @@ var index_default = {
           let parsed;
           try { parsed = new URL(sourceUrl); } catch (_) { return json({ error: "Please provide a valid source link." }, 400); }
           if (!["http:", "https:"].includes(parsed.protocol)) return json({ error: "The source link must use HTTP or HTTPS." }, 400);
-          if (email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return json({ error: "Please enter a valid email address." }, 400);
-          const year = b.year == null || b.year === "" ? null : Number(b.year);
+                    const year = b.year == null || b.year === "" ? null : Number(b.year);
           if (year !== null && (!Number.isInteger(year) || year < 1888 || year > 2100)) return json({ error: "Please enter a valid year." }, 400);
           await env.DB.prepare("INSERT INTO content_requests (id,title,year,content_type,source_url,reason,contact_email) VALUES (?,?,?,?,?,?,?)").bind(id("request"), title, year, type, sourceUrl, reason, email).run();
           return json({ ok: true }, 201);
