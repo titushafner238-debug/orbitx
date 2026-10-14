@@ -984,7 +984,10 @@ var index_default = {
       return new Response(patchOrbitHtml(ORBIT_NOW_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     }
     if (url.pathname === "/settings" || url.pathname === "/settings/") {
-      return new Response(patchOrbitHtml(ACCOUNT_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      const settingsUrl = new URL(request.url); settingsUrl.pathname = "/settings.html";
+      const page = await env.ASSETS.fetch(new Request(settingsUrl.toString(), { method: request.method, headers: request.headers }));
+      if (page.ok) return new Response(patchOrbitHtml(await page.text()), { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      return new Response("ORBIT X Settings could not be loaded.", { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } });
     }
     if (url.pathname === "/account" || url.pathname === "/account/") {
       return new Response(patchOrbitHtml(ACCOUNT_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
