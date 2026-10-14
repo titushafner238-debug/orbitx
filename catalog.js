@@ -41,17 +41,17 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
   carouselStyle.textContent=`
     .movie-card .poster{position:relative;overflow:hidden}
     .movie-card .poster:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));opacity:.72;pointer-events:none;transition:opacity .2s}
-    .movie-card .watch-button{position:absolute;z-index:2;left:12px;right:12px;bottom:12px;min-height:42px;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 14px;border:1px solid rgba(255,255,255,.7);border-radius:6px;background:#f5f5f5!important;color:#111!important;font-size:14px;font-weight:750;letter-spacing:.1px;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.24);opacity:0;transform:translateY(5px);transition:opacity .18s,transform .18s,background .18s}
-    .movie-card:hover .watch-button,.movie-card:focus-within .watch-button{opacity:1;transform:translateY(0)}
-    .movie-card .watch-button:hover,.movie-card .watch-button:focus-visible{background:#B9A4FF!important;border-color:#B9A4FF!important;color:#08070C!important;box-shadow:0 0 0 2px rgba(167,139,250,.22),0 8px 24px rgba(0,0,0,.28)}
-    .movie-card .watch-play-icon{font-size:13px;line-height:1}
+    .movie-grid .watch-button{position:absolute;z-index:2;left:10px;right:10px;bottom:10px;min-height:40px;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 12px;border:1px solid rgba(255,255,255,.75);border-radius:6px;background:#f5f5f5!important;color:#111!important;font-size:14px;font-weight:750;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.24);opacity:0;transform:translateY(5px);transition:opacity .18s,transform .18s,background .18s}
+    .movie-grid .movie-card:hover .watch-button,.movie-grid .movie-card:focus-within .watch-button{opacity:1;transform:translateY(0)}
+    .movie-grid .watch-button:hover,.movie-grid .watch-button:focus-visible{background:#B9A4FF!important;border-color:#B9A4FF!important;color:#08070C!important}
+    .movie-grid .watch-play-icon{font-size:13px;line-height:1}
     .movie-card .movie-info{padding:12px 2px 5px;background:transparent}
     .movie-card{background:transparent!important;overflow:visible;border-radius:7px}
     .movie-card:hover{background:transparent!important}
     .movie-card .poster{border-radius:7px;overflow:hidden;background:#171717;box-shadow:0 3px 12px rgba(0,0,0,.25)}
     .movie-card .movie-title{font-size:15px;line-height:1.35;margin-bottom:5px}
     .movie-card .movie-meta{font-size:12px;color:#a0a0a0}
-    @media(hover:none){.movie-card .watch-button{opacity:1;transform:none;min-height:38px;left:8px;right:8px;bottom:8px;padding:8px 10px}}
+    @media(hover:none){.movie-grid .watch-button{opacity:1;transform:none;min-height:38px;left:8px;right:8px;bottom:8px;padding:8px 10px}}
     .orbit-carousel{position:relative;width:100%;min-width:0}
     .orbit-carousel .movie-grid{display:flex!important;flex-wrap:nowrap;gap:18px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 12px;overscroll-behavior-x:contain}
     .orbit-carousel .movie-grid::-webkit-scrollbar{display:none}
