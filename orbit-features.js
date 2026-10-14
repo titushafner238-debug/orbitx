@@ -27,8 +27,9 @@ async function home(){
  };
  const halloweenGrid=document.getElementById("halloweenMovieGrid");
  if(halloweenGrid){
-   const spooky=all.filter(x=>x.type==="movie"&&/(horror|thriller|mystery|monster|vampire|haunted|zombie|nosferatu|night of the living dead|plan 9|house on haunted hill|sprite fright)/i.test(String(x.genres||"")+" "+x.title+" "+x.description));
-   halloweenGrid.innerHTML=spooky.map(x=>movieCard(x,"watch")).join("");
+   const spookyMatches=all.filter(x=>x.type==="movie"&&/(horror|thriller|mystery|monster|vampire|haunted|zombie|nosferatu|night of the living dead|plan 9|house on haunted hill|sprite fright|phantom|ghost|witch|devil|demon|black cat|old dark house|cat and the canary|mad love|mad doctor|werewolf|dracula|frankenstein|island of lost souls|most dangerous game|killer shrews|brain that would not die|amazing mr.? x|carnival of souls|dementia 13|the bat|white zombie|suspense|the lodger|invisible man|wolf man|vampyr|phantom carriage|the terror)/i.test(String(x.genres||"")+" "+x.title+" "+x.description));
+   const spooky=spookyMatches.length?spookyMatches:all.filter(x=>x.type==="movie"&&/(phantom of the opera|white zombie|house on haunted hill|night of the living dead|nosferatu|dracula|frankenstein|the bat|the cat and the canary|the old dark house|vampyr|phantom carriage|last man on earth|carnival of souls|dementia 13|killer shrews|brain that would not die|the terror|black cat|invisible man|wolf man|mad love|the lodger|most dangerous game|island of lost souls|mystery of the wax museum|mystery|haunted|horror|zombie|vampire|ghost|witch|monster|dark house)/i.test(String(x.title||"")));
+   halloweenGrid.innerHTML=spooky.length?spooky.map(x=>movieCard(x,"watch")).join(""):"<p class=\"orbit-halloween-empty\" style=\"color:#B9B2C6;padding:14px 0\">Spooky classics are being added. <a href=\"/search.html?collection=halloween\" style=\"color:#B9A4FF\">Explore the Halloween collection</a>.</p>";
    setupShelf(document.getElementById("halloween-collection"),halloweenGrid,"Halloween");
  }
  try{
