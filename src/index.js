@@ -952,6 +952,13 @@ var index_default = {
       }
       return new Response("Movies page could not be loaded.", { status: 503 });
     }
+    if (url.pathname === "/shorts.html" || url.pathname === "/shorts" || url.pathname === "/shorts/") {
+      const assetUrl = new URL(request.url);
+      assetUrl.pathname = "/shorts.html";
+      const page = await env.ASSETS.fetch(new Request(assetUrl.toString(), { method: request.method, headers: request.headers }));
+      if (page.ok) return new Response(patchOrbitHtml(await page.text()), { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      return new Response("Orbit Shorts page could not be loaded.", { status: 503 });
+    }
     if (url.pathname === "/tv.html" || url.pathname === "/tv" || url.pathname === "/tv/") {
       const assetUrl = new URL(request.url);
       assetUrl.pathname = "/tv.html";
