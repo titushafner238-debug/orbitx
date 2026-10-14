@@ -269,7 +269,7 @@ async function listContent(env, url, admin = false) {
     where.push("(title LIKE ? OR description LIKE ?)");
     args.push("%" + q + "%", "%" + q + "%");
   }
-  if (!admin) where.push(coming ? "status = 'scheduled' AND (release_at IS NULL OR release_at > datetime('now'))" : publicContentWhere());
+  if (!admin) where.push(coming ? "(status = 'scheduled' OR (status = 'published' AND release_at > datetime('now'))) AND (release_at IS NULL OR release_at > datetime('now'))" : publicContentWhere());
   const sql = `
     SELECT id, type, title, slug, description, year, runtime_minutes, rating,
            poster_url, backdrop_url, trailer_url, video_url, captions_url, featured,
