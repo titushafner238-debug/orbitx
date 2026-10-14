@@ -983,7 +983,7 @@ var index_default = {
     if (url.pathname === "/orbit-now" || url.pathname === "/orbit-now/" || url.pathname === "/orbit-now.html") {
       return new Response(patchOrbitHtml(ORBIT_NOW_HTML), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     }
-    if (url.pathname === "/settings" || url.pathname === "/settings/") {
+    if (url.pathname === "/settings" || url.pathname === "/settings/" || url.pathname === "/settings.html") {
       const settingsUrl = new URL(request.url); settingsUrl.pathname = "/settings.html";
       const page = await env.ASSETS.fetch(new Request(settingsUrl.toString(), { method: request.method, headers: request.headers }));
       if (page.ok) return new Response(patchOrbitHtml(await page.text()), { status: page.status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
