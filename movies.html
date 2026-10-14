@@ -732,5 +732,9 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
 
 <script src="/orbit-sidebar.js?v=20261014-sidebar-fix2"></script>
 <script src="/orbit-features.js?v=20261014-carousel-fix2"></script>
+
+<script>
+(()=>{const fix=()=>document.querySelectorAll(".watch-button").forEach(el=>{if(el.textContent.trim().toLowerCase()==="view title")el.textContent="Watch";if(el.getAttribute("aria-label")?.toLowerCase().startsWith("view title"))el.setAttribute("aria-label",el.getAttribute("aria-label").replace(/view title/i,"Watch"));});fix();new MutationObserver(fix).observe(document.documentElement,{subtree:true,childList:true,characterData:true});})();
+</script>
 </body>
 </html>
