@@ -160,7 +160,7 @@ __name22(id, "id");
 __name222(id, "id");
 __name2222(id, "id");
 function publicContentWhere() {
-  return `status = 'published'
+  return `(status = 'published' OR (status = 'scheduled' AND release_at IS NOT NULL AND release_at <= datetime('now')))
     AND (release_at IS NULL OR release_at <= datetime('now'))`;
 }
 __name(publicContentWhere, "publicContentWhere");
