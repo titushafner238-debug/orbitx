@@ -422,7 +422,9 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
     const search = (document.getElementById("searchBox")?.value || "").trim().toLowerCase();
     const filtered = shows.filter(i => {
       const genres = String(i.genres || "").split("||").map(x => x.toLowerCase());
-      const genreOK = activeGenre === "All" || genres.includes(activeGenre.toLowerCase());
+      const aliases = {"sci-fi":["science fiction","sci-fi"],"educational":["education","documentary"],"kids & family":["family","kids"],"religious":["religion","faith","biblical"]};
+      const wanted = [activeGenre.toLowerCase(),...(aliases[activeGenre.toLowerCase()]||[])];
+      const genreOK = activeGenre === "All" || genres.some(g => wanted.includes(g));
       return genreOK && (i.title + " " + (i.description || "")).toLowerCase().includes(search);
     });
     title.textContent = activeGenre === "All" ? "All TV Shows" : activeGenre + " TV Shows";
