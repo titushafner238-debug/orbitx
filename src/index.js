@@ -922,7 +922,7 @@ function patchOrbitHtml(html) {
   html = html.replace(/<script src="\/orbit-sidebar\.js[^"]*"><\/script>/g, "");
   html = html.replace(/<style id="orbit-watch-button-fix">[\s\S]*?<\/style>/g, "");
   html = html.replace("</head>", '<style id="orbit-watch-button-fix">.watch-play-icon{display:none!important}</style></head>');
-  return html.replace("</body>", '<script src="/orbit-sidebar.js?v=20261014-sidebar-restored"></script><script src="/orbit-features.js?v=20261014-carousel-fix3"></script><script src="/orbit-phase1.js?v=20261014-phase1-restored"></script><script src="/orbit-phase1-admin.js?v=20261014-admin-requests"></script><script src="/orbit-settings.js?v=20261014-settings2"></script></body>');
+  return html.replace("</body>", '<script src="/orbit-sidebar.js?v=20261014-sidebar-restored"></script><script src="/orbit-features.js?v=20261014-carousel-fix3"></script><script src="/orbit-phase1.js?v=20261014-phase1-restored"></script><script src="/orbit-phase1-admin.js?v=20261014-admin-requests"></script><script src="/orbit-settings.js?v=20261014-settings3"></script></body>');
 }
 __name(patchOrbitHtml, "patchOrbitHtml");
 __name2(patchOrbitHtml, "patchOrbitHtml");
