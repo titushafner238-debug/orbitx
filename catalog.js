@@ -58,8 +58,7 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
     .orbit-carousel .movie-grid{display:flex!important;flex-wrap:nowrap;gap:18px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 12px;overscroll-behavior-x:contain}
     .orbit-carousel .movie-grid::-webkit-scrollbar{display:none}
     .orbit-carousel .movie-card{flex:0 0 calc((100% - 72px)/5);min-width:0;scroll-snap-align:start}
-    .orbit-carousel .orbit-row-arrow{position:absolute;z-index:5;top:38%;transform:translateY(-50%);width:42px;height:64px;border:0;border-radius:7px;background:rgba(8,8,8,.88);color:#fff;font-size:32px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 14px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s,background .18s}
-    .orbit-carousel:hover .orbit-row-arrow,.orbit-carousel:focus-within .orbit-row-arrow{opacity:1;pointer-events:auto}
+    .orbit-carousel .orbit-row-arrow{position:absolute;z-index:5;top:38%;transform:translateY(-50%);width:42px;height:64px;border:0;border-radius:7px;background:rgba(8,8,8,.88);color:#fff;font-size:32px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 14px rgba(0,0,0,.35);opacity:1;pointer-events:auto;transition:opacity .18s,background .18s}
     .orbit-carousel .orbit-row-arrow:hover{background:rgba(45,45,45,.98)}
     .orbit-carousel .orbit-row-arrow:focus-visible{opacity:1;pointer-events:auto;outline:2px solid #fff;outline-offset:2px}
     .orbit-carousel .orbit-row-arrow.left{left:4px}
@@ -74,16 +73,16 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
     const section=grid.closest(".section");
     if(!section||section.classList.contains("originals")||grid.dataset.orbitCarousel==="ready")return;
     const count=grid.querySelectorAll(".movie-card").length;
-    if(count<=5)return;
+    if(count<=2)return;
     grid.dataset.orbitCarousel="ready";
     const wrap=document.createElement("div");wrap.className="orbit-carousel";
     grid.parentNode.insertBefore(wrap,grid);wrap.appendChild(grid);
     const left=document.createElement("button");left.type="button";left.className="orbit-row-arrow left";left.innerHTML="&#8249;";left.setAttribute("aria-label","Scroll "+(section.querySelector(".section-title")?.textContent||"titles")+" left");
     const right=document.createElement("button");right.type="button";right.className="orbit-row-arrow right";right.innerHTML="&#8250;";right.setAttribute("aria-label","Scroll "+(section.querySelector(".section-title")?.textContent||"titles")+" right");
     wrap.append(left,right);
-    const update=()=>{const max=grid.scrollWidth-grid.clientWidth;left.hidden=grid.scrollLeft<=3;right.hidden=max<=3||grid.scrollLeft>=max-3};
-    left.addEventListener("click",()=>grid.scrollBy({left:-grid.clientWidth*.85,behavior:"smooth"}));
-    right.addEventListener("click",()=>grid.scrollBy({left:grid.clientWidth*.85,behavior:"smooth"}));
+    const update=()=>{const max=grid.scrollWidth-grid.clientWidth;const mobile=window.matchMedia("(max-width:600px)").matches;const showArrows=count>(mobile?2:5)&&max>3;left.hidden=!showArrows;right.hidden=!showArrows;};
+    left.addEventListener("click",()=>{const max=grid.scrollWidth-grid.clientWidth;if(grid.scrollLeft<=3)grid.scrollTo({left:max,behavior:"smooth"});else grid.scrollBy({left:-grid.clientWidth*.85,behavior:"smooth"});});
+    right.addEventListener("click",()=>{const max=grid.scrollWidth-grid.clientWidth;if(grid.scrollLeft>=max-3)grid.scrollTo({left:0,behavior:"smooth"});else grid.scrollBy({left:grid.clientWidth*.85,behavior:"smooth"});});
     grid.addEventListener("scroll",update,{passive:true});
     if("ResizeObserver" in window)new ResizeObserver(update).observe(grid);else window.addEventListener("resize",update);
     update();
