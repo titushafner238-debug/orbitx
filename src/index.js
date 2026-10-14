@@ -992,6 +992,19 @@ var index_default = {
     if (url.pathname.startsWith("/api/")) {
       try {
         if (url.pathname === "/api/poster" && request.method === "GET") return posterProxy(url);
+        if (url.pathname === "/api/admin/content-requests" && request.method === "GET") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
+          const data = await env.DB.prepare("SELECT id,title,year,content_type,source_url,reason,contact_email,status,created_at FROM content_requests ORDER BY created_at DESC LIMIT 100").all();
+          return json({ requests: data.results || [] });
+        }
+        if (url.pathname === "/api/admin/content-requests/update" && request.method === "POST") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
+          const b = await request.json();
+          if (!["pending", "reviewing", "approved", "rejected"].includes(b.status)) return json({ error: "Invalid status." }, 400);
+          const result = await env.DB.prepare("UPDATE content_requests SET status=? WHERE id=?").bind(b.status, String(b.id || "")).run();
+          if (!result.meta?.changes) return json({ error: "Request not found." }, 404);
+          return json({ ok: true });
+        }
         if (url.pathname === "/api/content-requests" && request.method === "POST") {
           const b = await request.json();
           const title = String(b.title || "").trim().slice(0, 180);
