@@ -137,3 +137,19 @@ footer a:hover { color: var(--orbit-violet-bright) !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Homepage collection wallpapers: original CSS artwork, not substitute movie posters. */
+.orbit-collection-wallpapers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.orbit-wallpaper{position:relative;isolation:isolate;min-height:205px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:22px;border:1px solid #49385E;border-radius:10px;color:#F8F6FC!important;text-decoration:none;background:#14111B;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .2s,border-color .2s}
+.orbit-wallpaper:before{content:"";position:absolute;inset:0;z-index:-2;transition:transform .45s}
+.orbit-wallpaper:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(8,7,12,.97),rgba(8,7,12,.2) 75%)}
+.orbit-wallpaper:hover{transform:translateY(-3px);border-color:#A78BFA}.orbit-wallpaper:hover:before{transform:scale(1.05)}
+.orbit-wallpaper strong{font-size:clamp(20px,2vw,29px);line-height:1.1;letter-spacing:.01em}.orbit-wallpaper .wallpaper-kicker{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#D7C7FF}.orbit-wallpaper .wallpaper-caption{font-size:12px;line-height:1.45;color:#E2DCEA;max-width:300px}
+.orbit-wallpaper.chaplin:before{background:radial-gradient(ellipse at 70% 22%,rgba(239,239,239,.24),transparent 25%),repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.035) 22px 23px),linear-gradient(130deg,#68616e,#27222f 52%,#0d0a12)}
+.orbit-wallpaper.halloween:before{background:radial-gradient(ellipse at 70% 25%,#9a5cce 0,transparent 26%),radial-gradient(ellipse at 20% 100%,#f08c35 0,transparent 28%),linear-gradient(135deg,#2b123d,#100b17 75%)}
+.orbit-wallpaper.thanksgiving:before{background:radial-gradient(ellipse at 76% 20%,#c7864e 0,transparent 25%),radial-gradient(ellipse at 25% 70%,#85513b 0,transparent 30%),linear-gradient(135deg,#513022,#1b1014 75%)}
+.orbit-wallpaper.christmas:before{background:radial-gradient(ellipse at 78% 18%,#d9d0ff 0,transparent 17%),radial-gradient(ellipse at 20% 80%,#3c795f 0,transparent 32%),linear-gradient(135deg,#184638,#11101a 75%)}
+.orbit-wallpaper.tarzan:before{background:radial-gradient(ellipse at 76% 20%,#c5a66a 0,transparent 19%),repeating-linear-gradient(112deg,transparent 0 27px,rgba(121,174,105,.15) 27px 30px),linear-gradient(135deg,#1b4839,#13251f 55%,#0b0d12)}
+.orbit-wallpaper.nasa:before{background:radial-gradient(circle at 73% 25%,#d8d1ff 0 1px,transparent 2px),radial-gradient(ellipse at 74% 24%,#5d56a9 0,transparent 30%),radial-gradient(ellipse at 75% 24%,#1b7baf 0,transparent 40%),radial-gradient(circle at 20% 20%,#fff 0 1px,transparent 2px),radial-gradient(circle at 48% 40%,#fff 0 1px,transparent 2px),linear-gradient(135deg,#0b1830,#1c1641 65%,#08070c)}
+@media(max-width:850px){.orbit-collection-wallpapers{grid-template-columns:repeat(2,minmax(0,1fr))}.orbit-wallpaper{min-height:180px;padding:17px}}
+@media(max-width:480px){.orbit-collection-wallpapers{grid-template-columns:1fr}.orbit-wallpaper{min-height:155px}}
