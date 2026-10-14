@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ORBIT X — Orbit Shorts</title>
+    <title>ORBIT X — Short Films</title>
 
     <style>
         * {
@@ -327,7 +327,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
         <a href="/">Home</a>
         <a href="/movies.html">Movies</a>
         <a href="/tv.html">TV Shows</a>
-        <a href="/shorts.html" class="active">Orbit Shorts</a>
+        <a href="/shorts.html" class="active">Short Films</a>
         <a href="/search.html" class="search-page-button" aria-label="Search ORBIT X" onclick="sessionStorage.setItem('orbitxSearchFrom', location.pathname + location.search)"><span class="search-glass" aria-hidden="true"></span><span>Search</span></a>
       </nav>
 </header>
@@ -337,7 +337,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
 
     <div class="page-header">
 
-        <h1>Orbit Shorts</h1>
+        <h1>Short Films</h1>
 
         <p>
             Discover short films 15 minutes or shorter. TV episodes stay in TV Shows.
@@ -358,71 +358,71 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
             All
         </div>
 
-        <div class="genre" onclick="filterMovies('Action', this)">
+        <div class="genre" onclick="filterShorts('Action', this)">
             Action
         </div>
 
-        <div class="genre" onclick="filterMovies('Adventure', this)">
+        <div class="genre" onclick="filterShorts('Adventure', this)">
             Adventure
         </div>
 
-        <div class="genre" onclick="filterMovies('Comedy', this)">
+        <div class="genre" onclick="filterShorts('Comedy', this)">
             Comedy
         </div>
 
-        <div class="genre" onclick="filterMovies('Crime', this)">
+        <div class="genre" onclick="filterShorts('Crime', this)">
             Crime
         </div>
 
-        <div class="genre" onclick="filterMovies('Documentary', this)">
+        <div class="genre" onclick="filterShorts('Documentary', this)">
             Documentary
         </div>
 
-        <div class="genre" onclick="filterMovies('Drama', this)">
+        <div class="genre" onclick="filterShorts('Drama', this)">
             Drama
         </div>
 
-        <div class="genre" onclick="filterMovies('Kids & Family', this)">
+        <div class="genre" onclick="filterShorts('Kids & Family', this)">
             Kids & Family
         </div>
 
-        <div class="genre" onclick="filterMovies('Fantasy', this)">
+        <div class="genre" onclick="filterShorts('Fantasy', this)">
             Fantasy
         </div>
 
-        <div class="genre" onclick="filterMovies('Horror', this)">
+        <div class="genre" onclick="filterShorts('Horror', this)">
             Horror
         </div>
 
-        <div class="genre" onclick="filterMovies('Mystery', this)">
+        <div class="genre" onclick="filterShorts('Mystery', this)">
             Mystery
         </div>
 
-        <div class="genre" onclick="filterMovies('Romance', this)">
+        <div class="genre" onclick="filterShorts('Romance', this)">
             Romance
         </div>
 
-        <div class="genre" onclick="filterMovies('Sci-Fi', this)">
+        <div class="genre" onclick="filterShorts('Sci-Fi', this)">
             Sci-Fi
         </div>
 
-        <div class="genre" onclick="filterMovies('Thriller', this)">
+        <div class="genre" onclick="filterShorts('Thriller', this)">
             Thriller
         </div>
 
-        <div class="genre" onclick="filterMovies('Western', this)">
+        <div class="genre" onclick="filterShorts('Western', this)">
             Western
         </div>
 
-        <div class="genre" onclick="filterMovies('Animation', this)">
+        <div class="genre" onclick="filterShorts('Animation', this)">
             Animation
         </div>
 
-        <div class="genre" onclick="filterMovies('Classic', this)">
+        <div class="genre" onclick="filterShorts('Classic', this)">
             Classic
         </div>
 
-        <div class="genre" onclick="filterMovies('Religious', this)">
+        <div class="genre" onclick="filterShorts('Religious', this)">
             Religious
         </div>
 
@@ -697,12 +697,22 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
   function applyFilters() {
     const search = (document.getElementById("searchBox")?.value || "").trim().toLowerCase();
     const filtered = movies.filter(i => {
-      const genres = String(i.genres || "").split("||").map(x => x.toLowerCase());
-      const aliases = {"religious":["religion","faith","biblical"],"sci-fi":["science fiction","sci-fi"],"kids & family":["family","kids"],"educational":["education","documentary"]};
-      const wanted = [activeGenre.toLowerCase(),...(aliases[activeGenre.toLowerCase()]||[])];
-      const genreOK = activeGenre === "All" || genres.some(g => wanted.includes(g));
-      const text = (i.title + " " + (i.description || "")).toLowerCase();
-      return genreOK && text.includes(search);
+      const key = value => String(value || "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
+      const genres = String(i.genres || "").split("||").map(key).filter(Boolean);
+      const aliases = {
+        action:["action"], adventure:["adventure"], comedy:["comedy","funny","silentcomedy"],
+        crime:["crime","detective"], documentary:["documentary","education","educational","nasa","science"],
+        drama:["drama"], kidsandfamily:["family","kids","children","animation","cartoon"],
+        fantasy:["fantasy","magic"], horror:["horror","scary","monster"], mystery:["mystery","detective"],
+        romance:["romance","romantic"], scifi:["scifi","sciencefiction","space","science"],
+        thriller:["thriller","suspense"], western:["western","cowboy"], animation:["animation","animated","cartoon"],
+        classic:["classic","silent","vintage"], religious:["religious","religion","faith","biblical","christian"]
+      };
+      const wanted = new Set([key(activeGenre), ...(aliases[key(activeGenre)] || [])].map(key));
+      const text = key([i.title, i.description, i.genres].join(" "));
+      const genreOK = activeGenre === "All" || genres.some(g => wanted.has(g)) ||
+        [...wanted].some(term => term.length > 3 && text.includes(term));
+      return genreOK && text.includes(key(search));
     });
     title.textContent = activeGenre === "All" ? "All Short Films" : activeGenre + " Short Films";
     render(filtered);
@@ -718,7 +728,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
   document.getElementById("searchBox")?.addEventListener("input", applyFilters);
 
   try {
-    const r = await fetch("/api/public/content?type=movie");
+    const r = await fetch("/api/public/content?type=movie", {cache:"no-store"});
     const d = await r.json();
     movies = (d.content || []).filter(i => i.runtime_minutes != null && String(i.runtime_minutes).trim() !== "" && Number(i.runtime_minutes) >= 0 && Number(i.runtime_minutes) <= 15);
     applyFilters();
@@ -730,7 +740,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
 })();
 </script>
 
-<script src="/orbit-sidebar.js?v=20261011-sidebar"></script>
-<script src="/orbit-features.js?v=20261011-page-specific"></script>
+<script src="/orbit-sidebar.js?v=20261014-sidebar-fix2"></script>
+<script src="/orbit-features.js?v=20261014-carousel-fix2"></script>
 </body>
 </html>
