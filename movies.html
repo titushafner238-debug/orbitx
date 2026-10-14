@@ -326,7 +326,8 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
         <a href="/account" class="account-nav" aria-label="Account"><span class="avatar-circle">○</span><span>Account</span></a>
         <a href="/">Home</a>
         <a href="/movies.html" class="active">Movies</a>
-        <a href="/tv.html">TV</a>
+        <a href="/tv.html">TV Shows</a>
+        <a href="/shorts.html">Orbit Shorts</a>
         <a href="/search.html" class="search-page-button" aria-label="Search ORBIT X" onclick="sessionStorage.setItem('orbitxSearchFrom', location.pathname + location.search)"><span class="search-glass" aria-hidden="true"></span><span>Search</span></a>
       </nav>
 </header>
@@ -657,7 +658,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
     count.textContent = list.length;
     empty.style.display = list.length ? "none" : "block";
     grid.innerHTML = list.map(i => {
-      const meta = [i.year, i.rating, i.runtime_minutes ? i.runtime_minutes + " min" : ""]
+      const meta = [i.year, i.rating, i.runtime_minutes != null ? Math.max(1, Number(i.runtime_minutes)) + " min" : ""]
         .filter(Boolean).join(" · ");
       const genres = String(i.genres || "").split("||").filter(Boolean);
       const url = "/watch.html?slug=" + encodeURIComponent(i.slug);
@@ -719,7 +720,7 @@ button:hover,.button:hover,.watch-button:hover{background:#fff!important;color:#
   try {
     const r = await fetch("/api/public/content?type=movie");
     const d = await r.json();
-    movies = d.content || [];
+    movies = (d.content || []).filter(i => !(Number(i.runtime_minutes) > 0 && Number(i.runtime_minutes) <= 15));
     applyFilters();
   } catch (e) {
     console.error(e);
