@@ -4,3 +4,12 @@ schema.sql
 wrangler.jsonc
 .assetsignore
 src/
+
+tests/
+docs/
+README.md
+orbit-x-ai/
+books.html
+music.html
+music-admin.html
+music-catalog.json

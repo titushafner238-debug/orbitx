@@ -29,7 +29,7 @@ const css=document.createElement("style");css.textContent=".orbit-search{positio
  const pickShows=(key,fallback)=>pick(key,fallback,"show");
  const featuredShowCandidates=[...pickShows("featured_show_ids",shows.filter(i=>i.featured)),...shows.filter(i=>i.featured),...shows];
  const featuredShows=[...new Map(featuredShowCandidates.filter(Boolean).map(i=>[i.id,i])).values()].slice(0,15),recommendedShows=pickShows("recommended_show_ids",shows.slice(0,5)),recentShows=pickShows("recent_show_ids",shows.slice(0,30)).slice(0,30);
-  const recent=[...recentMovies,...recentShows].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>String(b.created_at||"").localeCompare(String(a.created_at||""))).slice(0,30);
+  const recent=[...items].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>String(b.created_at||" ").localeCompare(String(a.created_at||" "))||String(a.title||" ").localeCompare(String(b.title||" "))).slice(0,30);
   const recommended=[...recommendedMovies,...recommendedShows].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).slice(0,12);
  if(location.pathname.endsWith("movies.html")){const g=document.getElementById("movieGrid")||document.querySelector(".movie-grid");if(g)g.innerHTML=movies.map(card).join("")||"<p>No movies published yet.</p>";}
  if(location.pathname.endsWith("tv.html")){const g=document.querySelector(".movie-grid");if(g)g.innerHTML=shows.map(card).join("")||"<p>No TV shows published yet.</p>";}
