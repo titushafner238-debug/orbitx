@@ -412,13 +412,22 @@ __name2(getGenres, "getGenres");
 __name22(getGenres, "getGenres");
 __name222(getGenres, "getGenres");
 __name2222(getGenres, "getGenres");
-async function getSeasons(env, showId) {
-  const result = await env.DB.prepare(`
-    SELECT id, show_id, season_number, title, description
-    FROM seasons
-    WHERE show_id = ?
-    ORDER BY season_number ASC
-  `).bind(showId).all();
+async function getSeasons(env, showId, admin = false) {
+  const sql = admin ? `
+    SELECT s.id, s.show_id, s.season_number, s.title, s.description
+    FROM seasons s
+    WHERE s.show_id = ?
+    ORDER BY s.season_number ASC
+  ` : `
+    SELECT s.id, s.show_id, s.season_number, s.title, s.description
+    FROM seasons s
+    JOIN content c ON c.id = s.show_id
+    WHERE s.show_id = ?
+      AND c.status = 'published'
+      AND (c.release_at IS NULL OR c.release_at <= datetime('now'))
+    ORDER BY s.season_number ASC
+  `;
+  const result = await env.DB.prepare(sql).bind(showId).all();
   return json({ seasons: result.results || [] });
 }
 __name(getSeasons, "getSeasons");
@@ -452,14 +461,27 @@ __name2(saveSeason, "saveSeason");
 __name22(saveSeason, "saveSeason");
 __name222(saveSeason, "saveSeason");
 __name2222(saveSeason, "saveSeason");
-async function getEpisodes(env, seasonId) {
-  const result = await env.DB.prepare(`
-    SELECT id, season_id, episode_number, title, description, runtime_minutes,
-           thumbnail_url, video_url, captions_url, status, release_at
-    FROM episodes
-    WHERE season_id = ?
-    ORDER BY episode_number ASC
-  `).bind(seasonId).all();
+async function getEpisodes(env, seasonId, admin = false) {
+  const sql = admin ? `
+    SELECT e.id, e.season_id, e.episode_number, e.title, e.description, e.runtime_minutes,
+           e.thumbnail_url, e.video_url, e.captions_url, e.status, e.release_at
+    FROM episodes e
+    WHERE e.season_id = ?
+    ORDER BY e.episode_number ASC
+  ` : `
+    SELECT e.id, e.season_id, e.episode_number, e.title, e.description, e.runtime_minutes,
+           e.thumbnail_url, e.video_url, e.captions_url, e.status, e.release_at
+    FROM episodes e
+    JOIN seasons s ON s.id = e.season_id
+    JOIN content c ON c.id = s.show_id
+    WHERE e.season_id = ?
+      AND c.status = 'published'
+      AND (c.release_at IS NULL OR c.release_at <= datetime('now'))
+      AND e.status = 'published'
+      AND (e.release_at IS NULL OR e.release_at <= datetime('now'))
+    ORDER BY e.episode_number ASC
+  `;
+  const result = await env.DB.prepare(sql).bind(seasonId).all();
   return json({ episodes: result.results || [] });
 }
 __name(getEpisodes, "getEpisodes");
@@ -1038,7 +1060,10 @@ var index_default = {
         if (url.pathname === "/api/profiles/delete" && request.method === "POST") return deleteProfile(request, env);
         if (url.pathname === "/api/settings" && request.method === "POST") return saveSettings(request, env);
         if (url.pathname === "/api/site-settings" && request.method === "GET") return publicSiteSettings(env);
-        if (url.pathname === "/api/site-settings" && request.method === "POST") return saveSiteSettings(request, env);
+        if (url.pathname === "/api/site-settings" && request.method === "POST") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
+          return saveSiteSettings(request, env);
+        }
         if (url.pathname === "/api/admin/users" && request.method === "GET") {
           if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
           return adminUsers(env);
@@ -1051,24 +1076,30 @@ var index_default = {
           return listContent(env, url, false);
         }
         if (url.pathname === "/api/content" && request.method === "POST") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
           return saveContent(request, env);
         }
         if (url.pathname === "/api/content/delete" && request.method === "POST") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
           return deleteContent(request, env);
         }
         if (url.pathname === "/api/genres" && request.method === "GET") {
           return getGenres(env);
         }
         if (url.pathname === "/api/seasons" && request.method === "GET") {
-          return getSeasons(env, url.searchParams.get("show_id"));
+          const admin = Boolean(await requireAdmin(request, env));
+          return getSeasons(env, url.searchParams.get("show_id"), admin);
         }
         if (url.pathname === "/api/seasons" && request.method === "POST") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
           return saveSeason(request, env);
         }
         if (url.pathname === "/api/episodes" && request.method === "GET") {
-          return getEpisodes(env, url.searchParams.get("season_id"));
+          const admin = Boolean(await requireAdmin(request, env));
+          return getEpisodes(env, url.searchParams.get("season_id"), admin);
         }
         if (url.pathname === "/api/episodes" && request.method === "POST") {
+          if (!await requireAdmin(request, env)) return authJson({ error: "Admin access required." }, 403);
           return saveEpisode(request, env);
         }
         if (url.pathname === "/api/upload" && request.method === "POST") {
