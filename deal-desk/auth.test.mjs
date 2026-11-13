@@ -1,0 +1,12 @@
+import {Miniflare} from 'miniflare';import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
+const mf=new Miniflare({modules:true,script:fs.readFileSync('dist/worker.js','utf8'),compatibilityDate:'2026-05-15',d1Databases:['DB'],bindings:{SESSION_KEY:'test-key-only-not-production',PASSWORD_SALT:'test-only',PASSWORD_HASH:createHash('sha256').update('test-only:test-pass').digest('hex')}});
+const db=await mf.getD1Database('DB');await db.exec('CREATE TABLE login_attempts(id TEXT PRIMARY KEY,count INTEGER,expires INTEGER); CREATE TABLE tracker_source(id TEXT PRIMARY KEY,payload TEXT,imported_at TEXT,revision INTEGER); CREATE TABLE handoffs(id TEXT PRIMARY KEY,payload TEXT,revision INTEGER,updated_at TEXT); CREATE TABLE brand_profiles(id TEXT PRIMARY KEY,payload TEXT,revision INTEGER,updated_at TEXT); CREATE TABLE desk_settings(id TEXT PRIMARY KEY,payload TEXT);');
+const base='https://desk.example';
+for(const path of ['/','/client.js','/style.css']){const r=await mf.dispatchFetch(base+path);assert.match(await r.text(),/Private Deal Desk/);assert.equal(r.headers.get('cache-control'),'private, no-store');}
+for(const path of ['/api/data','/api/profiles?id=x'])assert.equal((await mf.dispatchFetch(base+path)).status,401);
+assert.equal((await mf.dispatchFetch(base+'/login',{method:'POST',headers:{Origin:'https://evil.example'},body:'password=x'})).status,403);
+async function login(p,ip='1.2.3.4'){return mf.dispatchFetch(base+'/login',{method:'POST',redirect:'manual',headers:{Origin:base,'Content-Type':'application/x-www-form-urlencoded','CF-Connecting-IP':ip},body:'password='+p});}
+assert.equal((await login('wrong')).status,401);const r=await login('test-pass');assert.equal(r.status,303);const c=r.headers.get('set-cookie');assert.match(c,/Secure; HttpOnly; SameSite=Strict/);const cookie=c.split(';')[0];assert.equal((await mf.dispatchFetch(base+'/api/data',{headers:{cookie}})).status,200);assert.match(await (await mf.dispatchFetch(base+'/',{headers:{cookie}})).text(),/id="root"/);
+assert.equal((await mf.dispatchFetch(base+'/api/data',{headers:{cookie:cookie+'x'}})).status,401);
+for(let i=0;i<5;i++)assert.equal((await login('bad','9.8.7.6')).status,401);assert.equal((await login('test-pass','9.8.7.6')).status,429);
+await mf.dispose();console.log('PASS: login, API/asset protection, CSRF, signed cookies, wrong-password throttling');

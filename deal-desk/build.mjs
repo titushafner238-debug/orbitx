@@ -1,0 +1,7 @@
+import {build} from 'esbuild';import fs from 'node:fs';
+fs.mkdirSync('dist',{recursive:true});
+await build({entryPoints:['client.tsx'],bundle:true,minify:true,format:'esm',outfile:'dist/client.js',jsx:'automatic',define:{'process.env.NODE_ENV':'"production"'}});
+const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Uncle Tye · Deal Desk</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/style.css"></head><body><form action="/logout" method="post" style="position:fixed;right:16px;bottom:12px;z-index:80"><button style="background:#171e2b;color:white;border-radius:6px;padding:7px 12px">Lock desk</button></form><div id="root"></div><script type="module" src="/client.js"></script></body></html>';
+fs.writeFileSync('assets.json',JSON.stringify({'/':{type:'text/html;charset=utf-8',body:html},'/client.js':{type:'application/javascript',body:fs.readFileSync('dist/client.js','utf8')},'/style.css':{type:'text/css',body:fs.readFileSync('style.css','utf8')},'/favicon.svg':{type:'image/svg+xml',body:fs.readFileSync('public/favicon.svg','utf8')}}));
+await build({entryPoints:['server.ts'],bundle:true,minify:true,format:'esm',platform:'browser',external:['cloudflare:workers'],outfile:'dist/worker.js'});
+console.log('Built protected standalone Worker');

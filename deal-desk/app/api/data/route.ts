@@ -1,0 +1,2 @@
+import {getDb} from '@/db';import {trackerSource,handoffs} from '@/db/schema';
+export async function GET(){const db=getDb();const [s]=await db.select().from(trackerSource);const h=await db.select().from(handoffs);const p=s?JSON.parse(s.payload):null;return Response.json({source:s?{...p,revision:s.revision,importedAt:s.importedAt}:null,workflows:Object.fromEntries(h.map(w=>[w.id,{...JSON.parse(w.payload),revision:w.revision}]))});}
