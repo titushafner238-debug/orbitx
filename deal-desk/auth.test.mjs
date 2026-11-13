@@ -2,6 +2,12 @@ import {Miniflare} from 'miniflare';import fs from 'node:fs';import assert from 
 const mf=new Miniflare({modules:true,script:fs.readFileSync('dist/worker.js','utf8'),compatibilityDate:'2026-05-15',d1Databases:['DB'],bindings:{SESSION_KEY:'test-key-only-not-production',PASSWORD_SALT:'test-only',PASSWORD_HASH:createHash('sha256').update('test-only:test-pass').digest('hex')}});
 const db=await mf.getD1Database('DB');await db.exec('CREATE TABLE login_attempts(id TEXT PRIMARY KEY,count INTEGER,expires INTEGER); CREATE TABLE tracker_source(id TEXT PRIMARY KEY,payload TEXT,imported_at TEXT,revision INTEGER); CREATE TABLE handoffs(id TEXT PRIMARY KEY,payload TEXT,revision INTEGER,updated_at TEXT); CREATE TABLE brand_profiles(id TEXT PRIMARY KEY,payload TEXT,revision INTEGER,updated_at TEXT); CREATE TABLE desk_settings(id TEXT PRIMARY KEY,payload TEXT);');
 const base='https://desk.example';
+// Native form POSTs use an opaque Origin under a no-referrer policy.
+const documentResponse=await mf.dispatchFetch(base+'/');
+const formOrigin=documentResponse.headers.get('referrer-policy')==='no-referrer'?'null':base;
+const formLogin=await mf.dispatchFetch(base+'/login',{method:'POST',redirect:'manual',headers:{Origin:formOrigin,'Content-Type':'application/x-www-form-urlencoded','CF-Connecting-IP':'2.2.2.2'},body:'password=test-pass'});
+assert.equal(formLogin.status,303,'Login form must preserve same-origin CSRF provenance');
+
 for(const path of ['/','/client.js','/style.css']){const r=await mf.dispatchFetch(base+path);assert.match(await r.text(),/Private Deal Desk/);assert.equal(r.headers.get('cache-control'),'private, no-store');}
 for(const path of ['/api/data','/api/profiles?id=x'])assert.equal((await mf.dispatchFetch(base+path)).status,401);
 assert.equal((await mf.dispatchFetch(base+'/login',{method:'POST',headers:{Origin:'https://evil.example'},body:'password=x'})).status,403);
